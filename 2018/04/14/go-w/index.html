@@ -1,0 +1,367 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>浅谈Go语言中的文件读入方法 | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="/本篇blog是因为1-10.go而写的/听说我居然在文件写入的时候遇到了麻烦？
+对了，1-10.go的位置：1-10.go
+
+Go-文件写入的四种方式
+第一种：io.WriteString()在此之前介绍两个函数：12func checkFileIsExist(filename string) b">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/04/14/go-w/" title="浅谈Go语言中的文件读入方法" itemprop="url">浅谈Go语言中的文件读入方法</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-04-14T15:06:39.000Z" itemprop="datePublished">2018-04-14</time>
+    Updated:<time datetime="2019-04-08T15:39:45.220Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#本篇blog是因为1-10-go而写的"><span class="toc-number">1.</span> <span class="toc-text">/本篇blog是因为1-10.go而写的/</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Go-文件写入的四种方式"><span class="toc-number">2.</span> <span class="toc-text">Go-文件写入的四种方式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#第一种：io-WriteString"><span class="toc-number">2.1.</span> <span class="toc-text">第一种：io.WriteString()</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#checkFileIsExist"><span class="toc-number">2.1.1.</span> <span class="toc-text">checkFileIsExist()</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#os-Stat-filename"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">os.Stat(filename):</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#os-IsNotExist-err-error"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">os.IsNotExist(err error):</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check"><span class="toc-number">2.1.2.</span> <span class="toc-text">check()</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#题外话：0666"><span class="toc-number">2.1.2.1.</span> <span class="toc-text">题外话：0666</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第二种：ioutil-WriteFile"><span class="toc-number">2.2.</span> <span class="toc-text">第二种：ioutil.WriteFile()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第三种：File-Write-WriteString"><span class="toc-number">2.3.</span> <span class="toc-text">第三种：File(Write,WriteString)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第四种："><span class="toc-number">2.4.</span> <span class="toc-text">第四种：</span></a></li></ol></li></ol>
+		</div>
+		
+		<h1 id="本篇blog是因为1-10-go而写的"><a href="#本篇blog是因为1-10-go而写的" class="headerlink" title="/本篇blog是因为1-10.go而写的/"></a>/<em>本篇blog是因为1-10.go而写的</em>/</h1><p>听说我居然在文件写入的时候遇到了麻烦？</p>
+<p>对了，1-10.go的位置：<br><a href="https://github.com/ShiinaOrez/go_practice/blob/master/Go%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E8%AF%AD%E8%A8%80/1/1-10.go" target="_blank" rel="noopener">1-10.go</a></p>
+<hr>
+<h1 id="Go-文件写入的四种方式"><a href="#Go-文件写入的四种方式" class="headerlink" title="Go-文件写入的四种方式"></a>Go-文件写入的四种方式</h1><hr>
+<h2 id="第一种：io-WriteString"><a href="#第一种：io-WriteString" class="headerlink" title="第一种：io.WriteString()"></a>第一种：io.WriteString()</h2><p>在此之前介绍两个函数：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkFileIsExist</span><span class="params">(filename <span class="keyword">string</span>)</span> <span class="title">bool</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">check</span><span class="params">(err error)</span> <span class="title">bool</span></span></span><br></pre></td></tr></table></figure></p>
+<h3 id="checkFileIsExist"><a href="#checkFileIsExist" class="headerlink" title="checkFileIsExist()"></a>checkFileIsExist()</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkFileIsExist</span><span class="params">(filename <span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    exist:=<span class="literal">true</span></span><br><span class="line">    <span class="keyword">if</span> _,err:=os.Stat(filename);os.IsNotExist(err)&#123;</span><br><span class="line">        exits=<span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> exist</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看上去不是一个很复杂的程序，但是出现了两个我们陌生的函数：os.Stat(filenmae)、os.IsNotExist(err)</p>
+<hr>
+<h4 id="os-Stat-filename"><a href="#os-Stat-filename" class="headerlink" title="os.Stat(filename):"></a>os.Stat(filename):</h4><p>返回文件的系统状态相关信息：</p>
+<pre><code>os.Stat(filename).Name() string//获取文件名
+os.Stat(filename).IsDir() bool//判断是否是目录
+os.Stat(filename).ModTime() time.Time//获取文件修改时间
+os.Stat(filename).Mode() FileMode//文件的权限
+os.Stat(filename).Size() int64//获取文件大小
+os.Stat(filename).Sys() interface{}//基础数据源接口
+</code></pre><h4 id="os-IsNotExist-err-error"><a href="#os-IsNotExist-err-error" class="headerlink" title="os.IsNotExist(err error):"></a>os.IsNotExist(err error):</h4><p>函数中有这么一段代码：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">    ErrInvalid = errors.New(<span class="string">"invalid argument"</span>)</span><br><span class="line">    ErrPermission = errors.New(<span class="string">"permission denied"</span>)</span><br><span class="line">    ErrExist = errors.New(<span class="string">"file already exists"</span>)</span><br><span class="line">    ErrNotExist = errors.New(<span class="string">"file does not exist"</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<p>剩下的不用多说，显而易见。</p>
+<h3 id="check"><a href="#check" class="headerlink" title="check()"></a>check()</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(err error)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(err!=<span class="literal">nil</span>)&#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个函数是一个错误检查函数，我们传递一个error类型的参数进去，如果它确实是一个错误(没有错误就是nil了)那么使用panic中断进程。</p>
+<p>这就涉及了一个很有意思的事情：GO语言中的错误处理。</p>
+<p>显而易见，错误在go语言程序中是如此常见，基本所有的函数都会返回一个error。因此在Google上的go group中也有对于error处理的广泛讨论。<a href="https://blog.csdn.net/erlib/article/details/24012743" target="_blank" rel="noopener">https://blog.csdn.net/erlib/article/details/24012743</a></p>
+<hr>
+<p>回归正题，我们继续说怎么用io.WriteString()来写入文件。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> f *os.File</span><br><span class="line"><span class="keyword">var</span> err error</span><br><span class="line"><span class="keyword">if</span> checkFileIsExist(filename) &#123; <span class="comment">//如果文件存在</span></span><br><span class="line">		f, err = os.OpenFile(filename, os.O_APPEND, <span class="number">0666</span>) <span class="comment">//打开文件</span></span><br><span class="line">		fmt.Println(<span class="string">"文件存在"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		f, err = os.Create(filename) <span class="comment">//创建文件</span></span><br><span class="line">		fmt.Println(<span class="string">"文件不存在"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	check(err)</span><br><span class="line">	n, err := io.WriteString(f, wireteString) <span class="comment">//写入文件(字符串)</span></span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"写入 %d 个字节n"</span>, n)</span><br></pre></td></tr></table></figure>
+<p><strong>问题接踵而至，这个叫做os.Openfile(filename,os.O_APPEND,0666)</strong></p>
+<p>三个参数：filename,os.O_APPEND,0666</p>
+<p><strong>第一个参数</strong>：文件名<br><strong>第二个参数</strong>：打开方式<br><strong>第三个参数</strong>：这TM是啥？</p>
+<hr>
+<h4 id="题外话：0666"><a href="#题外话：0666" class="headerlink" title="题外话：0666"></a>题外话：0666</h4><p>wa这个0666是什么鬼畜操作？</p>
+<p>0666代表权限。</p>
+<pre><code>4,2,1分别代表读入，写入，执行权限
+6=4+2   就是读写权限
+7=4+2+1 就是读写执行权限
+那么也就是说权限只能在0~7之间，所以采用八进制存储，最前面的一位0代表八进制。
+</code></pre><p>为什么三个6？（因为老铁双击666啊）</p>
+<pre><code>每一位代表一种类型的权限：
+    第一位是拥有者的权限
+    第二位是同组权限
+    第三位是他人的权限
+</code></pre><hr>
+<h2 id="第二种：ioutil-WriteFile"><a href="#第二种：ioutil-WriteFile" class="headerlink" title="第二种：ioutil.WriteFile()"></a>第二种：ioutil.WriteFile()</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">d:=[]<span class="keyword">byte</span>(<span class="string">"I love muxi"</span>)</span><br><span class="line">err:=ioutil.WriteFile(filename,d,<span class="number">0666</span>)</span><br><span class="line">check(err)</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="第三种：File-Write-WriteString"><a href="#第三种：File-Write-WriteString" class="headerlink" title="第三种：File(Write,WriteString)"></a>第三种：File(Write,WriteString)</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">var</span> n <span class="keyword">int64</span></span><br><span class="line">   f, err = os.Create(<span class="string">"./"</span>+filename) <span class="comment">//创建文件</span></span><br><span class="line">check(err)</span><br><span class="line"><span class="keyword">defer</span> f.Close()</span><br><span class="line">n,err = f.Write(d) <span class="comment">//写入文件(字节数组)</span></span><br><span class="line">check(err)</span><br><span class="line">fmt.Printf(<span class="string">"写入 %d 个字节n"</span>, n)</span><br><span class="line">n,err = f.WriteString(<span class="string">"I LOVE MUXI"</span>) <span class="comment">//写入文件(字节数组)</span></span><br><span class="line">fmt.Printf(<span class="string">"写入 %d 个字节n"</span>, n)</span><br><span class="line">f.Sync()</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="第四种："><a href="#第四种：" class="headerlink" title="第四种："></a>第四种：</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">w := bufio.NewWriter(f) <span class="comment">//创建新的 Writer 对象</span></span><br><span class="line">n, err = w.WriteString(<span class="string">"I love muxi"</span>)</span><br><span class="line">fmt.Printf(<span class="string">"写入 %d 个字节n"</span>, n)</span><br><span class="line">w.Flush() <span class="comment">//将缓存区提交到底层的io.Writer</span></span><br><span class="line">f.Close()</span><br></pre></td></tr></table></figure>
+<hr>
+<p><img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/Vv8Pj2J71CNGUB1enHftGxNBTkjO8ceaxgCmWiGq0UM!/r/dDEBAAAAAAAA" alt="这里写图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/go/">go</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/04/14/go-w/" data-title="浅谈Go语言中的文件读入方法 | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/04/22/strongly-connected-component/" title="强连通分量的tarjan算法">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  强连通分量的tarjan算法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/04/11/qt/" title="QT安装以及配置教程">
+ <strong>NEXT:</strong><br> 
+ <span>QT安装以及配置教程
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#本篇blog是因为1-10-go而写的"><span class="toc-number">1.</span> <span class="toc-text">/本篇blog是因为1-10.go而写的/</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Go-文件写入的四种方式"><span class="toc-number">2.</span> <span class="toc-text">Go-文件写入的四种方式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#第一种：io-WriteString"><span class="toc-number">2.1.</span> <span class="toc-text">第一种：io.WriteString()</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#checkFileIsExist"><span class="toc-number">2.1.1.</span> <span class="toc-text">checkFileIsExist()</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#os-Stat-filename"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">os.Stat(filename):</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#os-IsNotExist-err-error"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">os.IsNotExist(err error):</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check"><span class="toc-number">2.1.2.</span> <span class="toc-text">check()</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#题外话：0666"><span class="toc-number">2.1.2.1.</span> <span class="toc-text">题外话：0666</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第二种：ioutil-WriteFile"><span class="toc-number">2.2.</span> <span class="toc-text">第二种：ioutil.WriteFile()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第三种：File-Write-WriteString"><span class="toc-number">2.3.</span> <span class="toc-text">第三种：File(Write,WriteString)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第四种："><span class="toc-number">2.4.</span> <span class="toc-text">第四种：</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

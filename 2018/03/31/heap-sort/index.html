@@ -1,0 +1,340 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>Heap-Sort | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="堆-Heap（本文特指二叉堆） 堆在算法界是一个非常常见的东西23333
+ 堆的优点在于它的复杂度，都控制到了O（log 2 n）的级别
+堆的定义： 堆是一个完全二叉树。既去掉最后一行 ，是一棵满二叉树。 堆分为大根堆和小根堆。 大根堆：除根节点外的每一个结点的父亲节点都要不小于结点本身。 小根堆：">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/31/heap-sort/" title="Heap-Sort" itemprop="url">Heap-Sort</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-03-31T09:01:52.000Z" itemprop="datePublished">2018-03-31</time>
+    Updated:<time datetime="2019-04-08T15:39:45.220Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#堆-Heap（本文特指二叉堆）"><span class="toc-number">1.</span> <span class="toc-text">堆-Heap（本文特指二叉堆）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#堆的定义："><span class="toc-number">1.1.</span> <span class="toc-text">堆的定义：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构造一个堆："><span class="toc-number">1.2.</span> <span class="toc-text">构造一个堆：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#具体思路："><span class="toc-number">1.2.1.</span> <span class="toc-text">具体思路：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆排序–Heap-sort"><span class="toc-number">1.3.</span> <span class="toc-text">堆排序–Heap_sort</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#堆排序只是堆的一种应用方式，堆作为一种结构。用途是很多的。"><span class="toc-number">1.3.1.</span> <span class="toc-text">堆排序只是堆的一种应用方式，堆作为一种结构。用途是很多的。</span></a></li></ol></li></ol></li></ol>
+		</div>
+		
+		<h1 id="堆-Heap（本文特指二叉堆）"><a href="#堆-Heap（本文特指二叉堆）" class="headerlink" title="堆-Heap（本文特指二叉堆）"></a>堆-Heap（本文特指二叉堆）</h1><p> 堆在算法界是一个非常常见的东西23333</p>
+<p> 堆的优点在于它的复杂度，都控制到了O（log 2 n）的级别</p>
+<h2 id="堆的定义："><a href="#堆的定义：" class="headerlink" title="堆的定义："></a>堆的定义：</h2><p> 堆是一个完全二叉树。既去掉最后一行 ，是一棵满二叉树。<br> 堆分为大根堆和小根堆。<br> 大根堆：除根节点外的每一个结点的父亲节点都要不小于结点本身。<br> 小根堆：除根节点之外的每一个结点的父亲结点都要不大于结点本身。</p>
+<h2 id="构造一个堆："><a href="#构造一个堆：" class="headerlink" title="构造一个堆："></a>构造一个堆：</h2><p> 就像是 一个二叉树一样，我们可以用一个一维数组去存储一棵树。<br> 同理，我们也可以用一个一维数组去存储一个堆。<br> 对于a[i].<br> 它的父亲是a[i/2];左儿子和右儿子分别是：a[i<em>2];a[i</em>2+1]<br> 所以我们把n个元素按照堆的性质进行排列，就能得到一个堆，这个过程成为build_heap()</p>
+<h3 id="具体思路："><a href="#具体思路：" class="headerlink" title="具体思路："></a>具体思路：</h3><pre><code>每个节点加入到堆的最后，然后进行上浮操作（假定我们要一个小根堆）：
+    和自己的父亲节点进行比较，若是a[i]&lt;a[i/2]；那么swap(i,i/2);
+    然后再对i/2进行上浮操作；
+每个元素都这么做，最后我们就得到了一个小根堆。
+</code></pre><p> 代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void build_heap(int a,int p)&#123;</span><br><span class="line">	heap[p]=a;</span><br><span class="line">	while(p&gt;=1&amp;&amp;heap[p/2]&gt;heap[p])&#123;</span><br><span class="line">		swap(heap[p/2],heap[p]);</span><br><span class="line">		p/=2;</span><br><span class="line">	&#125;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">for(int i=1;i&lt;=n;i++)&#123;</span><br><span class="line">	scanf(&quot;%d&quot;,&amp;a);</span><br><span class="line">	build_heap(a,i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="堆排序–Heap-sort"><a href="#堆排序–Heap-sort" class="headerlink" title="堆排序–Heap_sort"></a>堆排序–Heap_sort</h2><p> 堆有一个特点，那就是根节点一定是堆中的最值。<br> 所以我们可以利用这一点写一个排序<strong>（同样以小根堆为例子）</strong>。</p>
+<pre><code>每次，我们取出根节点。然后将堆末尾的元素赋值给根节点。
+    //这一步代表了彻底取出根节点的元素，并且剩余元素的个数-1了。
+然后对根节点进行下沉操作：
+    如果这个节点大于任何一个左儿子或者右儿子，那么交换。如果都大于，那么和小的那个儿子节点进行交换。
+循环n-1次之后，堆只剩一个元素，我们再取出，堆排序完成。
+显而易见复杂度是O（n log n）
+</code></pre><p> 代码 ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">void heaply(int p)&#123;</span><br><span class="line">	int l=p*2,r=p*2+1;</span><br><span class="line">	if(heap[l]&gt;heap[r])&#123;</span><br><span class="line">		swap(heap[r],heap[p]);</span><br><span class="line">		heaply(r);</span><br><span class="line">	&#125;</span><br><span class="line">	else&#123;</span><br><span class="line">		swap(heap[l],heap[p]);</span><br><span class="line">		heaply(l);</span><br><span class="line">	&#125;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">void heap_sort()&#123;</span><br><span class="line">	for(int i=n;i&gt;=1;i--)&#123;</span><br><span class="line">		printf(&quot;%d &quot;,heap[1]);</span><br><span class="line">		heap[1]=heap[i];</span><br><span class="line">		heaply(1);</span><br><span class="line">	&#125;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="堆排序只是堆的一种应用方式，堆作为一种结构。用途是很多的。"><a href="#堆排序只是堆的一种应用方式，堆作为一种结构。用途是很多的。" class="headerlink" title="堆排序只是堆的一种应用方式，堆作为一种结构。用途是很多的。"></a>堆排序只是堆的一种应用方式，堆作为一种结构。用途是很多的。</h3><p> 最后当然还是祝各位OIer武运昌隆！！！</p>
+<p><img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/UgJT0EuSJGAMzBO6T2c0VIoCDahUgPl9Zi4wOa9*gH0!/r/dPMAAAAAAAAA" alt="这里写图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/algorithm/">algorithm</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/03/31/heap-sort/" data-title="Heap-Sort | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/03/31/Kruskal-Prim/" title="Kruskal和Prim--最小生成树算法">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  Kruskal和Prim--最小生成树算法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/03/31/union_find/" title="Union_find">
+ <strong>NEXT:</strong><br> 
+ <span>Union_find
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#堆-Heap（本文特指二叉堆）"><span class="toc-number">1.</span> <span class="toc-text">堆-Heap（本文特指二叉堆）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#堆的定义："><span class="toc-number">1.1.</span> <span class="toc-text">堆的定义：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构造一个堆："><span class="toc-number">1.2.</span> <span class="toc-text">构造一个堆：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#具体思路："><span class="toc-number">1.2.1.</span> <span class="toc-text">具体思路：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆排序–Heap-sort"><span class="toc-number">1.3.</span> <span class="toc-text">堆排序–Heap_sort</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#堆排序只是堆的一种应用方式，堆作为一种结构。用途是很多的。"><span class="toc-number">1.3.1.</span> <span class="toc-text">堆排序只是堆的一种应用方式，堆作为一种结构。用途是很多的。</span></a></li></ol></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

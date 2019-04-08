@@ -1,0 +1,391 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>kotlin学习笔记 | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="hin难受的kotlin学习之路
+首先是如何安装命令行编译情况，这样我们就可以欢快的nano了
+
+使用terminal，输入
+curl -s https://get.sdkman.io | bash
+
+
+然后你就安装sdkman成功了，terminal上会说让你enjoy！
+
+接下来就是安装kotl">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/07/12/kotlin-learning/" title="kotlin学习笔记" itemprop="url">kotlin学习笔记</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-07-11T17:28:02.000Z" itemprop="datePublished">2018-07-12</time>
+    Updated:<time datetime="2019-04-08T15:39:45.224Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#hin难受的kotlin学习之路"><span class="toc-number">1.</span> <span class="toc-text">hin难受的kotlin学习之路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#kotlin-amp-go"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">kotlin&amp;go</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#变量定义："><span class="toc-number">1.0.0.2.</span> <span class="toc-text">变量定义：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注释："><span class="toc-number">1.0.0.3.</span> <span class="toc-text">注释：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#基本数据类型："><span class="toc-number">1.0.0.4.</span> <span class="toc-text">基本数据类型：</span></a></li></ol></li></ol>
+		</div>
+		
+		<h1 id="hin难受的kotlin学习之路"><a href="#hin难受的kotlin学习之路" class="headerlink" title="hin难受的kotlin学习之路"></a>hin难受的kotlin学习之路</h1><ul>
+<li><p>首先是如何安装命令行编译情况，这样我们就可以欢快的nano了</p>
+<ul>
+<li>使用terminal，输入<ul>
+<li>curl -s <a href="https://get.sdkman.io" target="_blank" rel="noopener">https://get.sdkman.io</a> | bash</li>
+</ul>
+</li>
+<li><p>然后你就安装sdkman成功了，terminal上会说让你enjoy！</p>
+<ul>
+<li>接下来就是安装kotlin：sdk install kotlin</li>
+<li>这个时候会有一个小问题，你的terminal说command not found:sdk，这时候不要慌，restart your terminal</li>
+<li>：详情：<a href="https://stackoverflow.com/questions/45392965/sdk-command-is-not-found-is-coming-the-terminal" target="_blank" rel="noopener">解决方案-stackoverflow</a></li>
+<li>这个过程非常的磨人。。我安装了7遍才成功，请确保自己科学上网了</li>
+</ul>
+<ul>
+<li>接下来我们确保自己写好了一个hello,world，然后假设名字是hello.kt</li>
+<li>在目录下，使用kotlinc命令生成.jar文件，使用java命令运行<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kotlinc hello.kt -include-runtime -d hello.jar</span><br><span class="line">java -jar hello.jar</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="kotlin-amp-go"><a href="#kotlin-amp-go" class="headerlink" title="kotlin&amp;go"></a>kotlin&amp;go</h4><ul>
+<li>比如一样傻逼的变量声明：</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">int</span> <span class="comment">//Go language</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a:<span class="built_in">Int</span> <span class="comment">//kotlin language</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>还有函数声明：</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">funName</span><span class="params">(arg <span class="keyword">int</span>)</span><span class="title">int</span></span>&#123;&#125; <span class="comment">//go language</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">funName</span><span class="params">(arg:<span class="type">Int</span>)</span></span>:<span class="built_in">Int</span>&#123;&#125; <span class="comment">//kotlin language</span></span><br></pre></td></tr></table></figure>
+<p>注意，kotlin的语法中是没有空类型的，空类型的返回值为Unit,但是很体贴的一点是，如果你的返回值是Unit那么可以省略。</p>
+<p>在函数中有一个关键字叫做vararg，这个关键字的作用是可变长参数。作用有些类似于接收一个不定长的list。</p>
+<p><strong>kotlin中很耀眼的一点就是函数可以简单声明：</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">sum</span><span class="params">(a: <span class="type">Int</span>, b: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> = a + b</span><br></pre></td></tr></table></figure>
+<p>因此对于一些表达式函数我们可以很简单的去写。</p>
+<hr>
+<h4 id="变量定义："><a href="#变量定义：" class="headerlink" title="变量定义："></a>变量定义：</h4><p>变量定义分为两种：可变变量和不可变变量：</p>
+<ul>
+<li>可变变量：      var</li>
+<li>不可变变量：  val</li>
+</ul>
+<p>val变量是不可变变量和常量有区别，不可变变量自始至终仅可被赋值一次。</p>
+<hr>
+<h4 id="注释："><a href="#注释：" class="headerlink" title="注释："></a>注释：</h4><p>和C、C++、Go的语法一致</p>
+<hr>
+<h4 id="基本数据类型："><a href="#基本数据类型：" class="headerlink" title="基本数据类型："></a>基本数据类型：</h4><p>kotlin中所谓的数据类型，其实是一个类。所有的变量都是实例。</p>
+<p>有Byte，Short，Int，Float，Double，Char等等<br>长整型以L结尾，而十六进制是以0x开头 二进制以0b开头（不支持八进制！<br>单精度浮点数以f结尾，支持科学计数法</p>
+<p>可以使用下划线对数字进行分割：123_456==123456</p>
+<p>对于变量的比较：</p>
+<ul>
+<li>比较对象地址： ===</li>
+<li>比较对象的值： ==</li>
+</ul>
+<p>类型强制转换：</p>
+<p>每种数据类型都会有以下内置方法：</p>
+<pre><code>toByte()
+toInt()
+.
+.
+toChar()
+</code></pre><p>用作强制类型转换。</p>
+<p><strong>此外，在kotlin中，char类型作为一个单独的数据类型存在，而不是数值类型。</strong></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/kotlin/">kotlin</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/07/12/kotlin-learning/" data-title="kotlin学习笔记 | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/07/20/github/" title="Linux终端上的github基础教程">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  Linux终端上的github基础教程</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/05/20/树的重心/" title="树点分治--树上的重心">
+ <strong>NEXT:</strong><br> 
+ <span>树点分治--树上的重心
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#hin难受的kotlin学习之路"><span class="toc-number">1.</span> <span class="toc-text">hin难受的kotlin学习之路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#kotlin-amp-go"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">kotlin&amp;go</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#变量定义："><span class="toc-number">1.0.0.2.</span> <span class="toc-text">变量定义：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注释："><span class="toc-number">1.0.0.3.</span> <span class="toc-text">注释：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#基本数据类型："><span class="toc-number">1.0.0.4.</span> <span class="toc-text">基本数据类型：</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,350 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>QT安装以及配置教程 | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="什么是QTQt 是一个1991年由Qt Company开发的跨平台C++图形用户界面应用程序开发框架。它既可以开发GUI程序，也可用于开发非GUI程序，比如控制台工具和服务器。Qt是面向对象的框架，使用特殊的代码生成扩展（称为元对象编译器(Meta Object Compiler, moc)）以及一">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/04/11/qt/" title="QT安装以及配置教程" itemprop="url">QT安装以及配置教程</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-04-11T15:55:12.000Z" itemprop="datePublished">2018-04-11</time>
+    Updated:<time datetime="2019-04-08T15:39:45.240Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#什么是QT"><span class="toc-number">1.</span> <span class="toc-text">什么是QT</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#大体流程？"><span class="toc-number">2.</span> <span class="toc-text">大体流程？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Install-QT-Creator"><span class="toc-number">2.1.</span> <span class="toc-text">Install QT Creator</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#①-在QT官网下载："><span class="toc-number">2.1.1.</span> <span class="toc-text">① 在QT官网下载：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#②-apt-get-install-qtcreator"><span class="toc-number">2.1.2.</span> <span class="toc-text">②$apt-get install qtcreator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装JDK"><span class="toc-number">2.2.</span> <span class="toc-text">安装JDK</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#打开项目"><span class="toc-number">2.3.</span> <span class="toc-text">打开项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置项目"><span class="toc-number">2.4.</span> <span class="toc-text">配置项目</span></a></li></ol></li></ol>
+		</div>
+		
+		<h1 id="什么是QT"><a href="#什么是QT" class="headerlink" title="什么是QT"></a>什么是QT</h1><pre><code>Qt 是一个1991年由Qt Company开发的跨平台C++图形用户界面应用程序开发框架。它既可以开发GUI程序，也可用于开发非GUI程序，比如控制台工具和服务器。Qt是面向对象的框架，使用特殊的代码生成扩展（称为元对象编译器(Meta Object Compiler, moc)）以及一些宏，Qt很容易扩展，并且允许真正地组件编程。 -- 百度百科
+</code></pre><p>QT官网： <a href="https://www.qt.io/" target="_blank" rel="noopener">https://www.qt.io/</a></p>
+<h1 id="大体流程？"><a href="#大体流程？" class="headerlink" title="大体流程？"></a>大体流程？</h1><blockquote>
+<ul>
+<li>下载QT opensource安装包</li>
+<li>安装JDK</li>
+<li>新建项目或者打开项目</li>
+<li>配置项目<br>OJBK</li>
+</ul>
+</blockquote>
+<h2 id="Install-QT-Creator"><a href="#Install-QT-Creator" class="headerlink" title="Install QT Creator"></a>Install QT Creator</h2><h3 id="①-在QT官网下载："><a href="#①-在QT官网下载：" class="headerlink" title="① 在QT官网下载："></a>① 在QT官网下载：</h3><p><a href="https://www.qt.io/download" target="_blank" rel="noopener">https://www.qt.io/download</a><br>选择开源版本，新用户填写信息注册，老用户直接登陆即可。然后会下载一个名为：<br>    qt-unified-linux-x64-3.0.4-online .run<br>的文件。双击运行或者命令行./运行都可以。</p>
+<p>然后一直next,不要停…</p>
+<p>安装完毕。</p>
+<h3 id="②-apt-get-install-qtcreator"><a href="#②-apt-get-install-qtcreator" class="headerlink" title="②$apt-get install qtcreator"></a>②$apt-get install qtcreator</h3><p>首先我们更新apt源：</p>
+<pre><code>$ vim /etc/apt/sources.list
+</code></pre><p>在list文件末尾追加：</p>
+<pre><code>deb http://us.archive.ubuntu.com/ubuntu trusty main universe
+</code></pre><p>然后就可以放飞自我了：</p>
+<pre><code>$ sudo apt-get install qtcreator
+</code></pre><h2 id="安装JDK"><a href="#安装JDK" class="headerlink" title="安装JDK"></a>安装JDK</h2><p>由于QT运行是需要JDK支持的，所以我们要安装JDK(version&gt;=8)</p>
+<h2 id="打开项目"><a href="#打开项目" class="headerlink" title="打开项目"></a>打开项目</h2><p>现在你可能看到的是这个界面（我假设你安装好了）</p>
+<p><img src="http://img.blog.csdn.net/20180411234219716?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvU2hpaW5hX09yZXo=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<p>然后Ctrl+O就可以打开项目了，打开pro文件</p>
+<h2 id="配置项目"><a href="#配置项目" class="headerlink" title="配置项目"></a>配置项目</h2><p>我假设你真的打开了一个项目</p>
+<p><img src="http://img.blog.csdn.net/20180411234703400?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvU2hpaW5hX09yZXo=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<p>你可能发现你的界面和我的不太一样woc，没关系，找到manage kits选项【就在左上角】</p>
+<p>然后选择你的默认kit</p>
+<p><img src="http://img.blog.csdn.net/20180411235117234?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvU2hpaW5hX09yZXo=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<p>然后选择编译器，还有QT Version选项，全都选择完之后点击OK，你会发现你配置完了。</p>
+<p>编译，运行！开始你的GUI编程吧！</p>
+<hr>
+<p>任何问题欢迎电子邮件：</p>
+<p><a href="mailto:shiina_orez@qq.com" target="_blank" rel="noopener">shiina_orez@qq.com</a> or <a href="mailto:shiinaorez@gmail.com" target="_blank" rel="noopener">shiinaorez@gmail.com</a></p>
+<hr>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/ubuntu-QT/">ubuntu QT</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/04/11/qt/" data-title="QT安装以及配置教程 | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/04/14/go-w/" title="浅谈Go语言中的文件读入方法">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  浅谈Go语言中的文件读入方法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/03/31/array-to-list/" title="数组模拟链表">
+ <strong>NEXT:</strong><br> 
+ <span>数组模拟链表
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#什么是QT"><span class="toc-number">1.</span> <span class="toc-text">什么是QT</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#大体流程？"><span class="toc-number">2.</span> <span class="toc-text">大体流程？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Install-QT-Creator"><span class="toc-number">2.1.</span> <span class="toc-text">Install QT Creator</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#①-在QT官网下载："><span class="toc-number">2.1.1.</span> <span class="toc-text">① 在QT官网下载：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#②-apt-get-install-qtcreator"><span class="toc-number">2.1.2.</span> <span class="toc-text">②$apt-get install qtcreator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装JDK"><span class="toc-number">2.2.</span> <span class="toc-text">安装JDK</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#打开项目"><span class="toc-number">2.3.</span> <span class="toc-text">打开项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置项目"><span class="toc-number">2.4.</span> <span class="toc-text">配置项目</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,408 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>Linux终端上的github基础教程 | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="欢迎各位来到木犀团队后端组星计划Github部分经过之前的学习，相信大家现在已经能够进入Linux系统了！恭喜你们，现在有了一个比Windows好些的开发平台。接下来我的这篇博客的目的是教你们使用开发者手中的利器–github.com
+什么是Github简单而非学术的说：就是大家放代码的地方。你可以">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/07/20/github/" title="Linux终端上的github基础教程" itemprop="url">Linux终端上的github基础教程</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-07-20T05:40:09.000Z" itemprop="datePublished">2018-07-20</time>
+    Updated:<time datetime="2019-04-08T15:39:45.220Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#欢迎各位来到木犀团队后端组星计划Github部分"><span class="toc-number">1.</span> <span class="toc-text">欢迎各位来到木犀团队后端组星计划Github部分</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Github"><span class="toc-number">1.1.</span> <span class="toc-text">什么是Github</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#首先我们应该拥有一个账户！"><span class="toc-number">1.2.</span> <span class="toc-text">首先我们应该拥有一个账户！</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载安装git-core"><span class="toc-number">1.3.</span> <span class="toc-text">下载安装git-core</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#把你之前注册的账户绑定到本地"><span class="toc-number">1.4.</span> <span class="toc-text">把你之前注册的账户绑定到本地</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个仓库叭w"><span class="toc-number">1.5.</span> <span class="toc-text">创建一个仓库叭w</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用终端进行文件上传！"><span class="toc-number">1.6.</span> <span class="toc-text">使用终端进行文件上传！</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-number">1.7.</span> <span class="toc-text">其他</span></a></li></ol></li></ol>
+		</div>
+		
+		<h1 id="欢迎各位来到木犀团队后端组星计划Github部分"><a href="#欢迎各位来到木犀团队后端组星计划Github部分" class="headerlink" title="欢迎各位来到木犀团队后端组星计划Github部分"></a>欢迎各位来到木犀团队后端组星计划Github部分</h1><p>经过之前的学习，相信大家现在已经能够进入Linux系统了！<br>恭喜你们，现在有了一个比Windows好些的开发平台。<br>接下来我的这篇博客的目的是教你们使用开发者手中的利器–github.com</p>
+<h2 id="什么是Github"><a href="#什么是Github" class="headerlink" title="什么是Github"></a>什么是Github</h2><p>简单而非学术的说：就是大家放代码的地方。<br>你可以放自己的练习代码。<br>也可以和别人一起开发。<br>当然别人的代码是可以公开的，而你的代码也可以是公开的。</p>
+<p>这是一个开源网站，是属于开发人员的圣地–github</p>
+<hr>
+<h2 id="首先我们应该拥有一个账户！"><a href="#首先我们应该拥有一个账户！" class="headerlink" title="首先我们应该拥有一个账户！"></a>首先我们应该拥有一个账户！</h2><p>不要以为纯英文界面都会被墙！<br>github是使用国内的网络就可以访问的！<br>网址：<a href="https://github.com" target="_blank" rel="noopener">https://github.com</a><br>或者百度github</p>
+<p><img src="https://img-blog.csdn.net/20180719232322136?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>这里是首页，如果心细的话可以去看看首页的话都是什么意思www<br>我们点击右上角的Sign Up（注册</p>
+<p><img src="https://img-blog.csdn.net/20180719232400451?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>在下面填写个人信息，注意不能使用重复的用户名和邮箱。<br>这里要注意用户名使用英文的，以免带来不必要的麻烦。<br>密码设置要有一定的复杂度！<br>我们点击create an account</p>
+<p><img src="https://img-blog.csdn.net/20180719232547131?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>第二步这里不要更改，直接点击continue</p>
+<p><img src="https://img-blog.csdn.net/20180719232703768?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>第三步，这里是让你写一些问题的答案。<br>第一个问题是问你写代码的水平，如果你是小白的话就选第一个咯。<br>第二个问题是问你为什么注册，我们选择Project Management.<br>第三个问题是问你什么职业，显然是第一个。</p>
+<p>然后你就创建成功了！<br><img src="https://img-blog.csdn.net/20180719232900810?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>这里有人发现不会验证邮箱对不对，但是千万不要大意，这个邮箱非常的重要的！！</p>
+<hr>
+<h2 id="下载安装git-core"><a href="#下载安装git-core" class="headerlink" title="下载安装git-core"></a>下载安装git-core</h2><p>Ubuntu系统的终端使用快捷键：Ctrl+Alt+T开启（T代表terminal）</p>
+<p>然后会出现一个很酷酷的命令行界面：</p>
+<p><img src="https://img-blog.csdn.net/20180720110641451?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>你会发现命令行界面总有一串字符串：（以我自己的为例）</p>
+<pre><code>shiina@shiina-Inspiron-7559:~$
+</code></pre><p>在@前面是你这个Linux下的用户，默认是你进入系统的用户。但是在某些状态下，我们需要使用超级用户权限。</p>
+<p>我们使用</p>
+<pre><code>sudo su
+</code></pre><p>这个命令，然后键入你的密码，就可以切换为超级管理员，此时你发现你的身份从shiina变成了root，root就是根用户，是超级用户（super user）</p>
+<p>然后使用快捷键Ctrl+D退回，我们回到shiina这个用户的状态。</p>
+<pre><code>虽然超级用户是一个很方便的东西，但是要注意不要乱用。超级用户时创建更改的所有文件都对于普通用户是只读状态。如果要修改要递归更改权限。
+谨慎使用。
+</code></pre><p>然后我们使用</p>
+<pre><code>sudo apt-get update
+
+sudo apt-get install git-core
+</code></pre><p>sudo就是使用super user的权限去do，可以使单独的命令具有超级用户权限。</p>
+<p>apt-get暂时可以看作是手机上的应用商店。update是更新的意思，我们先更新一下自己系统中的”应用商店”。</p>
+<p>install是安装的意思。git-core就是我们要安装的应用名称。怎么样，是不是简单明了？</p>
+<p>安装成功之后，输入</p>
+<pre><code>git --help
+</code></pre><p>来查看git这个”应用”的一些功能。</p>
+<p><img src="https://img-blog.csdn.net/20180720112205988?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<hr>
+<h2 id="把你之前注册的账户绑定到本地"><a href="#把你之前注册的账户绑定到本地" class="headerlink" title="把你之前注册的账户绑定到本地"></a>把你之前注册的账户绑定到本地</h2><p>使用命令：</p>
+<pre><code>git config --global user.name &quot;your_name&quot;
+git config --global user.email &quot;your_email&quot;
+</code></pre><p>这两个命令的作用是告知git这个”应用”你的身份信息。</p>
+<pre><code>ps:your_name和your_email务必要填写正确
+</code></pre><hr>
+<h2 id="创建一个仓库叭w"><a href="#创建一个仓库叭w" class="headerlink" title="创建一个仓库叭w"></a>创建一个仓库叭w</h2><p>使用浏览器之前的github官网页面，右上角进入个人主页：</p>
+<p><img src="https://img-blog.csdn.net/20180720123119568?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>然后点击到仓库（repository）的选项：</p>
+<p><img src="https://img-blog.csdn.net/2018072012333550?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>有一个很瞩目的<strong>NEW</strong>按钮，我们点击：<br><img src="https://img-blog.csdn.net/20180720123541545?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>然后填写相关信息，包括仓库名称，描述信息等等</p>
+<p><img src="https://img-blog.csdn.net/20180720124335381?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>然后点击<strong>Create Repository </strong> </p>
+<p>出现了！是一堆看不懂的东西！</p>
+<p>这个页面代表你已经在github网站上创建了一个你自己的仓库。什么是仓库呢？就是集中放一类代码的地方。</p>
+<p>我们现在有仓库了，但是仓库里空空如也，如果使用浏览器页面进行交互，不仅上传文件太慢，而且没有逼格。</p>
+<hr>
+<h2 id="使用终端进行文件上传！"><a href="#使用终端进行文件上传！" class="headerlink" title="使用终端进行文件上传！"></a>使用终端进行文件上传！</h2><p>wa怎么这么长啊这个博客（抱怨）<br>但是不要担心，这是最后一步了！</p>
+<p>还记得刚才的那个全是看不懂语句的页面吗？不要关掉！我们来分析这个页面。<br>（当然关掉也无所谓啦～</p>
+<p><img src="https://img-blog.csdn.net/20180720125237761?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>在被蓝色高亮的部分，有一个链接在框框里，这个框框里的链接就是你的仓库的URL（统一资源定位符）</p>
+<pre><code>https://github.com/YOUR_NAME/REPOSITORY_NAME.git
+</code></pre><p>这么一种格式↑很好记的，记住的话就可以自然而然写出这个链接。</p>
+<p>视线向下移动，有一句话叫做：</p>
+<pre><code>...or create a new repository on the command line
+。。。或者用命令行创建一个新的仓库
+</code></pre><p>下面的命令挨个输入到命令行就好了…但是需要一些事先准备：</p>
+<p>仓库在电脑本机上的出现形式是：文件夹<br>所以我们要用命令行创建新文件夹ww<br>和视图界面不同。。我们不需要 鼠标</p>
+<pre><code>mkdir REPOSITORY_NAME
+//REPOSITORY_NAME是你仓库的名字
+cd REPOSITORY_NAME
+//进入文件夹
+</code></pre><p>然后就可以执行网页给你的命令了，但是我要更改一下顺序：</p>
+<pre><code>git init
+//把这个文件夹变成本地的一个仓库
+git remote add origin https://github.com/YOUR_NAME/REPOSITORY_NAME.git
+//把本地仓库和github上的仓库对接起来
+</code></pre><p>此时，我们已经把本地仓库和远程仓库对接起来了w，接下来我们新建一个文件，然后上传！</p>
+<pre><code>echo &quot;# REPOSITORY_NAME&quot; &gt;&gt; README.md
+//新建一个名为README.md的文件，其内容为：&quot;REPOSITORY_NAME&quot;
+git add README.md
+//将文件README.md 加入即将上传的空间
+git status
+//你可以看到这个文件的状态
+git commit -m &quot;my first commit&quot;
+//确认添加完了，我们提交即将上传的文件到缓冲区
+git push origin master
+//推上远程仓库，在这之后会让你输入用户名和密码，在这里的origin就是之前使用git remote语句链接到的远程仓库的链接地址。
+</code></pre><p>到现在你应该就完成了基本任务。但是git博大精深，所以暂时的放松之后。记得看我在后面写的其余知识点。</p>
+<hr>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/base/">base</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/07/20/github/" data-title="Linux终端上的github基础教程 | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/08/18/login-required/" title="login_required身份验证用装饰器for api [flask version]">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  login_required身份验证用装饰器for api [flask version]</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/07/12/kotlin-learning/" title="kotlin学习笔记">
+ <strong>NEXT:</strong><br> 
+ <span>kotlin学习笔记
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#欢迎各位来到木犀团队后端组星计划Github部分"><span class="toc-number">1.</span> <span class="toc-text">欢迎各位来到木犀团队后端组星计划Github部分</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Github"><span class="toc-number">1.1.</span> <span class="toc-text">什么是Github</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#首先我们应该拥有一个账户！"><span class="toc-number">1.2.</span> <span class="toc-text">首先我们应该拥有一个账户！</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载安装git-core"><span class="toc-number">1.3.</span> <span class="toc-text">下载安装git-core</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#把你之前注册的账户绑定到本地"><span class="toc-number">1.4.</span> <span class="toc-text">把你之前注册的账户绑定到本地</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个仓库叭w"><span class="toc-number">1.5.</span> <span class="toc-text">创建一个仓库叭w</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用终端进行文件上传！"><span class="toc-number">1.6.</span> <span class="toc-text">使用终端进行文件上传！</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-number">1.7.</span> <span class="toc-text">其他</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,354 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>图论--最短路算法 | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="图论图论是OI比赛中最重要的部分 。OI中除了送分题和数论题，基本都是图论的题目。
+ 最短路是图论中一个比较核心的问题。在一个图中（有向，无向//有环，无环//有负边权，无负边权）两个点，如何找到一个花费最小的路径呢？
+ 在高中我接触到了4个最短路算法：Floyd，Dijkstra，Bellman-">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/31/图论--最短路算法/" title="图论--最短路算法" itemprop="url">图论--最短路算法</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-03-31T09:27:00.000Z" itemprop="datePublished">2018-03-31</time>
+    Updated:<time datetime="2019-04-08T15:39:45.268Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#图论"><span class="toc-number">1.</span> <span class="toc-text">图论</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Floyd："><span class="toc-number">1.1.</span> <span class="toc-text">Floyd：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dijkstra："><span class="toc-number">1.2.</span> <span class="toc-text">Dijkstra：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#过程"><span class="toc-number">1.2.1.</span> <span class="toc-text">过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SPFA（Shortest-Path-Faster-Algorithm）："><span class="toc-number">1.3.</span> <span class="toc-text">SPFA（Shortest Path Faster Algorithm）：</span></a></li></ol></li></ol>
+		</div>
+		
+		<h1 id="图论"><a href="#图论" class="headerlink" title="图论"></a>图论</h1><p>图论是OI比赛中最重要的部分 。OI中除了送分题和数论题，基本都是图论的题目。</p>
+<p> 最短路是图论中一个比较核心的问题。在一个图中（有向，无向//有环，无环//有负边权，无负边权）两个点，如何找到一个花费最小的路径呢？</p>
+<p> 在高中我接触到了4个最短路算法：<strong>Floyd，Dijkstra，Bellman-Ford，SPFA</strong><br> 今天只打算讲除了Bellman-Ford之外的三个算法。<br> <del>你都有SPFA了干嘛还要写BF</del></p>
+<h2 id="Floyd："><a href="#Floyd：" class="headerlink" title="Floyd："></a>Floyd：</h2><p> 本算法的复杂度是算法界中首屈一指的高：O（n³）<br> 但是，它被沿用的原因有两个：</p>
+<pre><code>1.对Floyd单次的调用可以获得所有的点对之间的最短路径。
+2.可以处理正负边权的情况。
+</code></pre><p>  本算法的三个循环：<br>  第一层循环是对中间点的穷举；<br>  第二层循环是对起点的穷举；<br>  第三层循环是对终点的穷举；</p>
+<p> 而确立最短路径的地过程，更像是一个动态规划：</p>
+<blockquote>
+<ul>
+<li>状态转移方程：map[i,j]:=min{map[i,k]+map[k,j],map[i,j]}；<br>其中map记录了最短路的情况</li>
+</ul>
+</blockquote>
+<p>   经过这个动态转移方程的描述，可以更加清楚地看到Floyd的本质。</p>
+<p> 代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(k=<span class="number">1</span>;k&lt;=n;k++)</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=n;i++)</span><br><span class="line">	    <span class="keyword">for</span>(j=<span class="number">1</span>;j&lt;=n;j++)&#123;</span><br><span class="line">	        <span class="keyword">if</span>(d[i][k]+d[k][j]&lt;d[i][j])&#123;</span><br><span class="line">	            d[i][j]=d[i][k]+d[k][j];</span><br><span class="line">                path[i][j]=path[i][k];</span><br><span class="line">	        &#125;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Dijkstra："><a href="#Dijkstra：" class="headerlink" title="Dijkstra："></a>Dijkstra：</h2><p> 这个算法用于处理一对结点之间的问题，算法复杂度在n²。<br> 不能处理含有负边权的情况。</p>
+<p> dijkstra的思路其实有一些像prim算法的思路（笑<br> <del>所以其实我懒得写了？</del></p>
+<h3 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h3><p> 我们将整个图中的点分为两个集合;<br> 一个集合是已扩展的点集，S，一个集合是未扩展的，V。<br> 显而易见，一开始S是空集，而V包含所有的点。</p>
+<p> 第一步，我们将起点加入S。<br> 然后，选择S连接的点中，花费（边权）最 小的点。加入S。<br> 然后更新这个集合所连接的所有的点的花费。<br> （一步步…一步步…..直到所有的点都扩展了，我们就得到了终点的最终花费）</p>
+<p> 代码;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;cstdio&gt;</span><br><span class="line">#include&lt;algorithm&gt;</span><br><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#define maxn 100005</span><br><span class="line">using namespace std;</span><br><span class="line">struct node&#123;</span><br><span class="line">	int next;</span><br><span class="line">	int to;</span><br><span class="line">	int w;</span><br><span class="line">&#125;edge[maxn];</span><br><span class="line">struct Node&#123;</span><br><span class="line">	int w;</span><br><span class="line">	bool ty;</span><br><span class="line">&#125;dis[maxn];</span><br><span class="line">int n,m,q,e=0,head[maxn];</span><br><span class="line">void add(int u,int v,int d)&#123;</span><br><span class="line">	edge[++e].next=head[u];</span><br><span class="line">	edge[e].to=v;</span><br><span class="line">	edge[e].w=d;</span><br><span class="line">	head[u]=e;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">void dij(int x)&#123;</span><br><span class="line">	int c=n-1;</span><br><span class="line">	dis[x].ty=1;</span><br><span class="line">	for(int i=head[x];i!=0;i=edge[i].next)</span><br><span class="line">	  dis[edge[i].to].w=edge[i].w;</span><br><span class="line">	while(c&gt;0)&#123;</span><br><span class="line">		int min=900000000,p;</span><br><span class="line">		for(int i=1;i&lt;=n;i++)&#123;</span><br><span class="line">			if(dis[i].ty==0&amp;&amp;dis[i].w!=0&amp;&amp;dis[i].w&lt;min)&#123;</span><br><span class="line">				p=i;</span><br><span class="line">				min=dis[i].w;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		for(int i=head[p];i!=0;i=edge[i].next)&#123;</span><br><span class="line">			if(dis[edge[i].to].ty!=1)&#123;</span><br><span class="line">				if(dis[edge[i].to].w==0||dis[edge[i].to].w&gt;dis[i].w+edge[i].w)</span><br><span class="line">				  dis[edge[i].to].w=dis[p].w+edge[i].w;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		dis[p].ty=1;</span><br><span class="line">		c--;</span><br><span class="line">	&#125;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	int u,v,d,x,y;</span><br><span class="line">	scanf(&quot;%d%d&quot;,&amp;n,&amp;m);</span><br><span class="line">	for(int i=1;i&lt;=m;i++)&#123;</span><br><span class="line">		scanf(&quot;%d%d%d&quot;,&amp;u,&amp;v,&amp;d);</span><br><span class="line">		add(u,v,d);</span><br><span class="line">		add(v,u,d);</span><br><span class="line">	&#125;</span><br><span class="line">	scanf(&quot;%d&quot;,&amp;q);</span><br><span class="line">	for(int i=1;i&lt;=q;i++)&#123;</span><br><span class="line">		scanf(&quot;%d%d&quot;,&amp;x,&amp;y);</span><br><span class="line">		dij(x);</span><br><span class="line">		printf(&quot;%d\n&quot;,dis[y].w);</span><br><span class="line">		for(int j=1;j&lt;=n;j++)&#123;</span><br><span class="line">			dis[j].w=0;</span><br><span class="line">			dis[j].ty=0;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="SPFA（Shortest-Path-Faster-Algorithm）："><a href="#SPFA（Shortest-Path-Faster-Algorithm）：" class="headerlink" title="SPFA（Shortest Path Faster Algorithm）："></a>SPFA（Shortest Path Faster Algorithm）：</h2><p>SPFA的另一个作用：判定图中是否含有负数环23333</p>
+<p>用数组d记录每个结点的最短路径估计值，而且用邻接表来存储图G。<br>我们采取的方法是<strong>动态逼近法</strong>：</p>
+<pre><code>设立一个先进先出的队列用来保存待优化的结点，优化时每次取出队首结点u，并且用u点当前的最短路径估计值对离开u点所指向的结点v进行松弛操作，如果v点的最短路径估计值有所调整，且v点不在当前的队列中，就将v点放入队尾。这样不断从队列中取出结点来进行松弛操作，直至队列空为止。
+</code></pre><p>如果一个点进入队列达到n次，则表明图中存在负环，没有最短路径。</p>
+<p> 复杂度：<br> 期望时间复杂度：O(me)， 其中m为所有顶点进队的平均次数，可以证明m一般小于等于2n：</p>
+<pre><code>“算法编程后实际运算情况表明m一般没有超过2n.事实上顶点入队次数m是一个不容易事先分析出来的数,但它确是一个随图的不同而略有不同的常数.所谓常数,就是与e无关,与n也无关,仅与边的权值分布有关.一旦图确定,权值确定,原点确定,m就是一个确定的常数.所以SPFA算法复杂度为O(e).证毕.&quot;（SPFA的论文）
+</code></pre><p> 伪代码;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ProcedureSPFA;</span><br><span class="line">Begin</span><br><span class="line">    initialize-single-source(G,s);</span><br><span class="line">    initialize-queue(Q);</span><br><span class="line">    enqueue(Q,s);</span><br><span class="line">    while not empty(Q) do begin</span><br><span class="line">        u:=dequeue(Q);</span><br><span class="line">        for each v∈adj[u] do begin</span><br><span class="line">            tmp:=d[v];</span><br><span class="line">            relax(u,v);</span><br><span class="line">            if(tmp&lt;&gt;d[v])and(not v in Q)then enqueue(Q,v);</span><br><span class="line">        end;</span><br><span class="line">    end;</span><br><span class="line">End;</span><br></pre></td></tr></table></figure>
+<hr>
+<p> 求最短路不要拘束于这四种算法，很多算法会有出其不意的效果。<br> 比如我们可以把一个图拽起来，变成一棵树。<br> 然后最短路就是求LCA了233333</p>
+<pre><code>求出LCA时，记录逆dfs序列，直接写出路径。
+</code></pre><p> SPFA给我们做了一个好榜样，我们要自己去琢磨新的算法，新的思路。</p>
+<p> 最后还是祝各位OIer武运昌隆！</p>
+<p><img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/kXlhjoYHd7Ez89Bq6S*rm9ODEZVVTyAET07anIXLvy8!/r/dPIAAAAAAAAA" alt="这里写图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/algorithm/">algorithm</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/03/31/图论--最短路算法/" data-title="图论--最短路算法 | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/03/31/array-to-list/" title="数组模拟链表">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  数组模拟链表</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/03/31/lca-tarjan/" title="最近公共祖先LCA--Tarjan算法">
+ <strong>NEXT:</strong><br> 
+ <span>最近公共祖先LCA--Tarjan算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#图论"><span class="toc-number">1.</span> <span class="toc-text">图论</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Floyd："><span class="toc-number">1.1.</span> <span class="toc-text">Floyd：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dijkstra："><span class="toc-number">1.2.</span> <span class="toc-text">Dijkstra：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#过程"><span class="toc-number">1.2.1.</span> <span class="toc-text">过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SPFA（Shortest-Path-Faster-Algorithm）："><span class="toc-number">1.3.</span> <span class="toc-text">SPFA（Shortest Path Faster Algorithm）：</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

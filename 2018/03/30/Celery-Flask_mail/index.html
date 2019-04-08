@@ -1,0 +1,395 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>Clery-Flask_mail | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="前言(・ω&amp;lt;) ﾃﾍﾍﾟﾛ
+
+啊学校的抢课进不去。。好想准时抢课(╥╯^╰╥)
+啊朋友生日要到了，可是我不想熬夜啊啊(╥╯^╰╥)
+啊拖延症。。真想给自己发封邮件提醒一下(╥╯^╰╥)
+
+
+看完这篇博客，ok的ヾ(ﾟ∀ﾟゞ)
+
+先行知识：什么是celery？什么是flask？Celery~[芹">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/30/Celery-Flask_mail/" title="Clery-Flask_mail" itemprop="url">Clery-Flask_mail</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-03-30T04:12:12.000Z" itemprop="datePublished">2018-03-30</time>
+    Updated:<time datetime="2019-04-08T15:39:45.164Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言-・ω-lt-ﾃﾍﾍﾟﾛ"><span class="toc-number">1.</span> <span class="toc-text">前言(・ω&lt;) ﾃﾍﾍﾟﾛ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#先行知识：什么是celery？什么是flask？"><span class="toc-number">2.</span> <span class="toc-text">先行知识：什么是celery？什么是flask？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Celery-芹菜"><span class="toc-number">2.1.</span> <span class="toc-text">Celery~[芹菜]~:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flask-瓶子-："><span class="toc-number">2.2.</span> <span class="toc-text">Flask~[瓶子]~：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#给我个例子吧，到底什么是celery"><span class="toc-number">3.</span> <span class="toc-text">给我个例子吧，到底什么是celery</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#第一个celery程序："><span class="toc-number">3.1.</span> <span class="toc-text">第一个celery程序：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是Broker？："><span class="toc-number">3.1.1.</span> <span class="toc-text">什么是Broker？：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是Backend？："><span class="toc-number">3.1.2.</span> <span class="toc-text">什么是Backend？：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是Worker？："><span class="toc-number">3.1.3.</span> <span class="toc-text">什么是Worker？：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#怎么系统的写一个celery任务呢？"><span class="toc-number">3.2.</span> <span class="toc-text">怎么系统的写一个celery任务呢？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#celerybeat："><span class="toc-number">3.2.1.</span> <span class="toc-text">celerybeat：</span></a></li></ol></li></ol></li></ol>
+		</div>
+		
+		<h2 id="前言-・ω-lt-ﾃﾍﾍﾟﾛ"><a href="#前言-・ω-lt-ﾃﾍﾍﾟﾛ" class="headerlink" title="前言(・ω&lt;) ﾃﾍﾍﾟﾛ"></a>前言(・ω&lt;) ﾃﾍﾍﾟﾛ</h2><blockquote>
+<ul>
+<li>啊学校的抢课进不去。。好想准时抢课(╥╯^╰╥)</li>
+<li>啊朋友生日要到了，可是我不想熬夜啊啊(╥╯^╰╥)</li>
+<li>啊拖延症。。真想给自己发封邮件提醒一下(╥╯^╰╥)</li>
+</ul>
+</blockquote>
+<p>看完这篇博客，ok的ヾ(ﾟ∀ﾟゞ)</p>
+<hr>
+<h2 id="先行知识：什么是celery？什么是flask？"><a href="#先行知识：什么是celery？什么是flask？" class="headerlink" title="先行知识：什么是celery？什么是flask？"></a>先行知识：什么是celery？什么是flask？</h2><h3 id="Celery-芹菜"><a href="#Celery-芹菜" class="headerlink" title="Celery~[芹菜]~:"></a><strong>Celery~[芹菜]~:</strong></h3><p>Celery 是一个由 Python 编写的简单、灵活、可靠的用来处理大量信息的分布式系统,它同时提供操作和维护分布式系统所需的工具。</p>
+<p>Celery 专注于实时任务处理，支持任务调度。</p>
+<p>说白了，它是一个分布式队列的管理工具，我们可以用 Celery 提供的接口快速实现并管理一个分布式的任务队列。</p>
+<h3 id="Flask-瓶子-："><a href="#Flask-瓶子-：" class="headerlink" title="Flask~[瓶子]~："></a><strong>Flask~[瓶子]~：</strong></h3><p>Flask是一个使用 Python 编写的轻量级 Web 应用框架。其 WSGI 工具箱采用 Werkzeug ，模板引擎则使用 Jinja2 。Flask使用 BSD 授权。</p>
+<pre><code>Flask_mail是flask的一个重要的插件。Flask_mail 连接到简单邮件传输协议 (Simple Mail Transfer Protocol, SMTP) 服务器，并把邮件交给这个服务器发送。
+
+本文章着重于讲解celery，因此对于flask部分不再赘述。
+
+我假设读者会用flask_mail发送邮件。。如果你不会，那么请参考以下文章：
+
+http://pythonhosted.org/Flask-Mail/
+https://blog.csdn.net/wbin233/article/details/73222027
+</code></pre><hr>
+<h2 id="给我个例子吧，到底什么是celery"><a href="#给我个例子吧，到底什么是celery" class="headerlink" title="给我个例子吧，到底什么是celery"></a>给我个例子吧，到底什么是celery</h2><p>celery的原理很简单，就是一个异步任务队列。<br>所以开始我们的第一个小实验。</p>
+<hr>
+<h3 id="第一个celery程序："><a href="#第一个celery程序：" class="headerlink" title="第一个celery程序："></a>第一个celery程序：</h3><blockquote>
+<ul>
+<li>依赖：python、redis-server、celery 没有的直接sudo pip3 install XXX</li>
+</ul>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># test.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"><span class="keyword">import</span> time </span><br><span class="line"> </span><br><span class="line">app=Celery(<span class="string">'tasks'</span>,backend=<span class="string">'redis://localhost:6379/0'</span>,broker=<span class="string">'redis://localhost:6379/0'</span>) <span class="comment">#配置好celery的backend和broker</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">@app.task  #普通函数装饰为 celery task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x,y)</span>:</span></span><br><span class="line">    time.sleep(<span class="number">5.0</span>) <span class="comment">#模拟耗时操作</span></span><br><span class="line">    <span class="keyword">return</span> x+y</span><br></pre></td></tr></table></figure>
+<p>(〝▼皿▼)<strong>wa你这个sb博主为什么先放代码？</strong><br>别急别急，慢慢解释。</p>
+<p>celery的异步任务队列是怎么实现的呢？一张图很好的解释了。↓</p>
+<p><img src="https://ooo.0o0.ooo/2016/12/10/584bbf78e1783.png" alt="celery图解"></p>
+<h4 id="什么是Broker？："><a href="#什么是Broker？：" class="headerlink" title="什么是Broker？："></a>什么是Broker？：</h4><pre><code>brokers 中文意思为中间人，在这里就是指任务队列本身，Celery 扮演生产者和消费者的角色，brokers 就是生产者和消费者存放/拿取产品的地方(队列)
+常见的 brokers 有 rabbitmq、redis、Zookeeper 等
+
+我们今天使用的便是redis
+</code></pre><h4 id="什么是Backend？："><a href="#什么是Backend？：" class="headerlink" title="什么是Backend？："></a>什么是Backend？：</h4><pre><code>顾名思义就是结果储存的地方，队列中的任务运行完后的结果或者状态需要被任务发送者知道，那么就需要一个地方储存这些结果，就是 Result Stores 了
+
+常见的 backend 有 redis、Memcached 甚至常用的数据库都可以。
+</code></pre><h4 id="什么是Worker？："><a href="#什么是Worker？：" class="headerlink" title="什么是Worker？："></a>什么是Worker？：</h4><pre><code>就是 Celery 中的工作者，类似与生产/消费模型中的消费者，其从队列中取出任务并执行
+</code></pre><p>弄明白这些定义之后，我们就开始一行行地解释代码：</p>
+<blockquote>
+<ul>
+<li>首先，是预处理，我们引入了Celery用于创造Celery实例，引入了time包</li>
+<li>其次创造一个Celery实例，名为app<br>三个参数：第一个是name,第二个是broker，第三个是backend<br>  //这里的broker和backend是以redis的形式给出的，localhost==127.0.0.1</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>写一个简单的函数add，并且用app.task装饰<br>使之成为能加入broker的task。。。</li>
+</ul>
+</blockquote>
+<p>这基本就解释完了，那么问题来了</p>
+<p>ヽ(￣▽￣)ﾉ我知道了，接下来就是python3 test.py对不对<br>(｀ﾟДﾟ´)ゞ你知道个毛线啊！才不是！<br>(|| ﾟДﾟ)你redis启动了没有啊！<br>Σ(っ°Д°;)っ你celery也没开啊！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ redis-cli -p 6379 #开放6379端口</span><br><span class="line">新终端</span><br><span class="line">$ celery -A test worker --loglevel=info 或者 debug</span><br></pre></td></tr></table></figure>
+<p>当然你可以加个&amp;后台运行。。但是用ps关掉的时候就比较麻烦了。。<br>这个时候，用脚本来把任务加入队列也好，用shell也好，都ok</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; from test import add</span><br><span class="line">&gt;&gt;&gt; add.aplly_async(args=(2,8))</span><br><span class="line">&gt;&gt;&gt;&gt; ...</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="怎么系统的写一个celery任务呢？"><a href="#怎么系统的写一个celery任务呢？" class="headerlink" title="怎么系统的写一个celery任务呢？"></a>怎么系统的写一个celery任务呢？</h3><p>٩(๑&gt;◡&lt;๑)۶ 首先你要会写一个flask项目的结构。。。</p>
+<p>ヽ(ﾟ∀ﾟ)ﾒ(ﾟ∀ﾟ)ﾉ 听说结构是这个样子的↓：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">celery_test //测试总目录</span><br><span class="line">    |------celery_app //存放celery相关代码</span><br><span class="line">    |          |------__init__.py  //构造器</span><br><span class="line">    |          |------celery_config.py //celery配置文件</span><br><span class="line">    |          |------task.py //任务文件，比如什么发邮件啊，什么抢课啊</span><br><span class="line">    |------run.py //应用程序，用于将你的task加入celery broker</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># celery_test/celery_app/__init__.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app=Celery(<span class="string">'demo'</span>) //实例化</span><br><span class="line">app.config_from_object(<span class="string">'celery_app.celery_config'</span>) //导入配置</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># celery_test/celery_app/celery_config.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> timedelta</span><br><span class="line"><span class="keyword">from</span> celery.schedules <span class="keyword">import</span> crontab</span><br><span class="line"></span><br><span class="line"><span class="comment"># Broker and Backend</span></span><br><span class="line">BROKER_URL = <span class="string">'redis://localhost:6379/1'</span></span><br><span class="line">CELERY_RESULT_BACKEND = <span class="string">'redis://localhost:6379/0'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Timezone</span></span><br><span class="line">CELERY_TIMEZONE=<span class="string">'Asia/Shanghai'</span>    <span class="comment"># 指定时区，不指定默认为 'UTC'</span></span><br><span class="line"><span class="comment"># CELERY_TIMEZONE='UTC'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># import</span></span><br><span class="line">CELERY_IMPORTS = (</span><br><span class="line">    <span class="string">'celery_app.task'</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># schedules</span></span><br><span class="line">CELERYBEAT_SCHEDULE = &#123;</span><br><span class="line">    <span class="string">'add-every-30-seconds'</span>: &#123;</span><br><span class="line">         <span class="string">'task'</span>: <span class="string">'celery_app.task.send_mail'</span>,</span><br><span class="line">         <span class="string">'schedule'</span>: timedelta(seconds=<span class="number">30</span>),      <span class="comment"># 每 30 秒执行一次</span></span><br><span class="line"><span class="comment">#         'args': ()                             # 任务函数参数</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'multiply-at-some-time'</span>: &#123;</span><br><span class="line">        <span class="string">'task'</span>: <span class="string">'celery_app.task.lession'</span>,</span><br><span class="line">        <span class="string">'schedule'</span>: crontab(hour=<span class="number">9</span>, minute=<span class="number">50</span>),  <span class="comment"># 每天早上 9 点 50 分执行一次</span></span><br><span class="line"><span class="comment">#       'args': ()                               # 任务函数参数</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># celery_test/celery_app/task.py </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask ...</span><br><span class="line"><span class="keyword">from</span> celery_app <span class="keyword">import</span> app</span><br><span class="line"><span class="keyword">import</span> ...</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_mail</span><span class="params">()</span>:</span></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="meta">@qpp.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">lession</span><span class="params">()</span>:</span></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    flask.run()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># celery_test/run.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery_app <span class="keyword">import</span> task</span><br><span class="line"></span><br><span class="line">task.send_mail.aplly_async()</span><br><span class="line">task.lession.apply_async()</span><br></pre></td></tr></table></figure>
+<p>ヾ(ｏ･ω･)ﾉ 介要三分钟，李就会杠我一样，爱上这款celery</p>
+<p>哦对。。(&gt;ω･* )ﾉ还要解释一下celerybeat</p>
+<h4 id="celerybeat："><a href="#celerybeat：" class="headerlink" title="celerybeat："></a><strong>celerybeat：</strong></h4><p>celery中的定时任务是由celerybeat发送到broker的。。<br>因此我们不仅要启动redis，celery worker还有celerybeat</p>
+<p>比如：</p>
+<pre><code>$ celery -A celery_app worker --loglevel=info
+</code></pre><hr>
+<p>d(´ω｀*)Shiina的celery讲解就这么结束了w<br>不知道有没看看懂呢各位wヾ(=･ω･=)o<br>!!!∑(ﾟДﾟノ)ノ什么？flask_mail不会写？别找我啊！<br> щ(ﾟДﾟщ) 什么？request不会写？别找我啊！<br>  (;ﾟДﾟi|!) 什么？你要看我的代码？</p>
+<p>(灬°ω°灬) 拿去：<a href="https://github.com/ShiinaOrez/celery_test/" target="_blank" rel="noopener">https://github.com/ShiinaOrez/celery_test/</a> 别忘了顺手follow我哦！</p>
+<hr>
+<p>顺便贴上我GitHub博客的地址：<br><a href="https://shiinaorez.github.io" target="_blank" rel="noopener">https://shiinaorez.github.io</a></p>
+<p>ヽ(´•ω•`)､那么说再见了w<br>(&gt;ω･* )ﾉ希望你们能爱上我w</p>
+<p><img src="http://img.blog.csdn.net/20180329235544148?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvU2hpaW5hX09yZXo=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/python/">python</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/03/30/Celery-Flask_mail/" data-title="Clery-Flask_mail | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/03/31/frequent-partten-tree/" title="基于关联规则的推荐-获取频繁项集">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  基于关联规则的推荐-获取频繁项集</span>
+</a>
+</div>
+
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言-・ω-lt-ﾃﾍﾍﾟﾛ"><span class="toc-number">1.</span> <span class="toc-text">前言(・ω&lt;) ﾃﾍﾍﾟﾛ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#先行知识：什么是celery？什么是flask？"><span class="toc-number">2.</span> <span class="toc-text">先行知识：什么是celery？什么是flask？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Celery-芹菜"><span class="toc-number">2.1.</span> <span class="toc-text">Celery~[芹菜]~:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flask-瓶子-："><span class="toc-number">2.2.</span> <span class="toc-text">Flask~[瓶子]~：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#给我个例子吧，到底什么是celery"><span class="toc-number">3.</span> <span class="toc-text">给我个例子吧，到底什么是celery</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#第一个celery程序："><span class="toc-number">3.1.</span> <span class="toc-text">第一个celery程序：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是Broker？："><span class="toc-number">3.1.1.</span> <span class="toc-text">什么是Broker？：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是Backend？："><span class="toc-number">3.1.2.</span> <span class="toc-text">什么是Backend？：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是Worker？："><span class="toc-number">3.1.3.</span> <span class="toc-text">什么是Worker？：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#怎么系统的写一个celery任务呢？"><span class="toc-number">3.2.</span> <span class="toc-text">怎么系统的写一个celery任务呢？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#celerybeat："><span class="toc-number">3.2.1.</span> <span class="toc-text">celerybeat：</span></a></li></ol></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

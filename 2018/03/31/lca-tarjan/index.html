@@ -1,0 +1,335 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>最近公共祖先LCA--Tarjan算法 | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="最近公共祖先 Lowest Common Ancestors 在一棵树中，两个结点之间第一个共同的祖先。 如图：  
+ 结点10和11的公共祖先有1、7、8、⑨四个节点，但是只有⑨是离其最近的，所以只有⑨是LCA 同理，3和11的LCA即是根节点1。2和4的LCA是2。
+Tarjan算法： 其实讲个">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/31/lca-tarjan/" title="最近公共祖先LCA--Tarjan算法" itemprop="url">最近公共祖先LCA--Tarjan算法</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-03-31T09:20:46.000Z" itemprop="datePublished">2018-03-31</time>
+    Updated:<time datetime="2019-04-08T15:39:45.224Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#最近公共祖先-Lowest-Common-Ancestors"><span class="toc-number">1.</span> <span class="toc-text">最近公共祖先 Lowest Common Ancestors</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tarjan算法："><span class="toc-number">2.</span> <span class="toc-text">Tarjan算法：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#dfs序："><span class="toc-number">2.1.</span> <span class="toc-text">dfs序：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#继续："><span class="toc-number">2.2.</span> <span class="toc-text">继续：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#没错就是这么的。。简单"><span class="toc-number">2.3.</span> <span class="toc-text">没错就是这么的。。简单</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#http-blog-csdn-net-Shiina-Orez-article-details-78724156-–-gt-数组模拟链表"><span class="toc-number">3.</span> <span class="toc-text">http://blog.csdn.net/Shiina_Orez/article/details/78724156 –&gt;数组模拟链表</span></a></li></ol>
+		</div>
+		
+		<h1 id="最近公共祖先-Lowest-Common-Ancestors"><a href="#最近公共祖先-Lowest-Common-Ancestors" class="headerlink" title="最近公共祖先 Lowest Common Ancestors"></a>最近公共祖先 Lowest Common Ancestors</h1><p> 在一棵树中，两个结点之间第一个共同的祖先。<br> 如图：<br> <img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1512556667109&amp;di=7606e24595fe96661c90b18265edef83&amp;imgtype=0&amp;src=http://www.kuqin.com/upimg/allimg/140115/2252462243-0.jpg" alt="这里写图片描述"> </p>
+<p> 结点10和11的公共祖先有1、7、8、⑨四个节点，但是只有⑨是离其最近的，所以只有⑨是LCA<br> 同理，3和11的LCA即是根节点1。2和4的LCA是2。</p>
+<h1 id="Tarjan算法："><a href="#Tarjan算法：" class="headerlink" title="Tarjan算法："></a>Tarjan算法：</h1><p> 其实讲个道理，我也不知道究竟是不是tarjan算法，因为网上说这个dfs序离线做法不是tarjan啥的，姑且这么叫吧。。反正复杂度也是很低</p>
+<h2 id="dfs序："><a href="#dfs序：" class="headerlink" title="dfs序："></a>dfs序：</h2><p> 作为OI利器大法师–dfs–深度优先搜索<br> <del>据说是只要你dfs学得好，你就能一等，你就能拿金</del><br> 所谓dfs序，就是按照dfs遍历的顺序记录下点的顺序。<br> 再比如，还是上图为例：<br> 若是我们遍历的顺序是从左到右，则dfs序是这样的：</p>
+<blockquote>
+<ul>
+<li>1-2-3-2-4-5-4-6-4-2-1-7-8-9-10-9-11-9-8-7-1</li>
+</ul>
+</blockquote>
+<p> 有这个实例在，应该可以理解了吧。</p>
+<h2 id="继续："><a href="#继续：" class="headerlink" title="继续："></a>继续：</h2><p> 既然提到了dfs序的概念，我想很多人已经知道接下来怎么求LCA了<br> 没错，就是在两个结点中找到深度最小的那个结点。</p>
+<h2 id="没错就是这么的。。简单"><a href="#没错就是这么的。。简单" class="headerlink" title="没错就是这么的。。简单"></a>没错就是这么的。。简单</h2><p> 没有想象中的复杂吧。。这就是算法的迷人之处呢。</p>
+<p> 代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;cstdio&gt;</span><br><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;algorithm&gt;</span><br><span class="line">#define maxn 100005</span><br><span class="line">using namespace std;</span><br><span class="line">struct node&#123;</span><br><span class="line">	int next;</span><br><span class="line">	int to;</span><br><span class="line">	int w;</span><br><span class="line">&#125;edge[maxn];</span><br><span class="line">int c=0,lc,ans,e=0,q,n,m;</span><br><span class="line">int find_p[maxn],dfs_d[maxn],dfs_p[maxn],dfs_w[maxn],head[maxn];</span><br><span class="line">void add(int u,int v,int d)&#123;</span><br><span class="line">	edge[++e].next=head[u];</span><br><span class="line">	edge[e].to=v;</span><br><span class="line">	edge[e].w=d;</span><br><span class="line">	head[u]=e;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">void dfs_lca(int pre,int now,int deep,int weight)&#123;//遍历从第一个点开始，第一个输入的点--&gt;根 </span><br><span class="line">	c++;//遍历顺序编号 </span><br><span class="line">	dfs_p[c]=now;//此节点的下标 </span><br><span class="line">	dfs_d[c]=deep;//深度 </span><br><span class="line">	dfs_w[c]=weight;//权值和--&gt;沿路权值和 </span><br><span class="line">	for(int i=head[now];i!=0;i=edge[i].next)&#123;//now相连的所有点 </span><br><span class="line">		if(edge[i].to!=pre)&#123;//不向上 </span><br><span class="line">			dfs_lca(now,edge[i].to,deep+1,weight+edge[i].w);//继续dfs </span><br><span class="line">			c++;//回到这个节点 </span><br><span class="line">			dfs_p[c]=now;//同样记录 </span><br><span class="line">			dfs_d[c]=deep;</span><br><span class="line">			dfs_w[c]=weight;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	c++;//同样又一次回到了起点 </span><br><span class="line">	dfs_p[c]=now;</span><br><span class="line">	dfs_d[c]=deep;</span><br><span class="line">	dfs_w[c]=weight;</span><br><span class="line">	find_p[now]=c;//now这个点最后被记录的位置 </span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">void lca()&#123;</span><br><span class="line">	dfs_lca(0,1,1,0);</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">void find_lca(int u,int v)&#123;</span><br><span class="line">	if(find_p[u]&gt;find_p[v]) swap(u,v);</span><br><span class="line">	int ans=min(dfs_d[find_p[u]],dfs_d[find_p[v]]);</span><br><span class="line">	for(int i=find_p[u];i&lt;=find_p[v];i++)&#123;</span><br><span class="line">		if(dfs_d[i]&lt;ans) lc=dfs_p[i];</span><br><span class="line">	&#125;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	int u,v,d;</span><br><span class="line">	scanf(&quot;%d&quot;,&amp;m);</span><br><span class="line">	for(int i=1;i&lt;=m;i++)&#123;</span><br><span class="line">		scanf(&quot;%d%d%d&quot;,&amp;u,&amp;v,&amp;d);</span><br><span class="line">		add(u,v,d);</span><br><span class="line">		add(v,u,d);</span><br><span class="line">	&#125;</span><br><span class="line">	lca();</span><br><span class="line">	scanf(&quot;%d&quot;,&amp;q);</span><br><span class="line">	for(int i=1;i&lt;=q;i++)&#123;</span><br><span class="line">		scanf(&quot;%d%d&quot;,&amp;u,&amp;v);</span><br><span class="line">		find_lca(u,v);</span><br><span class="line">		printf(&quot;%d&quot;,lc);</span><br><span class="line">	&#125;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 代码中使用的数据结构是链表，但是是用数组模拟的办法，需要学习这种方法的同学可以去我的另一篇博客：</p>
+<h1 id="http-blog-csdn-net-Shiina-Orez-article-details-78724156-–-gt-数组模拟链表"><a href="#http-blog-csdn-net-Shiina-Orez-article-details-78724156-–-gt-数组模拟链表" class="headerlink" title="http://blog.csdn.net/Shiina_Orez/article/details/78724156 –&gt;数组模拟链表"></a><a href="http://blog.csdn.net/Shiina_Orez/article/details/78724156" target="_blank" rel="noopener">http://blog.csdn.net/Shiina_Orez/article/details/78724156</a> –&gt;数组模拟链表</h1><hr>
+<p> 祝各位OIer武运昌隆！！！<br> <img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/C3pTelk8lgVsdohSiEpZ*stIEPgiI68MM9x7YG7Bh.s!/r/dPMAAAAAAAAA" alt="这里写图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/algorithm/">algorithm</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/03/31/lca-tarjan/" data-title="最近公共祖先LCA--Tarjan算法 | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/03/31/图论--最短路算法/" title="图论--最短路算法">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  图论--最短路算法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/03/31/Kruskal-Prim/" title="Kruskal和Prim--最小生成树算法">
+ <strong>NEXT:</strong><br> 
+ <span>Kruskal和Prim--最小生成树算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#最近公共祖先-Lowest-Common-Ancestors"><span class="toc-number">1.</span> <span class="toc-text">最近公共祖先 Lowest Common Ancestors</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tarjan算法："><span class="toc-number">2.</span> <span class="toc-text">Tarjan算法：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#dfs序："><span class="toc-number">2.1.</span> <span class="toc-text">dfs序：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#继续："><span class="toc-number">2.2.</span> <span class="toc-text">继续：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#没错就是这么的。。简单"><span class="toc-number">2.3.</span> <span class="toc-text">没错就是这么的。。简单</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#http-blog-csdn-net-Shiina-Orez-article-details-78724156-–-gt-数组模拟链表"><span class="toc-number">3.</span> <span class="toc-text">http://blog.csdn.net/Shiina_Orez/article/details/78724156 –&gt;数组模拟链表</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

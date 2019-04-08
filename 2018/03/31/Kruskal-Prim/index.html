@@ -1,0 +1,342 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>Kruskal和Prim--最小生成树算法 | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="最小生成树：最小生成树是指一个有 n 个结点的连通图的生成树是原图的极小连通子图，且包含原图中的所有 n 个结点，并且有保持图连通的最少的边。
+稀疏图与稠密图的区别：判断标准如下：
+假设一个图G=(V,E)有n个节点，图G的每个节点的出度是一个固定的常数：k。由于E=kV=O(V) ，所以我们把符合">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/31/Kruskal-Prim/" title="Kruskal和Prim--最小生成树算法" itemprop="url">Kruskal和Prim--最小生成树算法</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-03-31T09:03:29.000Z" itemprop="datePublished">2018-03-31</time>
+    Updated:<time datetime="2019-04-08T15:39:45.204Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#最小生成树："><span class="toc-number">1.</span> <span class="toc-text">最小生成树：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#稀疏图与稠密图的区别："><span class="toc-number">1.1.</span> <span class="toc-text">稀疏图与稠密图的区别：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#稀疏图–-gt-Kruskal算法"><span class="toc-number">1.2.</span> <span class="toc-text">稀疏图–&gt;Kruskal算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#练习"><span class="toc-number">1.3.</span> <span class="toc-text">练习</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#稠密图–-gt-Prim算法"><span class="toc-number">1.4.</span> <span class="toc-text">稠密图–&gt; Prim算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#示例代码："><span class="toc-number">1.4.1.</span> <span class="toc-text">示例代码：</span></a></li></ol></li></ol></li></ol>
+		</div>
+		
+		<h1 id="最小生成树："><a href="#最小生成树：" class="headerlink" title="最小生成树："></a>最小生成树：</h1><p>最小生成树是指一个有 n 个结点的连通图的生成树是原图的极小连通子图，且包含原图中的所有 n 个结点，并且有保持图连通的最少的边。</p>
+<h2 id="稀疏图与稠密图的区别："><a href="#稀疏图与稠密图的区别：" class="headerlink" title="稀疏图与稠密图的区别："></a>稀疏图与稠密图的区别：</h2><p>判断标准如下：</p>
+<pre><code>假设一个图G=(V,E)有n个节点，图G的每个节点的出度是一个固定的常数：k。由于E=kV=O(V) ，所以我们把符合E=O(V) 条件的图称为稀疏图。
+同理 ：
+如果一个图G=(V,E)有n个节点，假设图G的每个节点的出度是关于n的一个小数，并且0&lt;f&lt;=1，我们把符合E=fV2(平方)=V2(平方)条件的图称为稠密图。
+比如：一个图节点为16，节点的出度为4，那么f = 0.25。
+</code></pre><p> <del>显然。。稠密图并不多见</del></p>
+<h2 id="稀疏图–-gt-Kruskal算法"><a href="#稀疏图–-gt-Kruskal算法" class="headerlink" title="稀疏图–&gt;Kruskal算法"></a>稀疏图–&gt;Kruskal算法</h2><p>因为稀疏图中边的数量和点的数量是在同一数量级上，即O（n）级别。所以我们从边下手。<br>因为是最小生成树，所以我们先把边进行排序，然后从小到大扫描，建立一个新树。这个新的树连通所有的结点。</p>
+<p>1.我们首先进行排序，对稳定性没有要求的情况下我们使用内建的sort就好了。。。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Node</span>&#123;</span></span><br><span class="line">	<span class="keyword">int</span> from;</span><br><span class="line">	<span class="keyword">int</span> to;</span><br><span class="line">	<span class="keyword">int</span> w;</span><br><span class="line">&#125;g[maxn];<span class="comment">//我们使用结构体来储存边，具有三个属性，起点，终点还有权值</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">comp</span><span class="params">(<span class="keyword">const</span> Node p1,<span class="keyword">const</span> Node p2)</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> p1.w&lt;p2.w;</span><br><span class="line">&#125;<span class="comment">//comp函数，我们搞一个升序数列</span></span><br><span class="line"></span><br><span class="line">sort(g+<span class="number">1</span>,g+<span class="number">1</span>+m,comp);</span><br></pre></td></tr></table></figure>
+<p>2.现在我们有了一个边的集合，它是有序的。<br>所以我们从小到大开始对边进行分析，这个时候使用并查集的思想。</p>
+<pre><code>并查集：我们这里把所有的点看做是未连接的，即n个树构成的森林。
+这里每棵树都是独立的。
+我们如果发现这一条边两边的结点不属于同一棵树，就建立起这条边。
+边建立的同时，这两棵树变成了一棵树。
+</code></pre><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> c=<span class="number">0</span>;<span class="comment">//c是遍历边的一个变量 </span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=m;i++)&#123;</span><br><span class="line">		<span class="keyword">if</span>(c==n<span class="number">-1</span>) <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">int</span> pre=g[i].from;</span><br><span class="line">		<span class="keyword">int</span> ver=g[i].to;</span><br><span class="line">		<span class="keyword">if</span>(find(pre)!=find(ver))&#123;<span class="comment">//不属于同一棵树</span></span><br><span class="line">			add(pre,ver,g[i].w);</span><br><span class="line">			add(ver,pre,g[i].w);<span class="comment">//无向图，所以添加两条边</span></span><br><span class="line">			union_forst(pre,ver);<span class="comment">//合并集合</span></span><br><span class="line">			c++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><p>CodeVS：1078最小生成树<br>代码：<a href="http://paste.ubuntu.com/26115611/" target="_blank" rel="noopener">http://paste.ubuntu.com/26115611/</a></p>
+<h2 id="稠密图–-gt-Prim算法"><a href="#稠密图–-gt-Prim算法" class="headerlink" title="稠密图–&gt; Prim算法"></a>稠密图–&gt; Prim算法</h2><p>稠密图中对边分析显然是不对的，因为边的数量级远超点的数量级。<br>所以我们对点下手。</p>
+<p>1.因为最终的生成树要包括所有的结点，所以我们任选一个结点作为起始起点。<br>2.把这个点加入生成树，所以此时生成树只有一个结点。<br>3.我们查找此时生成树对外的所有的边进行查找最小，然后加入<br>4.加入连接的另一个点</p>
+<h3 id="示例代码："><a href="#示例代码：" class="headerlink" title="示例代码："></a>示例代码：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;cstdio&gt;</span><br><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;algorithm&gt;</span><br><span class="line">#define maxn 100005</span><br><span class="line">using namespace std;</span><br><span class="line">struct node&#123;</span><br><span class="line">	int next;</span><br><span class="line">	int to;</span><br><span class="line">	int w;</span><br><span class="line">&#125;edge[maxn];</span><br><span class="line">struct Node&#123;</span><br><span class="line">	int from;</span><br><span class="line">	int to;</span><br><span class="line">	int w;</span><br><span class="line">&#125;g[maxn];</span><br><span class="line">int n,m,e=0;</span><br><span class="line">int fa[maxn],head[maxn];</span><br><span class="line">void add(int u,int v,int d)&#123;</span><br><span class="line">	edge[++e].next=head[u];</span><br><span class="line">	edge[e].to=v;</span><br><span class="line">	edge[e].w=d;</span><br><span class="line">	head[u]=e;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">bool comp(const Node p1,const Node p2)&#123;</span><br><span class="line">	return p1.w&lt;p2.w;</span><br><span class="line">&#125;</span><br><span class="line">void prim()&#123;</span><br><span class="line">	for(int i=1;i&lt;n;i++)&#123;</span><br><span class="line">		for(int i=1;i&lt;=m;i++)&#123;</span><br><span class="line">			int pre=g[i].from;</span><br><span class="line">			int ver=g[i].to;</span><br><span class="line">			if((fa[pre]==0&amp;&amp;fa[ver]!=0)||(fa[pre]!=0&amp;&amp;fa[ver]==0))&#123;</span><br><span class="line">				if(fa[pre]!=0)</span><br><span class="line">			 	 fa[pre]=0;</span><br><span class="line">				else fa[ver]=0;  </span><br><span class="line">				add(pre,ver,g[i].w);</span><br><span class="line">				add(ver,pre,g[i].w);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	int u,v,d;</span><br><span class="line">	scanf(&quot;%d%d&quot;,&amp;n,&amp;m);</span><br><span class="line">	for(int i=1;i&lt;m;i++)&#123;</span><br><span class="line">		fa[i]=i;</span><br><span class="line">		scanf(&quot;%d%d%d&quot;,&amp;u,&amp;v,&amp;d);</span><br><span class="line">		g[i].from=u;</span><br><span class="line">		g[i].to=v;</span><br><span class="line">		g[i].w=d;</span><br><span class="line">	&#125;</span><br><span class="line">	sort(g+1,g+1+m,comp);</span><br><span class="line">	prim();</span><br><span class="line">	return 0; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  这里prim就不细述了，大家根据我不专业的描述去读读看吧2333333</p>
+<hr>
+<p>就是这样<br>最后是惯例的祝各位OIer武运昌隆！</p>
+<p><img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/xD10jc4W8l7Z4lniZv6ab48fU4bOFzhuBfYyE47dl04!/r/dD4BAAAAAAAA" alt="这里写图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/algorithm/">algorithm</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/03/31/Kruskal-Prim/" data-title="Kruskal和Prim--最小生成树算法 | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/03/31/lca-tarjan/" title="最近公共祖先LCA--Tarjan算法">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  最近公共祖先LCA--Tarjan算法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/03/31/heap-sort/" title="Heap-Sort">
+ <strong>NEXT:</strong><br> 
+ <span>Heap-Sort
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#最小生成树："><span class="toc-number">1.</span> <span class="toc-text">最小生成树：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#稀疏图与稠密图的区别："><span class="toc-number">1.1.</span> <span class="toc-text">稀疏图与稠密图的区别：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#稀疏图–-gt-Kruskal算法"><span class="toc-number">1.2.</span> <span class="toc-text">稀疏图–&gt;Kruskal算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#练习"><span class="toc-number">1.3.</span> <span class="toc-text">练习</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#稠密图–-gt-Prim算法"><span class="toc-number">1.4.</span> <span class="toc-text">稠密图–&gt; Prim算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#示例代码："><span class="toc-number">1.4.1.</span> <span class="toc-text">示例代码：</span></a></li></ol></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

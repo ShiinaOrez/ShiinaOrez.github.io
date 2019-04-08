@@ -1,0 +1,412 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>基于关联规则的推荐-获取频繁项集 | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="关联规则：关联规则是形如X-&amp;gt;Y的蕴含表达式,其中X和Y是不相交的项集,即X∩Y=∅。
+
+关联规则的强度可以用它的支持度(support)和置信度(confidence)来度量
+
+支持度确定规则可以用于给定数据集的频繁程度（能够关联的次数）
+置信度确定Y在包含X的交易中出现的频繁程度（能够成功">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/31/frequent-partten-tree/" title="基于关联规则的推荐-获取频繁项集" itemprop="url">基于关联规则的推荐-获取频繁项集</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-03-31T08:27:54.000Z" itemprop="datePublished">2018-03-31</time>
+    Updated:<time datetime="2019-04-08T15:39:45.212Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#关联规则："><span class="toc-number">1.</span> <span class="toc-text">关联规则：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用Apriori算法获取频繁项集"><span class="toc-number">2.</span> <span class="toc-text">使用Apriori算法获取频繁项集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#暴力挖取："><span class="toc-number">2.1.</span> <span class="toc-text">暴力挖取：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#先验原理："><span class="toc-number">2.2.</span> <span class="toc-text">先验原理：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FP-Growth算法获取频繁项集"><span class="toc-number">3.</span> <span class="toc-text">使用FP-Growth算法获取频繁项集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FP-Tree-Frequent-Pattern-Tree-频繁模式树："><span class="toc-number">3.1.</span> <span class="toc-text">FP-Tree Frequent Pattern Tree | 频繁模式树：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Header-Table："><span class="toc-number">3.2.</span> <span class="toc-text">Header_Table：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Conditional-Pattern-Base-条件模式基："><span class="toc-number">3.3.</span> <span class="toc-text">Conditional Pattern Base | 条件模式基：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判定："><span class="toc-number">3.4.</span> <span class="toc-text">判定：</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="关联规则："><a href="#关联规则：" class="headerlink" title="关联规则："></a>关联规则：</h2><pre><code>关联规则是形如X-&gt;Y的蕴含表达式,其中X和Y是不相交的项集,即X∩Y=∅。
+
+关联规则的强度可以用它的支持度(support)和置信度(confidence)来度量
+
+支持度确定规则可以用于给定数据集的频繁程度（能够关联的次数）
+置信度确定Y在包含X的交易中出现的频繁程度（能够成功关联的次数）
+
+    支持度s和置信度c的形式定义如下：
+
+        ||--&gt; ·s(X-&gt;Y)=σ(X∪Y)/N
+        ||--&gt; ·c(X-&gt;Y)=σ(X∪Y)/σ(X)
+
+        因此，大多数关联规则挖掘算法通常采用的一种策略是：
+</code></pre><p><strong>将关联规则挖掘任务分解为如下两个主要的子任务：</strong></p>
+<p>1.频繁项集的产生：</p>
+<pre><code>其目标是发现满足最小值尺度阈值的所有项集，这些项集称作频繁项集(frequent itemset)
+</code></pre><p>2.规则的产生：</p>
+<pre><code>其目标是从上一步发现的频繁项集中提取所有高置信度的规则，这些规则称作强规则(strong rule)
+</code></pre><p>  <strong>显而易见。频繁项集的产生所需要的计算开销远大于产生规则所需的计算开销。</strong></p>
+<h2 id="使用Apriori算法获取频繁项集"><a href="#使用Apriori算法获取频繁项集" class="headerlink" title="使用Apriori算法获取频繁项集"></a>使用Apriori算法获取频繁项集</h2><h3 id="暴力挖取："><a href="#暴力挖取：" class="headerlink" title="暴力挖取："></a>暴力挖取：</h3><pre><code>最容易想到的、也是最直接的关联关系挖掘的方法或许就是暴力搜索      (Brute-force)的方法。
+
+但是暴力的计算量过大，一个包含k个项的数据集可能产生2^k-1个      频繁项集。
+
+发现频繁项集的一种原始方法是确定每一个候选项集(candidate -itemset)的支持度计数。为了完成这一任务，必须将每个候选项集与每个交易进行比较。
+
+如果候选项集包含在交易中则候选集的支持度计数增加。
+</code></pre><p>复杂度O(NMω),N是交易数,M=2^k-1是候选项集数，而ω是交易的最大宽度(也就是交易中最大的项数)</p>
+<h3 id="先验原理："><a href="#先验原理：" class="headerlink" title="先验原理："></a>先验原理：</h3><pre><code>对于本身复杂度极高的Brute-force，我们必须设法降低产生频繁项集的计算复杂度。此时我们可以利用支持度对候选项集进行剪枝。
+</code></pre><p>Apriori定律1：</p>
+<pre><code>如果一个集合是频繁项集，则它所有的子集都是频繁项集。
+</code></pre><p>Apriori定律2：</p>
+<pre><code>如果一个集合不是频繁项集，则它的所有的超集都不是频繁项集。
+</code></pre><p>剪枝原则：</p>
+<pre><code>依据apriori定律2，当一个集合不是频繁项集时，剪除所有向下的集合。
+</code></pre><p>频繁项集的产生：</p>
+<p>R.Agrawal 和 R. Srikant于1994年在文献中提出了Apriori算法，该算法的描述如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">·Let k=1</span><br><span class="line">		·Generate frequent itemsets of length k</span><br><span class="line">		·Repeat until no new frequent itemsets are identified </span><br><span class="line">			  ·Generate length (k+1) candidate itemsets from length k frequent itemsets</span><br><span class="line">			  ·Prune candidate itemsets containing subsets of length k+1 that are infrequent</span><br><span class="line">			  ·Count the support of each candidate by scanning the DB</span><br><span class="line">·Eliminate candidates that are infrequent, leaving only those that are frequent</span><br></pre></td></tr></table></figure>
+<pre><code>D为总集
+1.建立频繁-1-项集
+2.for k=2 频繁-k-项集不为空
+                从频繁-k-1-项集中产生候选-K-项集
+                计算候选-k-项集的支持度计数
+                去除小于支持度计数阈值的集合
+                返回频繁-k-项集
+3.返回频繁项集
+
+        产生候选项集：
+            从频繁-k-1项集中挑选两项，使得：
+                前k-2项相同
+            合并这两项
+
+        计算支持度计数：
+            for 所有的事务 in D：
+                产生这个事务的子集集合
+                判断候选项集是否属于这个子集
+</code></pre><p>===========================================================</p>
+<h2 id="使用FP-Growth算法获取频繁项集"><a href="#使用FP-Growth算法获取频繁项集" class="headerlink" title="使用FP-Growth算法获取频繁项集"></a>使用FP-Growth算法获取频繁项集</h2><p>Apriori算法的缺点在于，过多的重复扫描数据库。而另一种方法可以避免这种情况。</p>
+<p> FP-Growth算法是一种基于<strong>FP-Tree(Frequent Pattern Tree)</strong>的算法。<br>      算法使用递归解决多个子问题的方式来产生频繁项集，相比apriori也更容易实现。</p>
+<h3 id="FP-Tree-Frequent-Pattern-Tree-频繁模式树："><a href="#FP-Tree-Frequent-Pattern-Tree-频繁模式树：" class="headerlink" title="FP-Tree Frequent Pattern Tree | 频繁模式树："></a>FP-Tree Frequent Pattern Tree | 频繁模式树：</h3><pre><code>Frequent pattern tree是一种前缀树，它可以看做是所有事务的投影。
+
+建树方法：insert_fp_tree(p|P,T)
+
+    首先我们统计出所有的频繁一项集。
+    然后对所有的事务进行过滤和排序(降序)。
+    把每一条事务看作是(头|后缀)的形式，后缀可以为空。
+    然后递归的调用insert_fp_tree()
+        每次进行判断:
+            若当前结点的儿女中有p，那么这个儿女的频繁度+1
+            若没有，新建这个儿女，频繁度设置为1
+        然后递归地，把后缀P进行分割，然后对下一个结点进行insert_fp_tree()
+</code></pre><h3 id="Header-Table："><a href="#Header-Table：" class="headerlink" title="Header_Table："></a>Header_Table：</h3><pre><code>Header_Table的存在是为了方便进行快速查找。
+Header_Table有三个域：item_name,count,next
+
+  item_name是这个item的唯一标识符
+  count是这个item的支持度
+  next指向FP-Tree中的一个item的点，并且连接成串
+</code></pre><h3 id="Conditional-Pattern-Base-条件模式基："><a href="#Conditional-Pattern-Base-条件模式基：" class="headerlink" title="Conditional Pattern Base | 条件模式基："></a>Conditional Pattern Base | 条件模式基：</h3><pre><code>  条件模式基是由FP-Tree中所有的item的前缀构成的。
+  从事务数据的角度上讲，就是包含item(可以不止一个元素)的所有事务集
+
+generate conditional pattern base:
+      构造一个条件模式基，我们利用Header_Table对所有的item进行浏览，然后保存前缀路径即可。
+</code></pre><p>###Conditional Pattern Tree | 条件模式树：</p>
+<pre><code>从条件模式基构建出的FP-Tree称为条件模式树。
+
+对条件模式基中所有item的频繁度进行加和，然后用阈值过滤，新的由过滤后的前缀路径形成的FP-Tree就是条件模式树了。
+</code></pre><h3 id="判定："><a href="#判定：" class="headerlink" title="判定："></a>判定：</h3><pre><code>如果一个item(可以不止一个)对应的条件模式树为空或者仅有一条路径。
+那么：
+    item∪tree即为一个频繁项集。由apriori定理1可知，其中所有的子集都是频繁项集。
+</code></pre><hr>
+<p> 这次就不祝OIer了。。。反正你们也用不到23333</p>
+<p> <img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/dHRf7aqsS5vnznXchbG4vNBIy7F4WFsGG*TB5TefLe8!/r/dPMAAAAAAAAA" alt="这里写图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/algorithm/">algorithm</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/03/31/frequent-partten-tree/" data-title="基于关联规则的推荐-获取频繁项集 | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/03/31/segment-tree/" title="Segment-Tree">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  Segment-Tree</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/03/30/Celery-Flask_mail/" title="Clery-Flask_mail">
+ <strong>NEXT:</strong><br> 
+ <span>Clery-Flask_mail
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#关联规则："><span class="toc-number">1.</span> <span class="toc-text">关联规则：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用Apriori算法获取频繁项集"><span class="toc-number">2.</span> <span class="toc-text">使用Apriori算法获取频繁项集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#暴力挖取："><span class="toc-number">2.1.</span> <span class="toc-text">暴力挖取：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#先验原理："><span class="toc-number">2.2.</span> <span class="toc-text">先验原理：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用FP-Growth算法获取频繁项集"><span class="toc-number">3.</span> <span class="toc-text">使用FP-Growth算法获取频繁项集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FP-Tree-Frequent-Pattern-Tree-频繁模式树："><span class="toc-number">3.1.</span> <span class="toc-text">FP-Tree Frequent Pattern Tree | 频繁模式树：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Header-Table："><span class="toc-number">3.2.</span> <span class="toc-text">Header_Table：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Conditional-Pattern-Base-条件模式基："><span class="toc-number">3.3.</span> <span class="toc-text">Conditional Pattern Base | 条件模式基：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判定："><span class="toc-number">3.4.</span> <span class="toc-text">判定：</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

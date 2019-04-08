@@ -1,0 +1,345 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>Segment-Tree | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="线段树–动态区间查询前言： 现在手上有一个数组a[n]，让我们来求一个区间的和 这简直太简单了！ 我们写一个前缀和就可以在O（1）解决问题了！
+ 问题升级： 有两种操作，一个是修改其中某个变量的值， 另一个是求区间和
+ 这。。我只能O（n²）去做了==
+ 别怕， 线段树可以解决你的问题。
+线段树–S">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/31/segment-tree/" title="Segment-Tree" itemprop="url">Segment-Tree</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-03-31T08:37:01.000Z" itemprop="datePublished">2018-03-31</time>
+    Updated:<time datetime="2019-04-08T15:39:45.244Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#线段树–动态区间查询"><span class="toc-number">1.</span> <span class="toc-text">线段树–动态区间查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言："><span class="toc-number">1.1.</span> <span class="toc-text">前言：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#线段树–Segment-Tree"><span class="toc-number">2.</span> <span class="toc-text">线段树–Segment Tree</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#建树–build-tree"><span class="toc-number">2.1.</span> <span class="toc-text">建树–build_tree()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改–change"><span class="toc-number">2.2.</span> <span class="toc-text">修改–change()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询–find"><span class="toc-number">2.3.</span> <span class="toc-text">查询–find()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#返回区间和–add"><span class="toc-number">2.4.</span> <span class="toc-text">返回区间和–add()</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#当然，能写前缀和我绝对不写线段树"><span class="toc-number">3.</span> <span class="toc-text">当然，能写前缀和我绝对不写线段树</span></a></li></ol>
+		</div>
+		
+		<h1 id="线段树–动态区间查询"><a href="#线段树–动态区间查询" class="headerlink" title="线段树–动态区间查询"></a>线段树–动态区间查询</h1><h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p> 现在手上有一个数组a[n]，让我们来求一个区间的和<br> 这简直太简单了！<br> 我们写一个前缀和就可以在O（1）解决问题了！</p>
+<p> 问题升级：<br> 有两种操作，一个是修改其中某个变量的值，<br> 另一个是求区间和</p>
+<p> 这。。我只能O（n²）去做了==</p>
+<p> 别怕， 线段树可以解决你的问题。</p>
+<h1 id="线段树–Segment-Tree"><a href="#线段树–Segment-Tree" class="headerlink" title="线段树–Segment Tree"></a>线段树–Segment Tree</h1><p> 既然是线段树，那么一定具有一个树的结构。<br> 这个树和其他树不一样，线段树是用来<strong>维护</strong>我们手中的数组的</p>
+<p> 树的结点有这么几个属性：l,r,w<br> l代表left，是这个结点对应区间的左端点<br> r代表right，是这个结点对应区间的右端点<br> w代表这个区间内的区间和</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct node&#123;</span><br><span class="line">    int l;</span><br><span class="line">    int r;</span><br><span class="line">    int w;</span><br><span class="line">&#125;tree[maxn];</span><br></pre></td></tr></table></figure>
+<p> 那我们来想一下大致的过程吧：<br> 首先我们要对于初始的数组a[n]来把这个线段树建立起来<br> 然后，如果要修改一个值，我们就要修改对应叶子结点和它所有的父节点<br> 查找区间和emmm<br> 把一个大区间分成许多我们维护的小区间就好了~</p>
+<p> <del>看上去挺简单的</del></p>
+<h2 id="建树–build-tree"><a href="#建树–build-tree" class="headerlink" title="建树–build_tree()"></a>建树–build_tree()</h2><p> 建树也好，建堆也好，这种操作我们经常使用，就是初始化嘛~<br> 我们从根节点开始初始化，把区间逐渐二分下去。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">void build_tree(int x,int left,int right)&#123;//x是当前节点标号</span><br><span class="line">    tree[x].l=left;</span><br><span class="line">    tree[x].r=right;</span><br><span class="line">    if(left==right)&#123;</span><br><span class="line">        change(x,a[left]);//修改x的值为a[left]</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    build_tree(2*x,left,(left+right)/2);</span><br><span class="line">    build_tree(2*x+1,(left+right)/2+1,right);</span><br><span class="line">    //左右分别递归调用</span><br><span class="line">    return ;</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	/**/</span><br><span class="line">	build_tree(1,1,n);</span><br><span class="line">	/**/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 这样我们就能递归的建立一个线段树了。</p>
+<h2 id="修改–change"><a href="#修改–change" class="headerlink" title="修改–change()"></a>修改–change()</h2><p> <del>刚刚的代码里出现了什么奇怪的东西！</del><br> 是的，我们调用了还没写的change函数<br> change，就是把一个节点的值进行修改（现在我们简单的定义为加法）<br> 获取的参数是结点的序号，还有改动的值<br> 然后递归向上修改所有的父亲节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">void change(int x,int a)&#123;//x节点的值修改为tree[x].w+a</span><br><span class="line">    if(x==0) return ;//代表更新完毕</span><br><span class="line">    tree[x].w+=a;</span><br><span class="line">    change(x/2,a);</span><br><span class="line">    return ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="查询–find"><a href="#查询–find" class="headerlink" title="查询–find()"></a>查询–find()</h2><p> 那么，我们拿到的指令是，修改a[i]<br> 怎么通过a[i]找到对应的那个叶子结点呢？<br> 二分嘛：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int find(int x,int p,int left,int right)&#123;//返回a[x]对应的线段树中的p</span><br><span class="line">    if(left==right) return p;//找到了</span><br><span class="line">    p=(x&lt;=(left+right)/2):p*2?p*2+1;//x在左边，就找左儿子，在右边就找右儿子</span><br><span class="line">    return find(x,p,tree[p].l,tree[p].r);//接着找</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="返回区间和–add"><a href="#返回区间和–add" class="headerlink" title="返回区间和–add()"></a>返回区间和–add()</h2><p> 我们已经可以修改并且维护这颗大树了！<br> 接下来只要算算区间和究竟是多少就好了</p>
+<p> 我们拿到一个区间，这个区间很大可能没有直接与之对应的节点<br> 往往可能是5个，6个节点拼凑出要求的区间</p>
+<p> 写几个判断语句，然后递归：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">int add(int x,int left,int right)&#123;//返回区间和</span><br><span class="line">    if((tree[x].l==left)&amp;&amp;(tree[x].r==right))//正好相等，返回w</span><br><span class="line">        return tree[x].w;</span><br><span class="line">    int mid=(tree[x].l+tree[x].r)/2;</span><br><span class="line">    if(right&lt;=mid) //只可能存在于左儿子</span><br><span class="line">        return add(x*2,left,right);</span><br><span class="line">    if(left&gt;mid) //只可能存在于右儿子</span><br><span class="line">        return add(x*2+1,left,right);</span><br><span class="line">    return add(x*2,left,mid)+add(x*2+1,mid+1,right);//最普遍情况，再次一分为二</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 调用的时候，x为1，因为要从根节点开始寻找</p>
+<p> 这样我们就可以进行修改和在线查询了。<br>  前缀和求区间和的方法我们称为离线算法。<br>  而今天的线段树是在线算法。<br>  不同的情况，对于在线离线的要求是不一样的。</p>
+<h1 id="当然，能写前缀和我绝对不写线段树"><a href="#当然，能写前缀和我绝对不写线段树" class="headerlink" title="当然，能写前缀和我绝对不写线段树"></a><strong><del>当然，能写前缀和我绝对不写线段树</del></strong></h1><hr>
+<p> 最后祝各位OIer武运昌隆！！！</p>
+<p> <img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/NiLoyt5AhXAz2zmK0iJj3i4hz0wRXkVlo3gQfpTD5*Q!/r/dPMAAAAAAAAA" alt="这里写图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/algorithm/">algorithm</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/03/31/segment-tree/" data-title="Segment-Tree | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/03/31/union_find/" title="Union_find">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  Union_find</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/03/31/frequent-partten-tree/" title="基于关联规则的推荐-获取频繁项集">
+ <strong>NEXT:</strong><br> 
+ <span>基于关联规则的推荐-获取频繁项集
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#线段树–动态区间查询"><span class="toc-number">1.</span> <span class="toc-text">线段树–动态区间查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言："><span class="toc-number">1.1.</span> <span class="toc-text">前言：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#线段树–Segment-Tree"><span class="toc-number">2.</span> <span class="toc-text">线段树–Segment Tree</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#建树–build-tree"><span class="toc-number">2.1.</span> <span class="toc-text">建树–build_tree()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改–change"><span class="toc-number">2.2.</span> <span class="toc-text">修改–change()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询–find"><span class="toc-number">2.3.</span> <span class="toc-text">查询–find()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#返回区间和–add"><span class="toc-number">2.4.</span> <span class="toc-text">返回区间和–add()</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#当然，能写前缀和我绝对不写线段树"><span class="toc-number">3.</span> <span class="toc-text">当然，能写前缀和我绝对不写线段树</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

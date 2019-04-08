@@ -1,0 +1,335 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>数组模拟链表 | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="链表作为一种数据结构，对于空间的利用率非常之高。但是对于链表没有学好的同学来说，链表难上天了。有没有一种解决方案能实现链表却又不那么难呢？
+当然有：那就是：
+数组模拟链表顾名思义，通过一些特殊的方法，可以让数组具有链表的作用。
+我们先放代码，然后解释原理。
+12345678910111213int ">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/31/array-to-list/" title="数组模拟链表" itemprop="url">数组模拟链表</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-03-31T13:29:40.000Z" itemprop="datePublished">2018-03-31</time>
+    Updated:<time datetime="2019-04-08T15:39:45.208Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#数组模拟链表"><span class="toc-number">1.</span> <span class="toc-text">数组模拟链表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Node："><span class="toc-number">1.1.</span> <span class="toc-text">Node：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Add函数："><span class="toc-number">1.2.</span> <span class="toc-text">Add函数：</span></a></li></ol></li></ol>
+		</div>
+		
+		<p>链表作为一种数据结构，对于空间的利用率非常之高。但是对于链表没有学好的同学来说，链表难上天了。有没有一种解决方案能实现链表却又不那么难呢？</p>
+<p>当然有：那就是：</p>
+<h1 id="数组模拟链表"><a href="#数组模拟链表" class="headerlink" title="数组模拟链表"></a>数组模拟链表</h1><p>顾名思义，通过一些特殊的方法，可以让数组具有链表的作用。</p>
+<p>我们先放代码，然后解释原理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">int head[maxn],e=0; </span><br><span class="line">struct node&#123;</span><br><span class="line">	int next;</span><br><span class="line">	int to;</span><br><span class="line">	int w;</span><br><span class="line">&#125;edge[maxn];</span><br><span class="line">void add(int u,int v,int d)&#123;</span><br><span class="line">	edge[++e].next=head[u];</span><br><span class="line">	edge[e].to=v;</span><br><span class="line">	edge[e].w=d;</span><br><span class="line">	head[u]=e;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Node："><a href="#Node：" class="headerlink" title="Node："></a>Node：</h2><p>其实我们一步步的看代码就能发现其中的端倪，究竟是怎么实现这么神奇的操作的。<br>最基本的元素显然是node，具有三个属性next，to和w。<br><strong>为什么没有from</strong>？是因为链表都是单向的，没有回溯这一环。<del>别和我说什么双向链表</del></p>
+<h2 id="Add函数："><a href="#Add函数：" class="headerlink" title="Add函数："></a>Add函数：</h2><p> add函数有三个参数：u，v，d。u、v代表两个点，d代表权值。<br> 函数的第一行涉及到了一个量：head[u]。于是我们寻找head[u]在哪里。<br> 我们在最后一行找到了，<strong>head[u]被上一个函数赋值为e</strong>。</p>
+<p> e是什么？<br> 大致看一眼就知道e代表边的总数，同时还是<strong>每条边的序号</strong>。<br> 因此head[u]代表上一个以u为起点的边的序号。<br> 在程序的一开始e便会++,所以e这个全局变量最终就是所有边的数量。</p>
+<p> 再一次回到函数的开始， next属性赋值为head[u]。<br> 那个next就是指的上一个以u为起点的边的序号。</p>
+<p> 到这里就看的很清楚了吧。我们也就知道届时该如何遍历这个链表。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for(int i=head[p];i!=0;i=edge[i].next)&#123;</span><br><span class="line">	/*...*/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  这个循环的意义也就明白了，为什么是i！=0为判断条件，因为都是指向上一个以本节点为起点的边，那么第一条边之前没有边存在，那么就是0。</p>
+<hr>
+<p>就是这样，数组模拟链表的知识讲完了。<br> 祝各位OIer武运昌隆！！！</p>
+<p><img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/gfHYaNBYZ5fuk5qdR5D4Wniy2t*K3UN368bij4JY.Uc!/r/dPMAAAAAAAAA" alt="这里写图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/algorithm/">algorithm</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/03/31/array-to-list/" data-title="数组模拟链表 | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/04/11/qt/" title="QT安装以及配置教程">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  QT安装以及配置教程</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/03/31/图论--最短路算法/" title="图论--最短路算法">
+ <strong>NEXT:</strong><br> 
+ <span>图论--最短路算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#数组模拟链表"><span class="toc-number">1.</span> <span class="toc-text">数组模拟链表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Node："><span class="toc-number">1.1.</span> <span class="toc-text">Node：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Add函数："><span class="toc-number">1.2.</span> <span class="toc-text">Add函数：</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

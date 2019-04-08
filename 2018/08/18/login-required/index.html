@@ -1,0 +1,378 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>login_required身份验证用装饰器for api [flask version] | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="涂api是一件莫名其妙就会有绊脚石的工作之前涂api，每一个api都要传token（身份验证令牌），然后调用confirm方法比较等等。这次涂api总得进步不是。。于是就要把身份验证抽离。按照常规的做法，这次我要写一个decorator，叫做login_required
+对了这次博客讲解的代码
+
+准">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/08/18/login-required/" title="login_required身份验证用装饰器for api [flask version]" itemprop="url">login_required身份验证用装饰器for api [flask version]</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-08-18T09:50:32.000Z" itemprop="datePublished">2018-08-18</time>
+    Updated:<time datetime="2019-04-08T15:39:45.232Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#涂api是一件莫名其妙就会有绊脚石的工作"><span class="toc-number">1.</span> <span class="toc-text">涂api是一件莫名其妙就会有绊脚石的工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#准备工作："><span class="toc-number">1.1.</span> <span class="toc-text">准备工作：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Decorator-装饰器"><span class="toc-number">2.</span> <span class="toc-text">@  Decorator  装饰器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#from-import-as-各种包"><span class="toc-number">3.</span> <span class="toc-text">from..import..as.. 各种包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始写一个-浪费生命的-装饰器"><span class="toc-number">4.</span> <span class="toc-text">开始写一个 浪费生命的 装饰器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写完了-令人头秃的-装饰器"><span class="toc-number">5.</span> <span class="toc-text">写完了 令人头秃的 装饰器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DEBUG不用玄学小黄鸭！"><span class="toc-number">6.</span> <span class="toc-text">DEBUG不用玄学小黄鸭！</span></a></li></ol>
+		</div>
+		
+		<h2 id="涂api是一件莫名其妙就会有绊脚石的工作"><a href="#涂api是一件莫名其妙就会有绊脚石的工作" class="headerlink" title="涂api是一件莫名其妙就会有绊脚石的工作"></a>涂api是一件莫名其妙就会有绊脚石的工作</h2><p>之前涂api，每一个api都要传token（身份验证令牌），然后调用confirm方法比较等等。<br>这次涂api总得进步不是。。于是就要把身份验证抽离。<br>按照常规的做法，这次我要写一个<strong>decorator</strong>，叫做<strong>login_required</strong></p>
+<p>对了这次博客讲解的<a href="https://github.com/Muxi-X/work.muxixyz_be_auth/blob/shiina/work_muxixyz_app/decorator.py" target="_blank" rel="noopener">代码</a></p>
+<hr>
+<h3 id="准备工作："><a href="#准备工作：" class="headerlink" title="准备工作："></a>准备工作：</h3><p>嘤嘤嘤…本来想抄抄<a href="https://github.com/Humbertzhang" target="_blank" rel="noopener">可可</a>的代码的…后来发现是用的aiohttp这个Python框架，虽然不会差很多，但是我看着就不想抄了..</p>
+<p>于是 <del>自己动手丰衣足食</del> google了一下,找了半天知道这玩意儿还有专业名字：</p>
+<p><strong>login_required</strong>  <del>我真的很想叫它别的名字，好听一点的</del></p>
+<p>然后学啊学….跟着人家的经验走，最后居然花了一下午，弄完了</p>
+<p>哦对准备工作：</p>
+<ul>
+<li>电脑</li>
+<li>脑子</li>
+<li>手</li>
+</ul>
+<hr>
+<h2 id="Decorator-装饰器"><a href="#Decorator-装饰器" class="headerlink" title="@  Decorator  装饰器"></a><del>@</del>  <del>Decorator</del>  装饰器</h2><p>在Python里有乱七八糟的这个器那个器</p>
+<p>朋友写了个博客，叫做<a href="https://darren2017.github.io/2018/04/10/python-%E4%B9%8B%E5%99%A8/#more" target="_blank" rel="noopener">Python之器</a> <del>虽然我也看不懂，但是可以看看给他增加以下浏览量</del></p>
+<p>总之就是作用于函数，给函数加一层包装  <del>俄罗斯套娃笑死</del></p>
+<hr>
+<h2 id="from-import-as-各种包"><a href="#from-import-as-各种包" class="headerlink" title="from..import..as.. 各种包"></a><del>from..import..as..</del> 各种包</h2><p>这次写login_required()用到的包</p>
+<ul>
+<li>functools<ul>
+<li>wraps  ：用来写装饰器的装饰器</li>
+</ul>
+</li>
+<li>flask<ul>
+<li>abort,request ：抛出错误处理以及请求包</li>
+</ul>
+</li>
+<li>itsdangerous<ul>
+<li>TimedJSONWebSignatureSerializer ：加密解密令牌</li>
+</ul>
+</li>
+</ul>
+<p>这个只是这个文件中用到的…. <del>莫名在别人博客被jwt圈粉，以后不想用Serializer了</del></p>
+<hr>
+<h2 id="开始写一个-浪费生命的-装饰器"><a href="#开始写一个-浪费生命的-装饰器" class="headerlink" title="开始写一个 浪费生命的 装饰器"></a>开始写一个 <del>浪费生命的</del> 装饰器</h2><p>我们开始吧：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">login_required</span><span class="params">(f)</span>:</span></span><br></pre></td></tr></table></figure></p>
+<p><del>函数的</del> 第一行，你以后要用的装饰器的名字嘤嘤嘤，中间的参数<strong>f</strong>表<strong>function</strong>，是即将被我们进行 <del>俄罗斯套娃式处理</del> 修饰的函数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@wraps(f)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decorated_function</span><span class="params">(*args,**kwargs)</span>:</span></span><br></pre></td></tr></table></figure>
+<p>接下来是二三行，首先我们用到了wraps，使用了@符号代表对接下来的函数<strong>decorated_function</strong>使用装饰器进行装饰，所以下面的函数名字是decorate的被动 <del>本人英文稀烂</del><br><strong>值得注意的是，装饰器使用语法后不加冒号</strong> <del>我知道你们不会注意的，但是我写错过quq</del></p>
+<p>wraps的作用是帮助你写的函数成为装饰器</p>
+<p><strong>*args,</strong> <strong>**kwargs </strong>代表各种各样的参数</p>
+<p>接下来：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> <span class="string">'token'</span> <span class="keyword">in</span> request.headers:</span><br><span class="line">    abort(<span class="number">401</span>)</span><br><span class="line">t=request.headers[<span class="string">'token'</span>].encode(<span class="string">'utf-8'</span>)</span><br><span class="line">s=Serializer(current_app.config[<span class="string">'SECRET_KEY'</span>])</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    data=s.loads(t)</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    abort(<span class="number">401</span>)</span><br><span class="line">uid=data.get(<span class="string">'confirm'</span>)</span><br><span class="line"><span class="keyword">return</span> f(uid,*args,**kwargs)</span><br></pre></td></tr></table></figure></p>
+<p>非常抱歉我保持了缩进 <del>强迫症真的别管我</del></p>
+<p>这里就是正文了，首先我们判断我们需要的<strong>token</strong>是否存在于<strong>request.headers</strong>中，如果不存在，说明接下来就没有必要操作了，直接<strong>abort(401)</strong></p>
+<pre><code>abort(status_code)用于抛出错误，而401在状态码的意义中往往表示身份验证失败
+</code></pre><p>t是从headers[‘token’]字段中encode出来的，所以不需要再次encode <del>每次encode和decode多少次我都是人肉debug</del><br>s是我们解密用的秘钥，在这里我们要使用包来对config中的SECRET_KEY进行处理，为解密token做准备</p>
+<p>然后是一个解密工作，为<strong>s.loads()</strong>如果解密失败，也直接抛出401给前端 <del>我测试的时候瞎写状态码写成了405hhhhh</del></p>
+<p>解密完之后，<del>flask套路生成的</del> token变为了一个json数据段，我们取出名为<strong>confirm</strong>的数据，就是token携带的userID</p>
+<p>最后值得注意的是，我们接受了一个函数作为参数，所以我们也要返回一个函数。这里函数别的都没有变，唯独多出个参数，目的是从装饰器的 “预操作”中取出我们<strong>真正需要</strong>的值。而预处理的内容，都写进了被wraps装饰的这个函数里。</p>
+<p>最后：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> decorated_function</span><br></pre></td></tr></table></figure></p>
+<p>我们在login_required(f)中传进来的参数，变成了被装饰后的函数<strong>decorated_function</strong>，我们直接返回就好了。</p>
+<p>然后我们就</p>
+<hr>
+<h2 id="写完了-令人头秃的-装饰器"><a href="#写完了-令人头秃的-装饰器" class="headerlink" title="写完了 令人头秃的 装饰器"></a>写完了 <del>令人头秃的</del> 装饰器</h2><p>其实写好装饰器不是困难的全部，你要去学会怎么使用你自己写的装饰器，要改动你的api文件，还要写好单元测试去测试你的装饰器。这几件事情联系在一起就 <del>令人头秃</del> 比较麻烦。</p>
+<hr>
+<p><strong>我真的垃圾</strong></p>
+<p>最后欢迎 <del>各位观众姥爷</del> 点个<a href="https://blog.csdn.net/Shiina_Orez" target="_blank" rel="noopener">关注</a>啥的<br>还有我的<a href="https://github.com/ShiinaOrez" target="_blank" rel="noopener">github地址</a><br>当然还有 <del>假装是自己搭建的</del> <a href="shiinaorez.github.io">小小博客</a></p>
+<p><del>祝各位暴打产品经理</del><br> <del>祝各位福如东海，寿比南….</del><br> <del>祝各位考的全会蒙的全…….</del><br> <del>祝各位……</del></p>
+<h2 id="DEBUG不用玄学小黄鸭！"><a href="#DEBUG不用玄学小黄鸭！" class="headerlink" title="DEBUG不用玄学小黄鸭！"></a>DEBUG不用玄学小黄鸭！</h2><hr>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/python/">python</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/08/18/login-required/" data-title="login_required身份验证用装饰器for api [flask version] | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2099/03/30/ShiinaOrez/" title="Hello,my name is Shiina Orez">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  Hello,my name is Shiina Orez</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/07/20/github/" title="Linux终端上的github基础教程">
+ <strong>NEXT:</strong><br> 
+ <span>Linux终端上的github基础教程
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#涂api是一件莫名其妙就会有绊脚石的工作"><span class="toc-number">1.</span> <span class="toc-text">涂api是一件莫名其妙就会有绊脚石的工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#准备工作："><span class="toc-number">1.1.</span> <span class="toc-text">准备工作：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Decorator-装饰器"><span class="toc-number">2.</span> <span class="toc-text">@  Decorator  装饰器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#from-import-as-各种包"><span class="toc-number">3.</span> <span class="toc-text">from..import..as.. 各种包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始写一个-浪费生命的-装饰器"><span class="toc-number">4.</span> <span class="toc-text">开始写一个 浪费生命的 装饰器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写完了-令人头秃的-装饰器"><span class="toc-number">5.</span> <span class="toc-text">写完了 令人头秃的 装饰器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DEBUG不用玄学小黄鸭！"><span class="toc-number">6.</span> <span class="toc-text">DEBUG不用玄学小黄鸭！</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

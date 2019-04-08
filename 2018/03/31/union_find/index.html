@@ -1,0 +1,341 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>Union_find | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="并查集–并、查、集。 并查集这个名字听上去是不是怪怪的？？ 对的，应该是怪怪的才对！ 其实是三个汉字拼凑而成的术语23333
+并–Union： 并，指的是合并操作。 即将两个集合合并为一个集合。
+查–Find： 查，指的是查询。 查询一个节点的所属集合。
+集： 集，指的是集合。
+ 这样几个概念为什么">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Hexo" title="Hexo"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/31/union_find/" title="Union_find" itemprop="url">Union_find</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-03-31T08:41:30.000Z" itemprop="datePublished">2018-03-31</time>
+    Updated:<time datetime="2019-04-08T15:39:45.244Z" itemprop="dateModified">2019-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#并查集–并、查、集。"><span class="toc-number">1.</span> <span class="toc-text">并查集–并、查、集。</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#并–Union："><span class="toc-number">1.1.</span> <span class="toc-text">并–Union：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查–Find："><span class="toc-number">1.2.</span> <span class="toc-text">查–Find：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集："><span class="toc-number">1.3.</span> <span class="toc-text">集：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询是否同一集合"><span class="toc-number">1.4.</span> <span class="toc-text">查询是否同一集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#合并集合"><span class="toc-number">1.5.</span> <span class="toc-text">合并集合</span></a></li></ol></li></ol>
+		</div>
+		
+		<h1 id="并查集–并、查、集。"><a href="#并查集–并、查、集。" class="headerlink" title="并查集–并、查、集。"></a>并查集–并、查、集。</h1><p> 并查集这个名字听上去是不是怪怪的？？<br> 对的，应该是怪怪的才对！<br> 其实是三个汉字拼凑而成的术语23333</p>
+<h2 id="并–Union："><a href="#并–Union：" class="headerlink" title="并–Union："></a>并–Union：</h2><p> 并，指的是合并操作。<br> 即将两个集合合并为一个集合。</p>
+<h2 id="查–Find："><a href="#查–Find：" class="headerlink" title="查–Find："></a>查–Find：</h2><p> 查，指的是查询。<br> 查询一个节点的所属集合。</p>
+<h2 id="集："><a href="#集：" class="headerlink" title="集："></a>集：</h2><p> 集，指的是集合。</p>
+<p> 这样几个概念为什么能够拼凑在一起呢？<br> 我们从并查集最经典的亲戚问题入手：</p>
+<pre><code>如果你面对一个很大的调查人群，每个人都会告诉你一个亲戚关系。
+你怎么才能知道，那几个人是一个家族？或者一共有几个家族？？？
+</code></pre><p> 我们分析一下问题，亲戚群落可以看成是一个集合。彼此是亲戚的人肯定在同一个集合。如果两个不同集合的人之间有亲戚关系，那么这两个集合应该合并为一个才对吧！</p>
+<p> 事实上，我们这么一分析，并查集就全部出来了，但是“查”这个概念是隐形的，它存在于怎么判断两个是亲戚的人存在于同一集合还是存在于不同集合。</p>
+<p> 那我们就从查讲起：</p>
+<h2 id="查询是否同一集合"><a href="#查询是否同一集合" class="headerlink" title="查询是否同一集合"></a>查询是否同一集合</h2><p> 思想十分简单：<br>     我们可以指定一个人作为家族的代表嘛！（甚至这个人可以是刚刚满月的宝宝！）<br>     我们设置一个数组father，这个数组指向一个人的所属家族的另一个人。<br>     比如我们知道a和b是属于同一个家族的，那我们就把father[a]=b;<br>     这样我们就可以把所有人串在一根线上，只要向上寻找，就能找到家族的代表人物。<br>     怎么判断代表人物是谁啊？因为代表人物的father指向它本身。<br>     所以一个while循环就可以得出一个人所在家族的代表人物，<br>     如若两个人得出的代表人物不一致，那么是不同家族。</p>
+<h2 id="合并集合"><a href="#合并集合" class="headerlink" title="合并集合"></a>合并集合</h2><pre><code>突然发现两个不同家族的人是亲戚诶。。那么这两个家族中的任意两人都是亲戚了！
+所以我们合并一下集合。
+如何操作呢？
+只要把其中一个代表人物指向另一个代表人物就好啦。。。
+</code></pre><p>##代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;cstdio&gt;</span><br><span class="line">#include&lt;algorithm&gt;</span><br><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#define maxn 100005</span><br><span class="line">using namespace std;</span><br><span class="line">int fa[maxn];</span><br><span class="line">int n,m,q;</span><br><span class="line">int find(int x)&#123;</span><br><span class="line">	int y=x;</span><br><span class="line">	if(fa[y]!=y)</span><br><span class="line">	  fa[x]=find(fa[y]);//这里要注意，这里可以减少大量复杂度</span><br><span class="line">	else return y;</span><br><span class="line">	return fa[x];  </span><br><span class="line">&#125;</span><br><span class="line">void union(int u,int v)&#123;</span><br><span class="line">	fa[find(u)]=v;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	int u,v;</span><br><span class="line">	scanf(&quot;%d %d&quot;,&amp;n,&amp;m);</span><br><span class="line">	for(int i=1;i&lt;=n;i++)</span><br><span class="line">	  fa[i]=i;</span><br><span class="line">	for(int i=1;i&lt;=m;i++)&#123;</span><br><span class="line">		scanf(&quot;%d%d&quot;,&amp;u,&amp;v);</span><br><span class="line">		if(find(v)!=find(u))</span><br><span class="line">		  union(u,v);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 这就是并查集。<br> 相比于算法，并查集更像是一种思想，应用范围十分广泛。以图论居多哦。</p>
+<hr>
+<p> 最后祝各位OIer武运昌隆，早日捧杯！</p>
+<p><img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/7t1ljDkdWvpG3ZJcz8m21VQ1UZ6Bb.wy80v.cQC4eZI!/r/dD4BAAAAAAAA" alt="这里写图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/algorithm/">algorithm</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2018/03/31/union_find/" data-title="Union_find | Hexo" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2018/03/31/heap-sort/" title="Heap-Sort">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  Heap-Sort</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/03/31/segment-tree/" title="Segment-Tree">
+ <strong>NEXT:</strong><br> 
+ <span>Segment-Tree
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#并查集–并、查、集。"><span class="toc-number">1.</span> <span class="toc-text">并查集–并、查、集。</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#并–Union："><span class="toc-number">1.1.</span> <span class="toc-text">并–Union：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查–Find："><span class="toc-number">1.2.</span> <span class="toc-text">查–Find：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集："><span class="toc-number">1.3.</span> <span class="toc-text">集：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询是否同一集合"><span class="toc-number">1.4.</span> <span class="toc-text">查询是否同一集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#合并集合"><span class="toc-number">1.5.</span> <span class="toc-text">合并集合</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>1</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
