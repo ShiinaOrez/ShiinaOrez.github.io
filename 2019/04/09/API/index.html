@@ -1,0 +1,406 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>设计API时需要注意的点 | Shiina Orez</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Shiina Orez">
+    
+    <meta name="description" content="设计API前读一读设计API应该达到的目标：易于学习，易于理解应该具有足够的注释和文档进行解释说明，让其他调用者可以很快的上手使用你完成的接口。接口的意义不应该过于复杂，使人便于理解。
+不容易引发歧义避免模棱两可，使调用者清楚自己应该使用哪个接口，避免对于接口的错误使用。
+易于扩展对于工程的迭代时，">
+    
+    
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="shiina_orez">
+    <meta name="twitter:title" content="设计API时需要注意的点 | Shiina Orez">
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Shiina Orez" title="Shiina Orez"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shiina Orez">Shiina Orez</a></h1>
+				<h2 class="blog-motto">Backend coder, coding every day.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/04/09/API/" title="设计API时需要注意的点" itemprop="url">设计API时需要注意的点</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2019-04-09T15:53:30.000Z" itemprop="datePublished">2019-04-09</time>
+    Updated:<time datetime="2019-04-09T15:53:38.163Z" itemprop="dateModified">2019-04-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#设计API前读一读"><span class="toc-number">1.</span> <span class="toc-text">设计API前读一读</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#设计API应该达到的目标："><span class="toc-number">1.1.</span> <span class="toc-text">设计API应该达到的目标：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#易于学习，易于理解"><span class="toc-number">1.1.1.</span> <span class="toc-text">易于学习，易于理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不容易引发歧义"><span class="toc-number">1.1.2.</span> <span class="toc-text">不容易引发歧义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#易于扩展"><span class="toc-number">1.1.3.</span> <span class="toc-text">易于扩展</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#满足用户需求"><span class="toc-number">1.1.4.</span> <span class="toc-text">满足用户需求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何实现一个好的API设计"><span class="toc-number">1.2.</span> <span class="toc-text">如何实现一个好的API设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一个API的功能应该是单一的"><span class="toc-number">1.2.1.</span> <span class="toc-text">一个API的功能应该是单一的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#尽量少的外部依赖"><span class="toc-number">1.2.2.</span> <span class="toc-text">尽量少的外部依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不要泄露内部实现细节"><span class="toc-number">1.2.3.</span> <span class="toc-text">不要泄露内部实现细节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#良好的命名"><span class="toc-number">1.2.4.</span> <span class="toc-text">良好的命名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#性能要好"><span class="toc-number">1.2.5.</span> <span class="toc-text">性能要好</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#接口的设计上应该注意的细节"><span class="toc-number">1.2.6.</span> <span class="toc-text">接口的设计上应该注意的细节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#API和API，模块和模块之间的关系"><span class="toc-number">1.2.7.</span> <span class="toc-text">API和API，模块和模块之间的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一个API应该包含的内容"><span class="toc-number">1.2.8.</span> <span class="toc-text">一个API应该包含的内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#调用方式"><span class="toc-number">1.2.8.1.</span> <span class="toc-text">调用方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#调用约定"><span class="toc-number">1.2.8.2.</span> <span class="toc-text">调用约定</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#依赖关系"><span class="toc-number">1.2.8.3.</span> <span class="toc-text">依赖关系</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RESTful"><span class="toc-number">1.3.</span> <span class="toc-text">RESTful</span></a></li></ol></li></ol>
+		</div>
+		
+		<h1 id="设计API前读一读"><a href="#设计API前读一读" class="headerlink" title="设计API前读一读"></a>设计API前读一读</h1><h2 id="设计API应该达到的目标："><a href="#设计API应该达到的目标：" class="headerlink" title="设计API应该达到的目标："></a>设计API应该达到的目标：</h2><h3 id="易于学习，易于理解"><a href="#易于学习，易于理解" class="headerlink" title="易于学习，易于理解"></a>易于学习，易于理解</h3><p>应该具有足够的注释和文档进行解释说明，让其他调用者可以很快的上手使用你完成的接口。接口的意义不应该过于复杂，使人便于理解。</p>
+<h3 id="不容易引发歧义"><a href="#不容易引发歧义" class="headerlink" title="不容易引发歧义"></a>不容易引发歧义</h3><p>避免模棱两可，使调用者清楚自己应该使用哪个接口，避免对于接口的错误使用。</p>
+<h3 id="易于扩展"><a href="#易于扩展" class="headerlink" title="易于扩展"></a>易于扩展</h3><p>对于工程的迭代时，应该可以最大限度的复用之前的接口而不破坏整个工程的架构。因此对于接口的设计应该是易于扩展的。</p>
+<h3 id="满足用户需求"><a href="#满足用户需求" class="headerlink" title="满足用户需求"></a>满足用户需求</h3><ul>
+<li>完备性<ul>
+<li>完备性是指接口的设计完全能够完成满足用户需求的目标</li>
+</ul>
+</li>
+<li>正交性<ul>
+<li>数学上的正交大约体现为两个向量的乘积为0，两个向量的乘积被两个向量分别影响，因此乘积为0的情况说明这两个向量无法互相影响。</li>
+<li>API设计中的正交性是在保证完备性的前提下另一个需要注意的点，即尽可能满足所有的API之间是<strong>正交的</strong>，并且使用户需求和具体实现是<strong>正交的</strong>。</li>
+<li>API和API之间是<strong>正交的</strong>可以保证接口之间的<strong>重复功能</strong>最少，这样的接口构成的模块是具有高度稳定性的。</li>
+<li>即用户需求发生变化时，接口的具体实现不需要任何改动，只需要调用者改变调用方式即可满足。即用户需求和具体实现不产生<strong>任何的互相影响</strong>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="如何实现一个好的API设计"><a href="#如何实现一个好的API设计" class="headerlink" title="如何实现一个好的API设计"></a><strong>如何实现一个好的API设计</strong></h2><h3 id="一个API的功能应该是单一的"><a href="#一个API的功能应该是单一的" class="headerlink" title="一个API的功能应该是单一的"></a><strong>一个API的功能应该是单一的</strong></h3><p>所谓单一的功能，是为了一个API可以有<strong>更好的维护</strong>。一个API功能不单一的极端情况就是所谓的<strong>上帝类</strong>，上帝类的意思就是指一个类可以完成一个工程的所有需求，即所有的业务逻辑全部都放在一个类（API）中。</p>
+<p>从现在来看，上帝类其实是一个反人类的存在，这大概很“上帝”了hhh。在软件工程刚刚出现的时候，并没有人考虑到<strong>后期维护</strong>的问题。所以大家的代码全部都写在一起，通过各种goto语句来链接所有的业务逻辑。</p>
+<p><img src="https://i.loli.net/2019/04/07/5ca9ab254defc.png" alt="第一个图"></p>
+<p>但是问题在于这样的实现将产品的具体需求和API的具体实现过于紧密的绑定在了一起：<strong>但凡产品的具体需求发生了改变，体量相当庞大的源代码就需要进行相应的维护和改变。</strong>慢慢的上帝类就变得极其臃肿，难以维护。</p>
+<p>在功能上使每一个API都是一个最小的单元，这样便于在产品的需求发生改变时，能够对最少的源代码进行维护。</p>
+<h3 id="尽量少的外部依赖"><a href="#尽量少的外部依赖" class="headerlink" title="尽量少的外部依赖"></a><strong>尽量少的外部依赖</strong></h3><p>接口调用者，可能是和你进行协作的前端工程师、安卓BoyOrGirl，也有可能是任何的开发者，甚至可能是在你之后继续进行开发工作的同事。因此在他们调用时最好可以很快的进行上手。</p>
+<p>依赖的安装，或者叫环境的配置永远是程序员所<strong>头疼和厌恶</strong>的问题，因此API的实现应该使用尽可能少的外部依赖。</p>
+<h3 id="不要泄露内部实现细节"><a href="#不要泄露内部实现细节" class="headerlink" title="不要泄露内部实现细节"></a><strong>不要泄露内部实现细节</strong></h3><p>接口存在的意义，就是为了能够使项目的各个部分以模块化的方式进行协作和开发，接口的实现隐藏了一个模块的内部实现逻辑，而这些信息对于其他的模块来说是<strong>不必要的</strong>，首先暴露内部实现对于模块本身是不安全的，其次内部实现对于其他模块可能产生干扰。</p>
+<p>因此接口的存在要整洁。不要有任何多余的冗余信息。</p>
+<h3 id="良好的命名"><a href="#良好的命名" class="headerlink" title="良好的命名"></a><strong>良好的命名</strong></h3><p>命名是任何程序员都会遇到的问题，对于程序的变量，函数名等等都需要注意，这里对于接口的名称，参数名称等等进行约束。</p>
+<ul>
+<li>拼写准确<ul>
+<li>写错字还挺丢人的</li>
+</ul>
+</li>
+<li>时态准确<ul>
+<li>正确的时态能给调用者很好的引导</li>
+</ul>
+</li>
+<li>函数最好的动宾结构</li>
+<li>属性最好是定语+名词<ul>
+<li>定语可以很好的加深调用者对于参数的理解</li>
+</ul>
+</li>
+<li>不要用生僻单词<ul>
+<li>不要在不必要的地方秀英语</li>
+</ul>
+</li>
+<li>不要自己创造缩写<ul>
+<li>这方面的创造是不必要的</li>
+</ul>
+</li>
+<li>便于调用者理解<ul>
+<li>任何关于接口的设计都应该坚持这一点</li>
+</ul>
+</li>
+</ul>
+<h3 id="性能要好"><a href="#性能要好" class="headerlink" title="性能要好"></a><strong>性能要好</strong></h3><p>事实上这一点才应该是实现接口的程序员最上心的一点。一个接口的性能是很重要的，这直接体现了一个程序员的水平。代码的<strong>行数</strong>并不重要，重要的是接口的性能。当然可以使用各种手段来让你的代码性能变高，但是同时也要注意之前提到的<strong>依赖问题</strong>。</p>
+<h3 id="接口的设计上应该注意的细节"><a href="#接口的设计上应该注意的细节" class="headerlink" title="接口的设计上应该注意的细节"></a><strong>接口的设计上应该注意的细节</strong></h3><ul>
+<li>写注释</li>
+<li>方法的出现要成对<ul>
+<li>open-close add-remove</li>
+</ul>
+</li>
+<li>一套API应该具有相同的名词规范</li>
+<li>使用的意义相同的变量名称应该相同</li>
+<li>不要给已经有了约定俗成的语义的状态码新的语义<ul>
+<li>比如 401Unauthorized</li>
+</ul>
+</li>
+<li>减少在API中的冗余信息<ul>
+<li>比如path中仅出现一个ID时并不需要特殊命名。</li>
+</ul>
+</li>
+<li>不要让一个接口实现多个功能</li>
+</ul>
+<h3 id="API和API，模块和模块之间的关系"><a href="#API和API，模块和模块之间的关系" class="headerlink" title="API和API，模块和模块之间的关系"></a><strong>API和API，模块和模块之间的关系</strong></h3><ul>
+<li>任何语言都不允许循环调用（循环继承，循环引入）。在实现模块的时候也应该遵循同样的原则：<strong>不要让API和API，模块和模块之间的依赖关系变得复杂</strong>，应该有明确的单向依赖关系。当底层接口过于多调用过于繁琐时应该在两层之间加一个胶水层（工具函数层）。</li>
+</ul>
+<h3 id="一个API应该包含的内容"><a href="#一个API应该包含的内容" class="headerlink" title="一个API应该包含的内容"></a><strong>一个API应该包含的内容</strong></h3><p>以下内容基本都以文档的形式实现。</p>
+<h4 id="调用方式"><a href="#调用方式" class="headerlink" title="调用方式"></a>调用方式</h4><pre><code>即使用者应该如何调用。使用何种方式进行调用。
+</code></pre><h4 id="调用约定"><a href="#调用约定" class="headerlink" title="调用约定"></a>调用约定</h4><pre><code>各个部分的参数应该以怎样的约定进行传入，传出的数据又以怎样的形式进行组织等等。
+</code></pre><h4 id="依赖关系"><a href="#依赖关系" class="headerlink" title="依赖关系"></a>依赖关系</h4><pre><code>调用的条件。
+</code></pre><h2 id="RESTful"><a href="#RESTful" class="headerlink" title="RESTful"></a>RESTful</h2><p><a href="https://www.zybuluo.com/ShiinaOrez/note/896368" target="_blank" rel="noopener">RESTful API</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/软件体系结构/">软件体系结构</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2019/04/09/API/" data-title="设计API时需要注意的点 | Shiina Orez" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2018/08/18/login-required/" title="login_required身份验证用装饰器for api [flask version]">
+ <strong>NEXT:</strong><br> 
+ <span>login_required身份验证用装饰器for api [flask version]
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#设计API前读一读"><span class="toc-number">1.</span> <span class="toc-text">设计API前读一读</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#设计API应该达到的目标："><span class="toc-number">1.1.</span> <span class="toc-text">设计API应该达到的目标：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#易于学习，易于理解"><span class="toc-number">1.1.1.</span> <span class="toc-text">易于学习，易于理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不容易引发歧义"><span class="toc-number">1.1.2.</span> <span class="toc-text">不容易引发歧义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#易于扩展"><span class="toc-number">1.1.3.</span> <span class="toc-text">易于扩展</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#满足用户需求"><span class="toc-number">1.1.4.</span> <span class="toc-text">满足用户需求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何实现一个好的API设计"><span class="toc-number">1.2.</span> <span class="toc-text">如何实现一个好的API设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一个API的功能应该是单一的"><span class="toc-number">1.2.1.</span> <span class="toc-text">一个API的功能应该是单一的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#尽量少的外部依赖"><span class="toc-number">1.2.2.</span> <span class="toc-text">尽量少的外部依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不要泄露内部实现细节"><span class="toc-number">1.2.3.</span> <span class="toc-text">不要泄露内部实现细节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#良好的命名"><span class="toc-number">1.2.4.</span> <span class="toc-text">良好的命名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#性能要好"><span class="toc-number">1.2.5.</span> <span class="toc-text">性能要好</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#接口的设计上应该注意的细节"><span class="toc-number">1.2.6.</span> <span class="toc-text">接口的设计上应该注意的细节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#API和API，模块和模块之间的关系"><span class="toc-number">1.2.7.</span> <span class="toc-text">API和API，模块和模块之间的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一个API应该包含的内容"><span class="toc-number">1.2.8.</span> <span class="toc-text">一个API应该包含的内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#调用方式"><span class="toc-number">1.2.8.1.</span> <span class="toc-text">调用方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#调用约定"><span class="toc-number">1.2.8.2.</span> <span class="toc-text">调用约定</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#依赖关系"><span class="toc-number">1.2.8.3.</span> <span class="toc-text">依赖关系</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RESTful"><span class="toc-number">1.3.</span> <span class="toc-text">RESTful</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/ShiinaOrez/" title="ShiinaOrez">ShiinaOrez<sup>0</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+			<li><a href="/tags/软件体系结构/" title="软件体系结构">软件体系结构<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 做一个真正的菜鸡 --ShiinaOrez <br>
+			日积代码千行，则无往而不利也@学业进行中</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		<a href="https://twitter.com/shiina_orez" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/ShiinaOrez" target="_blank" title="github"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="Shiina Orez">Shiina Orez</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
