@@ -4,19 +4,20 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
-    <title>什么是RESTful？ | Shiina Orez</title>
+    <title>《Call Werkzeug系列之：开始》 | Shiina Orez</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Shiina Orez">
     
-    <meta name="description" content="RESTful架构什么是RESTRESTful这个词来源于2000年Roy Fielding的博士论文.(资源)表现层状态转化(Representational State Transfer, REST)是REST的真正意思，这里的资源并未在这个缩写中体现出来，但是资源却是隐含的最核心的一个概念。
-">
+    <meta name="description" content="前言：Werkzeugwerkzeug是使用Python语言编写的一个web后端工具包，提供了相当多的功能，并且是基于PEP 333:WSGI标准的，因此易于扩展。现如今许多的服务器端框架都是使用werkzeug的，比如flask。
+
+标准：WSGIWSGI是web server gateway i">
     
     
     
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="shiina_orez">
-    <meta name="twitter:title" content="什么是RESTful？ | Shiina Orez">
+    <meta name="twitter:title" content="《Call Werkzeug系列之：开始》 | Shiina Orez">
       
     
     
@@ -75,15 +76,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/04/10/RESTful/" title="什么是RESTful？" itemprop="url">什么是RESTful？</a>
+      <a href="/2019/04/10/CallWerkzeug_start/" title="《Call Werkzeug系列之：开始》" itemprop="url">《Call Werkzeug系列之：开始》</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
     </p>
   <p class="article-time">
-    <time datetime="2019-04-10T07:18:30.000Z" itemprop="datePublished">2019-04-10</time>
-    Updated:<time datetime="2019-04-10T07:19:17.467Z" itemprop="dateModified">2019-04-10</time>
+    <time datetime="2019-04-10T13:36:30.000Z" itemprop="datePublished">2019-04-10</time>
+    Updated:<time datetime="2019-04-10T13:36:12.522Z" itemprop="dateModified">2019-04-10</time>
     
   </p>
 </header>
@@ -92,84 +93,57 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RESTful架构"><span class="toc-number">1.</span> <span class="toc-text">RESTful架构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是REST"><span class="toc-number">1.1.</span> <span class="toc-text">什么是REST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#资源就是一切-–-RESTful-API"><span class="toc-number">1.2.</span> <span class="toc-text">资源就是一切 – RESTful API</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言：Werkzeug"><span class="toc-number">1.</span> <span class="toc-text">前言：Werkzeug</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#标准：WSGI"><span class="toc-number">2.</span> <span class="toc-text">标准：WSGI</span></a></li></ol>
 		</div>
 		
-		<h1 id="RESTful架构"><a href="#RESTful架构" class="headerlink" title="RESTful架构"></a>RESTful架构</h1><h2 id="什么是REST"><a href="#什么是REST" class="headerlink" title="什么是REST"></a>什么是REST</h2><p>RESTful这个词来源于2000年Roy Fielding的<a href="http://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm" target="_blank" rel="noopener">博士论文</a>.<br>(资源)<strong>表现层状态转化</strong>(Representational State Transfer, REST)是REST的真正意思，这里的<strong>资源</strong>并未在这个缩写中体现出来，但是资源却是隐含的最核心的一个概念。</p>
+		<hr>
+<h2 id="前言：Werkzeug"><a href="#前言：Werkzeug" class="headerlink" title="前言：Werkzeug"></a>前言：Werkzeug</h2><p><a href="https://github.com/pallets/werkzeug" target="_blank" rel="noopener">werkzeug</a>是使用Python语言编写的一个web后端工具包，提供了相当多的功能，并且是基于<a href="https://www.python.org/dev/peps/pep-0333/" target="_blank" rel="noopener">PEP 333:WSGI</a>标准的，因此易于扩展。现如今许多的服务器端框架都是使用werkzeug的，比如<a href="https://github.com/pallets/flask" target="_blank" rel="noopener">flask</a>。</p>
+<hr>
+<h2 id="标准：WSGI"><a href="#标准：WSGI" class="headerlink" title="标准：WSGI"></a>标准：WSGI</h2><p>WSGI是<strong>web server gateway interface</strong>的意思，即web服务器网关接口。是在PEP 333中提出用于规范服务端接口协议的。</p>
+<pre><code>PEP（Python增强建议书）： 是Python Enhancement Proposals的缩写。一个PEP是一份为Python社区提供各种增强功能的技术规格，也是提交新特性，以便让社区指出问题，精确化技术文档的提案。
+</code></pre><p><strong>WSGI指出以下几点：</strong></p>
 <ul>
-<li><p>资源</p>
+<li>WSGI接口分为两端：<ul>
+<li>服务器/网关端</li>
+<li>应用程序/Web框架端</li>
+</ul>
+</li>
+<li>应用程序端给服务器端提供一个可调用者（<strong>Callable</strong>），而服务器端如何使用它则取决于其本身。</li>
+<li><p>应用程序/Web框架端：</p>
 <ul>
-<li>资源指的是互联网上的一切信息的实体。互联网上的一切信息都可以看作是一个资源。这个资源是一个具体信息，是数据，我们可以用统一资源定位符（URI）来指向我们想要的资源。但是它的表现形式却是不确定的：同样的信息可以有不同的表现形式，这就是一个资源的<strong>表现层</strong>。</li>
-</ul>
-</li>
-<li><p>表现层</p>
-<ul>
-<li>尽管我们可以用URI来描述一个资源，但是同样的资源同样可以有不同的表现形式，URI指定了一个资源的位置，而如何解析表示一个数据的形式其实是多样的。</li>
-</ul>
-</li>
-<li><p>状态转化</p>
-<ul>
-<li>任何时间下，一个资源都有一个<strong>状态</strong>，而客户端对于资源的访问总是会引起状态的变化，否则的话互联网上的资源就是永久不变的了。而这种对于资源状态的转化是基于表面层的。也就是，资源先以一种表现层展示出来，然后才进行状态的转化，也就是表现层状态转化。</li>
-<li>客户端用于操作资源的方式，也就是http协议，拥有许多的请求方式：GET, POST, PUT, DELETE等等，也就是这些操作<strong>真正的实现</strong>了对于资源的表现层状态转化。</li>
-</ul>
-</li>
-</ul>
-<h2 id="资源就是一切-–-RESTful-API"><a href="#资源就是一切-–-RESTful-API" class="headerlink" title="资源就是一切 – RESTful API"></a>资源就是一切 – RESTful API</h2><p>RESTful的精神就是一切都是面向资源的，互联网上的一切操作都是对于资源的CURD，因此首先就是对于资源的描述，也就是URI如何命名：</p>
-<ul>
-<li>一个完整的URI由以下部分组成<ul>
-<li>协议<ul>
-<li>一般是http或https</li>
-</ul>
-</li>
-<li>主域名<ul>
-<li>如api.muxixyz.com</li>
-</ul>
-</li>
-<li>版本<ul>
-<li>/v1.0</li>
-</ul>
-</li>
-<li>路径<ul>
-<li>具体的路径，指向网络上的资源，既可以指向单个的资源，也可以指向资源的集合。指向单个资源时往往加入ID来确定具体的资源。</li>
-<li>路径中对于资源的描述都使用名词，因此不应该出现动词</li>
-<li>表示集合的时候名词应该使用复数</li>
-<li>如/comments, /comments/6</li>
+<li>应用程序对象：一个接受两个参数的<strong>Callable Object</strong><ul>
+<li>参数（environ，start_response）：<ul>
+<li>environ：字典对象。字面意思是请求环境的意思，包含了一个请求应该包含的所有信息，被封装为符合标准的WSGI Environment对象。</li>
+<li>start_response：一个<strong>Callable</strong>，返回值是一个<strong>Callable</strong>或者一个能包含零个或多个字符串的可迭代对象（<strong>Iterable</strong>）。<ul>
+<li>参数（status，response_headers，*exc_info）：<ul>
+<li>status：一个由状态码和描述拼接成的字符串。形如：<figure class="highlight plain"><figcaption><span>OK"```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">					+ response_headers：响应头。是一个列表元组。</span><br><span class="line">					+ exc_info：可选参数，用于描述错误信息。</span><br><span class="line">+ 服务器/网关端：每当HTTP客户端向应用程序发来一个请求，都会调用应用程序返回的**Callable**。</span><br><span class="line"></span><br><span class="line">经过以上的描述，相信能对WSGI有一个基本的认识了，其实WSGI只是一套规范而已。但是这个规范其实远远不止这些，包括environ在内的几乎所有内容都有严格的定义。因此在后面的解释中**经常以WSGI为前缀来表示“符合WSGI标准的”**的意思。</span><br><span class="line"></span><br><span class="line">	在PEP 333中详尽地描述了WSGI，有兴趣可以阅读@miaomiaomiao翻译后的PEP 333文档。</span><br><span class="line"></span><br><span class="line">-----</span><br><span class="line">## 源码：文件结构</span><br><span class="line"></span><br><span class="line">作为一个工具包，werkzeug有着很严谨的文件结构。</span><br><span class="line"></span><br><span class="line">+ ```__init__.py</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-<p>描述完资源之后，一个API还应该包括以下信息：</p>
-<ul>
-<li>HTTP动词，也就是请求方式<ul>
-<li>[GET] <a href="https://api.muxixyz.com/users/16/issues" target="_blank" rel="noopener">https://api.muxixyz.com/users/16/issues</a></li>
-<li>[DELETE] <a href="https://api.muxixyz.com/comments/17" target="_blank" rel="noopener">https://api.muxixyz.com/comments/17</a></li>
-</ul>
 </li>
-<li>QueryString – 过滤信息<ul>
-<li>其实大家都知道。。就是query string啦</li>
-<li>比如：/?page=1</li>
-</ul>
-</li>
-<li>HTTP状态码，用于表示操作的结果<ul>
-<li>有一部分的状态码是已经规定好的，也有很多没有规定好的可以方便开发者自己定义</li>
-<li>200 [OK]</li>
-<li>401 [Unauthorized]</li>
-<li>500 [Internal Server Error]</li>
-</ul>
-</li>
-<li>错误处理<ul>
-<li>如果出现了错误应当返回错误信息，服务器也应当有相应的日志记录。</li>
 </ul>
 </li>
 </ul>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+ ```_internal.py```：**提供了werkzeug中使用的一些常量和基类。**</span><br><span class="line">+ ```_reload.py```：重新加载模块</span><br><span class="line">+ ```datastructures.py```：**数据结构模块，用来存放整合数据的类。**</span><br><span class="line">+ ```exceptions.py```：**错误处理模块。用来存放各种错误类。**</span><br><span class="line">+ ```filesystem.py```：文件系统模块。</span><br><span class="line">+ ```formparser.py```：**表单解析模块。提供用于解析表单数据的工具函数。**</span><br><span class="line">+ ```http.py```：**用于处理HTTP中的数据的工具们。在wrapper.py中使用的比较多，但是这些工具函数往往单独使用作用更加显著，尤其是在没有请求和响应对象的前提下。**</span><br><span class="line">+ ```local.py```：本地上下文对象。</span><br><span class="line">+ ```posixemulation.py```：为应用程序提供可移植作业系统接口（Portable Operating System Interface，POSIX）。</span><br><span class="line">+ ```routing.py```：**路由匹配处理模块。**</span><br><span class="line">+ ```security.py```：安全模块。</span><br><span class="line">+ ```serving.py```：服务运行模块。</span><br><span class="line">+ ```test.py&amp;testapp.py</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>url.py</code>：<strong>处理解析URL的工具们。</strong></p>
+</li>
+<li><code>useragents.py</code>：用于处理用户代理的工具们。</li>
+<li><code>utils.py</code>：<strong>用于实现封装好的请求类和响应类的模块。对于中间件开发十分重要。</strong></li>
+<li><code>wrappers.py</code>：<strong>封装好的各种类。包括著名的请求基类和响应基类和各种混入类。</strong></li>
+<li><code>wsgi.py</code>：WSGI相关模块。</li>
+</ul>
+<p>加粗的是我认为比较重要且核心的模块。会在以后依次深入解读。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/软件体系结构/">软件体系结构</a>
+  <span></span> <a href="/tags/CallWerkzeug/">CallWerkzeug</a>
   </div>
 
 
@@ -177,7 +151,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://shiinaorez.github.com/2019/04/10/RESTful/" data-title="什么是RESTful？ | Shiina Orez" data-tsina class="share clearfix">
+  <div data-url="http://shiinaorez.github.com/2019/04/10/CallWerkzeug_start/" data-title="《Call Werkzeug系列之：开始》 | Shiina Orez" data-tsina class="share clearfix">
   </div>
 
 </div>
@@ -186,19 +160,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev">
- <a href="/2019/04/10/CallWerkzeug_wsgi_environment/" title="《Call Werkzeug系列之：WSGI Environment》">
-  <strong>PREVIOUS:</strong><br>
-  <span>
-  《Call Werkzeug系列之：WSGI Environment》</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2019/04/09/API/" title="设计API时需要注意的点">
+<a href="/2019/04/10/CallWerkzeug_wsgi_environment/" title="《Call Werkzeug系列之：WSGI Environment》">
  <strong>NEXT:</strong><br> 
- <span>设计API时需要注意的点
+ <span>《Call Werkzeug系列之：WSGI Environment》
 </span>
 </a>
 </div>
@@ -211,7 +177,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RESTful架构"><span class="toc-number">1.</span> <span class="toc-text">RESTful架构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是REST"><span class="toc-number">1.1.</span> <span class="toc-text">什么是REST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#资源就是一切-–-RESTful-API"><span class="toc-number">1.2.</span> <span class="toc-text">资源就是一切 – RESTful API</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言：Werkzeug"><span class="toc-number">1.</span> <span class="toc-text">前言：Werkzeug</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#标准：WSGI"><span class="toc-number">2.</span> <span class="toc-text">标准：WSGI</span></a></li></ol>
   </div>
 
 <div id="asidepart">
