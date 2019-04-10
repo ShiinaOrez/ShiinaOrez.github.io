@@ -4,22 +4,19 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
-    <title>数组模拟链表 | Shiina Orez</title>
+    <title>什么是RESTful？ | Shiina Orez</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Shiina Orez">
     
-    <meta name="description" content="链表作为一种数据结构，对于空间的利用率非常之高。但是对于链表没有学好的同学来说，链表难上天了。有没有一种解决方案能实现链表却又不那么难呢？
-当然有：那就是：
-数组模拟链表顾名思义，通过一些特殊的方法，可以让数组具有链表的作用。
-我们先放代码，然后解释原理。
-12345678910111213int ">
+    <meta name="description" content="RESTful架构什么是RESTRESTful这个词来源于2000年Roy Fielding的博士论文.(资源)表现层状态转化(Representational State Transfer, REST)是REST的真正意思，这里的资源并未在这个缩写中体现出来，但是资源却是隐含的最核心的一个概念。
+">
     
     
     
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="shiina_orez">
-    <meta name="twitter:title" content="数组模拟链表 | Shiina Orez">
+    <meta name="twitter:title" content="什么是RESTful？ | Shiina Orez">
       
     
     
@@ -78,15 +75,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2018/03/31/array-to-list/" title="数组模拟链表" itemprop="url">数组模拟链表</a>
+      <a href="/2019/04/10/RESTful/" title="什么是RESTful？" itemprop="url">什么是RESTful？</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
     </p>
   <p class="article-time">
-    <time datetime="2018-03-31T13:29:40.000Z" itemprop="datePublished">2018-03-31</time>
-    Updated:<time datetime="2019-04-08T15:39:45.208Z" itemprop="dateModified">2019-04-08</time>
+    <time datetime="2019-04-10T07:18:30.000Z" itemprop="datePublished">2019-04-10</time>
+    Updated:<time datetime="2019-04-10T07:19:17.467Z" itemprop="dateModified">2019-04-10</time>
     
   </p>
 </header>
@@ -95,31 +92,84 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#数组模拟链表"><span class="toc-number">1.</span> <span class="toc-text">数组模拟链表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Node："><span class="toc-number">1.1.</span> <span class="toc-text">Node：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Add函数："><span class="toc-number">1.2.</span> <span class="toc-text">Add函数：</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RESTful架构"><span class="toc-number">1.</span> <span class="toc-text">RESTful架构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是REST"><span class="toc-number">1.1.</span> <span class="toc-text">什么是REST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#资源就是一切-–-RESTful-API"><span class="toc-number">1.2.</span> <span class="toc-text">资源就是一切 – RESTful API</span></a></li></ol></li></ol>
 		</div>
 		
-		<p>链表作为一种数据结构，对于空间的利用率非常之高。但是对于链表没有学好的同学来说，链表难上天了。有没有一种解决方案能实现链表却又不那么难呢？</p>
-<p>当然有：那就是：</p>
-<h1 id="数组模拟链表"><a href="#数组模拟链表" class="headerlink" title="数组模拟链表"></a>数组模拟链表</h1><p>顾名思义，通过一些特殊的方法，可以让数组具有链表的作用。</p>
-<p>我们先放代码，然后解释原理。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">int head[maxn],e=0; </span><br><span class="line">struct node&#123;</span><br><span class="line">	int next;</span><br><span class="line">	int to;</span><br><span class="line">	int w;</span><br><span class="line">&#125;edge[maxn];</span><br><span class="line">void add(int u,int v,int d)&#123;</span><br><span class="line">	edge[++e].next=head[u];</span><br><span class="line">	edge[e].to=v;</span><br><span class="line">	edge[e].w=d;</span><br><span class="line">	head[u]=e;</span><br><span class="line">	return ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Node："><a href="#Node：" class="headerlink" title="Node："></a>Node：</h2><p>其实我们一步步的看代码就能发现其中的端倪，究竟是怎么实现这么神奇的操作的。<br>最基本的元素显然是node，具有三个属性next，to和w。<br><strong>为什么没有from</strong>？是因为链表都是单向的，没有回溯这一环。<del>别和我说什么双向链表</del></p>
-<h2 id="Add函数："><a href="#Add函数：" class="headerlink" title="Add函数："></a>Add函数：</h2><p> add函数有三个参数：u，v，d。u、v代表两个点，d代表权值。<br> 函数的第一行涉及到了一个量：head[u]。于是我们寻找head[u]在哪里。<br> 我们在最后一行找到了，<strong>head[u]被上一个函数赋值为e</strong>。</p>
-<p> e是什么？<br> 大致看一眼就知道e代表边的总数，同时还是<strong>每条边的序号</strong>。<br> 因此head[u]代表上一个以u为起点的边的序号。<br> 在程序的一开始e便会++,所以e这个全局变量最终就是所有边的数量。</p>
-<p> 再一次回到函数的开始， next属性赋值为head[u]。<br> 那个next就是指的上一个以u为起点的边的序号。</p>
-<p> 到这里就看的很清楚了吧。我们也就知道届时该如何遍历这个链表。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for(int i=head[p];i!=0;i=edge[i].next)&#123;</span><br><span class="line">	/*...*/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>  这个循环的意义也就明白了，为什么是i！=0为判断条件，因为都是指向上一个以本节点为起点的边，那么第一条边之前没有边存在，那么就是0。</p>
-<hr>
-<p>就是这样，数组模拟链表的知识讲完了。<br> 祝各位OIer武运昌隆！！！</p>
-<p><img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/gfHYaNBYZ5fuk5qdR5D4Wniy2t*K3UN368bij4JY.Uc!/r/dPMAAAAAAAAA" alt="这里写图片描述"></p>
+		<h1 id="RESTful架构"><a href="#RESTful架构" class="headerlink" title="RESTful架构"></a>RESTful架构</h1><h2 id="什么是REST"><a href="#什么是REST" class="headerlink" title="什么是REST"></a>什么是REST</h2><p>RESTful这个词来源于2000年Roy Fielding的<a href="http://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm" target="_blank" rel="noopener">博士论文</a>.<br>(资源)<strong>表现层状态转化</strong>(Representational State Transfer, REST)是REST的真正意思，这里的<strong>资源</strong>并未在这个缩写中体现出来，但是资源却是隐含的最核心的一个概念。</p>
+<ul>
+<li><p>资源</p>
+<ul>
+<li>资源指的是互联网上的一切信息的实体。互联网上的一切信息都可以看作是一个资源。这个资源是一个具体信息，是数据，我们可以用统一资源定位符（URI）来指向我们想要的资源。但是它的表现形式却是不确定的：同样的信息可以有不同的表现形式，这就是一个资源的<strong>表现层</strong>。</li>
+</ul>
+</li>
+<li><p>表现层</p>
+<ul>
+<li>尽管我们可以用URI来描述一个资源，但是同样的资源同样可以有不同的表现形式，URI指定了一个资源的位置，而如何解析表示一个数据的形式其实是多样的。</li>
+</ul>
+</li>
+<li><p>状态转化</p>
+<ul>
+<li>任何时间下，一个资源都有一个<strong>状态</strong>，而客户端对于资源的访问总是会引起状态的变化，否则的话互联网上的资源就是永久不变的了。而这种对于资源状态的转化是基于表面层的。也就是，资源先以一种表现层展示出来，然后才进行状态的转化，也就是表现层状态转化。</li>
+<li>客户端用于操作资源的方式，也就是http协议，拥有许多的请求方式：GET, POST, PUT, DELETE等等，也就是这些操作<strong>真正的实现</strong>了对于资源的表现层状态转化。</li>
+</ul>
+</li>
+</ul>
+<h2 id="资源就是一切-–-RESTful-API"><a href="#资源就是一切-–-RESTful-API" class="headerlink" title="资源就是一切 – RESTful API"></a>资源就是一切 – RESTful API</h2><p>RESTful的精神就是一切都是面向资源的，互联网上的一切操作都是对于资源的CURD，因此首先就是对于资源的描述，也就是URI如何命名：</p>
+<ul>
+<li>一个完整的URI由以下部分组成<ul>
+<li>协议<ul>
+<li>一般是http或https</li>
+</ul>
+</li>
+<li>主域名<ul>
+<li>如api.muxixyz.com</li>
+</ul>
+</li>
+<li>版本<ul>
+<li>/v1.0</li>
+</ul>
+</li>
+<li>路径<ul>
+<li>具体的路径，指向网络上的资源，既可以指向单个的资源，也可以指向资源的集合。指向单个资源时往往加入ID来确定具体的资源。</li>
+<li>路径中对于资源的描述都使用名词，因此不应该出现动词</li>
+<li>表示集合的时候名词应该使用复数</li>
+<li>如/comments, /comments/6</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>描述完资源之后，一个API还应该包括以下信息：</p>
+<ul>
+<li>HTTP动词，也就是请求方式<ul>
+<li>[GET] <a href="https://api.muxixyz.com/users/16/issues" target="_blank" rel="noopener">https://api.muxixyz.com/users/16/issues</a></li>
+<li>[DELETE] <a href="https://api.muxixyz.com/comments/17" target="_blank" rel="noopener">https://api.muxixyz.com/comments/17</a></li>
+</ul>
+</li>
+<li>QueryString – 过滤信息<ul>
+<li>其实大家都知道。。就是query string啦</li>
+<li>比如：/?page=1</li>
+</ul>
+</li>
+<li>HTTP状态码，用于表示操作的结果<ul>
+<li>有一部分的状态码是已经规定好的，也有很多没有规定好的可以方便开发者自己定义</li>
+<li>200 [OK]</li>
+<li>401 [Unauthorized]</li>
+<li>500 [Internal Server Error]</li>
+</ul>
+</li>
+<li>错误处理<ul>
+<li>如果出现了错误应当返回错误信息，服务器也应当有相应的日志记录。</li>
+</ul>
+</li>
+</ul>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/algorithm/">algorithm</a>
+  <span></span> <a href="/tags/软件体系结构/">软件体系结构</a>
   </div>
 
 
@@ -127,7 +177,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://shiinaorez.github.com/2018/03/31/array-to-list/" data-title="数组模拟链表 | Shiina Orez" data-tsina class="share clearfix">
+  <div data-url="http://shiinaorez.github.com/2019/04/10/RESTful/" data-title="什么是RESTful？ | Shiina Orez" data-tsina class="share clearfix">
   </div>
 
 </div>
@@ -136,19 +186,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev">
- <a href="/2018/04/11/qt/" title="QT安装以及配置教程">
-  <strong>PREVIOUS:</strong><br>
-  <span>
-  QT安装以及配置教程</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2018/03/31/图论--最短路算法/" title="图论--最短路算法">
+<a href="/2019/04/09/API/" title="设计API时需要注意的点">
  <strong>NEXT:</strong><br> 
- <span>图论--最短路算法
+ <span>设计API时需要注意的点
 </span>
 </a>
 </div>
@@ -161,7 +203,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#数组模拟链表"><span class="toc-number">1.</span> <span class="toc-text">数组模拟链表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Node："><span class="toc-number">1.1.</span> <span class="toc-text">Node：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Add函数："><span class="toc-number">1.2.</span> <span class="toc-text">Add函数：</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RESTful架构"><span class="toc-number">1.</span> <span class="toc-text">RESTful架构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是REST"><span class="toc-number">1.1.</span> <span class="toc-text">什么是REST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#资源就是一切-–-RESTful-API"><span class="toc-number">1.2.</span> <span class="toc-text">资源就是一切 – RESTful API</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">
