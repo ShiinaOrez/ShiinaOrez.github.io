@@ -4,19 +4,19 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
   
-    <title>什么是RESTful？ | Shiina Orez</title>
+    <title>《Call Werkzeug系列之：预备知识-Cookie》 | Shiina Orez</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Shiina Orez">
     
-    <meta name="description" content="RESTful架构什么是RESTRESTful这个词来源于2000年Roy Fielding的博士论文.(资源)表现层状态转化(Representational State Transfer, REST)是REST的真正意思，这里的资源并未在这个缩写中体现出来，但是资源却是隐含的最核心的一个概念。
-">
+    <meta name="description" content="源码中对应的场景：在 werkzeug.wrappers.BaseRequest.delete_cookie()和werkzeug.wrappers.BaseRequest.set_cookie()
+方法的参数中出现了path和domain。在看到的时候不是很理解，只是大概知道是中文路径和域的意思，">
     
     
     
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="shiina_orez">
-    <meta name="twitter:title" content="什么是RESTful？ | Shiina Orez">
+    <meta name="twitter:title" content="《Call Werkzeug系列之：预备知识-Cookie》 | Shiina Orez">
       
     
     
@@ -75,15 +75,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/04/10/RESTful/" title="什么是RESTful？" itemprop="url">什么是RESTful？</a>
+      <a href="/2019/04/23/CallWerkzeug_cookie/" title="《Call Werkzeug系列之：预备知识-Cookie》" itemprop="url">《Call Werkzeug系列之：预备知识-Cookie》</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
     </p>
   <p class="article-time">
-    <time datetime="2019-04-10T07:18:30.000Z" itemprop="datePublished">2019-04-10</time>
-    Updated:<time datetime="2019-04-10T07:19:17.467Z" itemprop="dateModified">2019-04-10</time>
+    <time datetime="2019-04-23T03:05:30.000Z" itemprop="datePublished">2019-04-23</time>
+    Updated:<time datetime="2019-04-23T03:12:20.784Z" itemprop="dateModified">2019-04-23</time>
     
   </p>
 </header>
@@ -92,84 +92,26 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RESTful架构"><span class="toc-number">1.</span> <span class="toc-text">RESTful架构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是REST"><span class="toc-number">1.1.</span> <span class="toc-text">什么是REST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#资源就是一切-–-RESTful-API"><span class="toc-number">1.2.</span> <span class="toc-text">资源就是一切 – RESTful API</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#源码中对应的场景："><span class="toc-number">1.</span> <span class="toc-text">源码中对应的场景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#path："><span class="toc-number">2.</span> <span class="toc-text">path：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#访问限制："><span class="toc-number">2.1.</span> <span class="toc-text">访问限制：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#domain："><span class="toc-number">3.</span> <span class="toc-text">domain：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#跨域访问："><span class="toc-number">3.1.</span> <span class="toc-text">跨域访问：</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="RESTful架构"><a href="#RESTful架构" class="headerlink" title="RESTful架构"></a>RESTful架构</h1><h2 id="什么是REST"><a href="#什么是REST" class="headerlink" title="什么是REST"></a>什么是REST</h2><p>RESTful这个词来源于2000年Roy Fielding的<a href="http://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm" target="_blank" rel="noopener">博士论文</a>.<br>(资源)<strong>表现层状态转化</strong>(Representational State Transfer, REST)是REST的真正意思，这里的<strong>资源</strong>并未在这个缩写中体现出来，但是资源却是隐含的最核心的一个概念。</p>
-<ul>
-<li><p>资源</p>
-<ul>
-<li>资源指的是互联网上的一切信息的实体。互联网上的一切信息都可以看作是一个资源。这个资源是一个具体信息，是数据，我们可以用统一资源定位符（URI）来指向我们想要的资源。但是它的表现形式却是不确定的：同样的信息可以有不同的表现形式，这就是一个资源的<strong>表现层</strong>。</li>
-</ul>
-</li>
-<li><p>表现层</p>
-<ul>
-<li>尽管我们可以用URI来描述一个资源，但是同样的资源同样可以有不同的表现形式，URI指定了一个资源的位置，而如何解析表示一个数据的形式其实是多样的。</li>
-</ul>
-</li>
-<li><p>状态转化</p>
-<ul>
-<li>任何时间下，一个资源都有一个<strong>状态</strong>，而客户端对于资源的访问总是会引起状态的变化，否则的话互联网上的资源就是永久不变的了。而这种对于资源状态的转化是基于表面层的。也就是，资源先以一种表现层展示出来，然后才进行状态的转化，也就是表现层状态转化。</li>
-<li>客户端用于操作资源的方式，也就是http协议，拥有许多的请求方式：GET, POST, PUT, DELETE等等，也就是这些操作<strong>真正的实现</strong>了对于资源的表现层状态转化。</li>
-</ul>
-</li>
-</ul>
-<h2 id="资源就是一切-–-RESTful-API"><a href="#资源就是一切-–-RESTful-API" class="headerlink" title="资源就是一切 – RESTful API"></a>资源就是一切 – RESTful API</h2><p>RESTful的精神就是一切都是面向资源的，互联网上的一切操作都是对于资源的CURD，因此首先就是对于资源的描述，也就是URI如何命名：</p>
-<ul>
-<li>一个完整的URI由以下部分组成<ul>
-<li>协议<ul>
-<li>一般是http或https</li>
-</ul>
-</li>
-<li>主域名<ul>
-<li>如api.muxixyz.com</li>
-</ul>
-</li>
-<li>版本<ul>
-<li>/v1.0</li>
-</ul>
-</li>
-<li>路径<ul>
-<li>具体的路径，指向网络上的资源，既可以指向单个的资源，也可以指向资源的集合。指向单个资源时往往加入ID来确定具体的资源。</li>
-<li>路径中对于资源的描述都使用名词，因此不应该出现动词</li>
-<li>表示集合的时候名词应该使用复数</li>
-<li>如/comments, /comments/6</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>描述完资源之后，一个API还应该包括以下信息：</p>
-<ul>
-<li>HTTP动词，也就是请求方式<ul>
-<li>[GET] <a href="https://api.muxixyz.com/users/16/issues" target="_blank" rel="noopener">https://api.muxixyz.com/users/16/issues</a></li>
-<li>[DELETE] <a href="https://api.muxixyz.com/comments/17" target="_blank" rel="noopener">https://api.muxixyz.com/comments/17</a></li>
-</ul>
-</li>
-<li>QueryString – 过滤信息<ul>
-<li>其实大家都知道。。就是query string啦</li>
-<li>比如：/?page=1</li>
-</ul>
-</li>
-<li>HTTP状态码，用于表示操作的结果<ul>
-<li>有一部分的状态码是已经规定好的，也有很多没有规定好的可以方便开发者自己定义</li>
-<li>200 [OK]</li>
-<li>401 [Unauthorized]</li>
-<li>500 [Internal Server Error]</li>
-</ul>
-</li>
-<li>错误处理<ul>
-<li>如果出现了错误应当返回错误信息，服务器也应当有相应的日志记录。</li>
-</ul>
-</li>
-</ul>
+		<h2 id="源码中对应的场景："><a href="#源码中对应的场景：" class="headerlink" title="源码中对应的场景："></a>源码中对应的场景：</h2><p>在 <strong>werkzeug.wrappers.BaseRequest.delete_cookie()</strong>和<strong>werkzeug.wrappers.BaseRequest.set_cookie()</strong></p>
+<p>方法的参数中出现了path和domain。<br>在看到的时候不是很理解，只是大概知道是中文路径和域的意思，在查阅了相关资料之后做一个总结。</p>
+<hr>
+<h2 id="path："><a href="#path：" class="headerlink" title="path："></a>path：</h2><pre><code>path代表cookie所在的目录，默认为&apos;/&apos;，也就是根目录。
+</code></pre><h3 id="访问限制："><a href="#访问限制：" class="headerlink" title="访问限制："></a>访问限制：</h3><p>在同一个服务器上有目录如下：<br><strong>/test/</strong>、<strong>/test/cd/</strong>、<strong>/test/dd/</strong><br>则<strong>path = /test/</strong>的cookie对于全部目录下都可以访问。<br>　<strong>path = /test/cd/</strong>的cookie不能被<strong>/test/dd/</strong>下所访问。</p>
+<hr>
+<h2 id="domain："><a href="#domain：" class="headerlink" title="domain："></a>domain：</h2><pre><code>domain为cookie所在的域，默认为请求的地址。
+</code></pre><p>若访问<strong><a href="http://www.test.com/test/test.jpg" target="_blank" rel="noopener">www.test.com/test/test.jpg</a></strong>，则domain默认为<strong><a href="http://www.test.com" target="_blank" rel="noopener">www.test.com</a></strong></p>
+<h3 id="跨域访问："><a href="#跨域访问：" class="headerlink" title="跨域访问："></a>跨域访问：</h3><p>设域A：<strong>t1.test.com</strong><br>   域B：<strong>t2.test.com</strong><br>则域A域B都能访问的cookie域应该设为<strong>.test.com</strong><br>域A不能访问，域B能访问：设为<strong>t2.test.com</strong></p>
+<hr>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/软件体系结构/">软件体系结构</a>
+  <span></span> <a href="/tags/Werkzeug/">Werkzeug</a>
   </div>
 
 
@@ -177,7 +119,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://shiinaorez.github.com/2019/04/10/RESTful/" data-title="什么是RESTful？ | Shiina Orez" data-tsina class="share clearfix">
+  <div data-url="http://shiinaorez.github.com/2019/04/23/CallWerkzeug_cookie/" data-title="《Call Werkzeug系列之：预备知识-Cookie》 | Shiina Orez" data-tsina class="share clearfix">
   </div>
 
 </div>
@@ -186,19 +128,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev">
- <a href="/2019/04/10/CallWerkzeug_wsgi_environment/" title="《Call Werkzeug系列之：WSGI Environment》">
-  <strong>PREVIOUS:</strong><br>
-  <span>
-  《Call Werkzeug系列之：WSGI Environment》</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2019/04/09/API/" title="设计API时需要注意的点">
+<a href="/2019/04/23/CallWerkzeug_wrappers/" title="《Call Werkzeug系列之：导读-Wrappers》">
  <strong>NEXT:</strong><br> 
- <span>设计API时需要注意的点
+ <span>《Call Werkzeug系列之：导读-Wrappers》
 </span>
 </a>
 </div>
@@ -211,7 +145,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RESTful架构"><span class="toc-number">1.</span> <span class="toc-text">RESTful架构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是REST"><span class="toc-number">1.1.</span> <span class="toc-text">什么是REST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#资源就是一切-–-RESTful-API"><span class="toc-number">1.2.</span> <span class="toc-text">资源就是一切 – RESTful API</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#源码中对应的场景："><span class="toc-number">1.</span> <span class="toc-text">源码中对应的场景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#path："><span class="toc-number">2.</span> <span class="toc-text">path：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#访问限制："><span class="toc-number">2.1.</span> <span class="toc-text">访问限制：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#domain："><span class="toc-number">3.</span> <span class="toc-text">domain：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#跨域访问："><span class="toc-number">3.1.</span> <span class="toc-text">跨域访问：</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">

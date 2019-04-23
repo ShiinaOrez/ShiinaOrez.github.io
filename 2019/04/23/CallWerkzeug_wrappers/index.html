@@ -1,0 +1,383 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+    <title>《Call Werkzeug系列之：导读-Wrappers》 | Shiina Orez</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Shiina Orez">
+    
+    <meta name="description" content="前言：WRAPPERS，即wrappers.py。包含了请求基类（BaseRequest）、响应基类（BaseResponse）和诸多的混入类（Mixin Classes）。wrappers.py是我选择进行源码解读的第一个入口，因为在写Web应用的过程中永远是离不开请求和响应的，那么首当其冲的就是">
+    
+    
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="shiina_orez">
+    <meta name="twitter:title" content="《Call Werkzeug系列之：导读-Wrappers》 | Shiina Orez">
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Shiina Orez" title="Shiina Orez"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shiina Orez">Shiina Orez</a></h1>
+				<h2 class="blog-motto">Backend coder, coding every day.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/04/23/CallWerkzeug_wrappers/" title="《Call Werkzeug系列之：导读-Wrappers》" itemprop="url">《Call Werkzeug系列之：导读-Wrappers》</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2019-04-23T03:04:30.000Z" itemprop="datePublished">2019-04-23</time>
+    Updated:<time datetime="2019-04-23T03:09:54.792Z" itemprop="dateModified">2019-04-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言："><span class="toc-number">1.</span> <span class="toc-text">前言：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#werkzeug-wrappers-BaseResponse-call"><span class="toc-number">2.</span> <span class="toc-text">werkzeug.wrappers.BaseResponse.call()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Request和Response的应用场景："><span class="toc-number">3.</span> <span class="toc-text">Request和Response的应用场景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#werkzeug-wrappers-BaseRequest-application"><span class="toc-number">4.</span> <span class="toc-text">werkzeug.wrappers.BaseRequest.application()</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#werkzeug-exceptions-HTTPException-get-response"><span class="toc-number">4.1.</span> <span class="toc-text">werkzeug.exceptions.HTTPException.get_response()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#functools-update-wrapper"><span class="toc-number">4.2.</span> <span class="toc-text">functools.update_wrapper()</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>WRAPPERS，即<strong>wrappers.py</strong>。包含了请求基类（BaseRequest）、响应基类（BaseResponse）和诸多的混入类（Mixin Classes）。<br><strong>wrappers.py</strong>是我选择进行源码解读的第一个入口，因为在写Web应用的过程中永远是离不开<strong>请求</strong>和<strong>响应</strong>的，那么首当其冲的就是要理解这两个至关重要又联系紧密的类了。</p>
+<p>在<strong>wrappers.py</strong>中，首先映入眼帘的是开发者们留下的一段话：</p>
+<p><strong>The request and response objects wrap the WSGI environment or the return value from a WSGI application so that is another WSGI application (wraps a while application).<br>请求和响应对象分别封装了WSGI环境变量和由一个符合WSGI标准的应用返回的数据，所以其实这是另一种形式的WSGI应用。</strong></p>
+<p>分开详细的讨论一下：</p>
+<ul>
+<li>Request Object：<ul>
+<li>接受WSGI-Environment为参数进行初始化，并且提供了<strong>一系列的方法</strong>用来解析和利用<strong>environ</strong>中的信息，方便客户代码更友好的利用这些来自底层的数据。</li>
+</ul>
+</li>
+<li>Response Object：<ul>
+<li>接受数据和一个<strong>mimetype</strong>作为参数进行初始化，并且实例是一个<strong>可调用对象</strong>（Callable），类似的，和WSGI-Application一样，接受两个参数：<strong>environ</strong>和<strong>start_response</strong>。接下来便来看一下是如何调用的。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="werkzeug-wrappers-BaseResponse-call"><a href="#werkzeug-wrappers-BaseResponse-call" class="headerlink" title="werkzeug.wrappers.BaseResponse.call()"></a><strong>werkzeug.wrappers.BaseResponse.<strong>call</strong>()</strong></h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, environ, start_response)</span>:</span></span><br><span class="line">    app_iter, status, headers = self.get_wsgi_response(environ)</span><br><span class="line">    start_response(status, headers)</span><br><span class="line">    <span class="keyword">return</span> app_iter</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="Request和Response的应用场景："><a href="#Request和Response的应用场景：" class="headerlink" title="Request和Response的应用场景："></a>Request和Response的应用场景：</h2><p>接下来将通过<strong>Request</strong>和<strong>Response</strong>来写一个符合WSGI规范的小小应用，来帮助理解他们的应用场景;</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> werkzeug.wrappers <span class="keyword">import</span> Request, Response</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></span><br><span class="line">    request = Request(environ)</span><br><span class="line">    response = Response(<span class="string">"Hello, %s!"</span> % request.args.get(<span class="string">'name'</span>))</span><br><span class="line">    <span class="keyword">return</span> response(environ, start_response)</span><br></pre></td></tr></table></figure>
+<p>以上代码展示了很基础的，微小的应用，它的逻辑是非常清晰的：</p>
+<ul>
+<li>组织请求</li>
+<li>由请求构建响应</li>
+<li>返回数据</li>
+</ul>
+<p>在现如今的应用中，基本都符合这种“请求-响应”模式。<strong>在该模式中，构建请求的相似度极高，而对请求的处理逻辑是每个应用的特点和灵魂。</strong>因此werkzeug使用了装饰器句法，讲处理<strong>environ</strong>为请求的部分抽离了出来。<br>[我觉得可能这是开创了使用装饰器句法装饰view_function的先河]</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Request.application</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(request)</span>:</span></span><br><span class="line">    ...</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>现在我们就要正式的开始我们的“第一个”解析源码的过程了：</p>
+<hr>
+<h2 id="werkzeug-wrappers-BaseRequest-application"><a href="#werkzeug-wrappers-BaseRequest-application" class="headerlink" title="werkzeug.wrappers.BaseRequest.application()"></a><strong>werkzeug.wrappers.BaseRequest.application()</strong></h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@classmethod</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(cls, f)</span>:</span></span><br><span class="line">    <span class="keyword">from</span> werkzeug.exceptions <span class="keyword">import</span> HTTPException</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(*args)</span>:</span></span><br><span class="line">        request = cls(args[<span class="number">-2</span>])</span><br><span class="line">        <span class="keyword">with</span> request:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                resp = f(*args[:<span class="number">-2</span>]+(request,))</span><br><span class="line">            <span class="keyword">except</span> HTTPException <span class="keyword">as</span> e:</span><br><span class="line">                resp = e.get_response(args[<span class="number">-2</span>])</span><br><span class="line">            <span class="keyword">return</span> resp(*args[<span class="number">-2</span>:])</span><br><span class="line">    <span class="keyword">return</span> update_wrapper(application, f)</span><br></pre></td></tr></table></figure>
+<p>第一眼看到这个东西我是真的不想读，真的真的不想读。</p>
+<p>首先要解决看不懂的方法：<strong>get_response()</strong>、<strong>update_wrapper()</strong></p>
+<h3 id="werkzeug-exceptions-HTTPException-get-response"><a href="#werkzeug-exceptions-HTTPException-get-response" class="headerlink" title="werkzeug.exceptions.HTTPException.get_response()"></a><strong>werkzeug.exceptions.HTTPException.get_response()</strong></h3><p>该方法的注释是这么写的：</p>
+<p>Get a response object. If one was passed to the exception it’s returned directly.<br>那么这个方法的目的就相当明显，就是<strong>从错误类中获取响应对象</strong>。</p>
+<h3 id="functools-update-wrapper"><a href="#functools-update-wrapper" class="headerlink" title="functools.update_wrapper()"></a><strong>functools.update_wrapper()</strong></h3><p>该方法用于保持函数签名。著名的<strong>functools.wraps</strong>装饰器就是由这个方法实现的。</p>
+<p>在解决了这两个看上去陌生的方法之后，我们继续分析application：</p>
+<ul>
+<li>导入了werkzeug中所有错误类的基类：<strong>HTTPException</strong></li>
+<li>在内部定义的<strong>application()</strong>中，使用<strong>args[-2]</strong>来获取<strong>environ</strong>用于初始化<strong>BaseRequest</strong></li>
+<li>以生成的request实例为上下文管理器：<ul>
+<li>获取一个响应对象并返回，即实现原本被装饰函数的功能</li>
+<li>尝试将原参数元组最后的两个参数替换为request对象</li>
+<li>否则，则从错误类获取响应</li>
+</ul>
+</li>
+</ul>
+<p>有趣之处在于使用的<strong>with</strong>句法：显然就需要去看一下<strong><strong>enter</strong>()</strong>和<strong><strong>exit</strong>()</strong>这两个魔法方法（Magic Method）<br>但是我们找了以下注释：</p>
+<p>Closes associated resources of this request object.  This closes <strong>all file handles</strong> explicitly. <strong>You can also use request object in a with statement which will automatically close it.</strong></p>
+<p>由此我们可以得知，请求时不只是有单纯的数据流动，也有可能涉及到文件的打开什么的。这个时候使用<strong>with</strong>，最后在<strong><strong>exit</strong>()</strong>中同意关闭文件是最理想的选择。</p>
+<hr>
+<p>接下来就是要正式接触对于源码的解析了w<br>真的好让人<strong>兴♂奋</strong>啊~！</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Werkzeug/">Werkzeug</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2019/04/23/CallWerkzeug_wrappers/" data-title="《Call Werkzeug系列之：导读-Wrappers》 | Shiina Orez" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/2019/04/23/CallWerkzeug_cookie/" title="《Call Werkzeug系列之：预备知识-Cookie》">
+  <strong>PREVIOUS:</strong><br>
+  <span>
+  《Call Werkzeug系列之：预备知识-Cookie》</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/04/10/CallWerkzeug_start/" title="《Call Werkzeug系列之：开始》">
+ <strong>NEXT:</strong><br> 
+ <span>《Call Werkzeug系列之：开始》
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言："><span class="toc-number">1.</span> <span class="toc-text">前言：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#werkzeug-wrappers-BaseResponse-call"><span class="toc-number">2.</span> <span class="toc-text">werkzeug.wrappers.BaseResponse.call()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Request和Response的应用场景："><span class="toc-number">3.</span> <span class="toc-text">Request和Response的应用场景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#werkzeug-wrappers-BaseRequest-application"><span class="toc-number">4.</span> <span class="toc-text">werkzeug.wrappers.BaseRequest.application()</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#werkzeug-exceptions-HTTPException-get-response"><span class="toc-number">4.1.</span> <span class="toc-text">werkzeug.exceptions.HTTPException.get_response()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#functools-update-wrapper"><span class="toc-number">4.2.</span> <span class="toc-text">functools.update_wrapper()</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Werkzeug/" title="Werkzeug">Werkzeug<sup>4</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+			<li><a href="/tags/软件体系结构/" title="软件体系结构">软件体系结构<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 做一个真正的菜鸡 --ShiinaOrez <br>
+			日积代码千行，则无往而不利也@学业进行中</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		<a href="https://twitter.com/shiina_orez" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/ShiinaOrez" target="_blank" title="github"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="Shiina Orez">Shiina Orez</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
