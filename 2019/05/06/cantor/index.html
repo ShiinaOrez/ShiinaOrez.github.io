@@ -1,0 +1,344 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+  <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+
+  
+    <title>康托展开 Cantor Expansion | Shiina Orez</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Shiina Orez">
+    
+    <meta name="description" content="全排列一直是一个让人联想到爆炸复杂度的东西如果一件事情牵扯到了全排列，大多数人脑中一定都是这样子的：高中学习的排列组合、排列数、组合数、数不清的阶乘、大学的组合数学等等一系列让人头疼的东西。
+如果你写过一点点OI相关的题目，或者在Leetcode等网站上刷过题，那么你一定使用过各种语言写过这样的题目">
+    
+    
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="shiina_orez">
+    <meta name="twitter:title" content="康托展开 Cantor Expansion | Shiina Orez">
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Shiina Orez" title="Shiina Orez"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shiina Orez">Shiina Orez</a></h1>
+				<h2 class="blog-motto">Backend coder, coding every day.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/05/06/cantor/" title="康托展开 Cantor Expansion" itemprop="url">康托展开 Cantor Expansion</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2019-05-06T11:52:43.000Z" itemprop="datePublished">2019-05-06</time>
+    Updated:<time datetime="2019-05-06T11:54:20.591Z" itemprop="dateModified">2019-05-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#全排列一直是一个让人联想到爆炸复杂度的东西"><span class="toc-number">1.</span> <span class="toc-text">全排列一直是一个让人联想到爆炸复杂度的东西</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#康托展开的基本思想"><span class="toc-number">2.</span> <span class="toc-text">康托展开的基本思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现？"><span class="toc-number">3.</span> <span class="toc-text">代码实现？</span></a></li></ol>
+		</div>
+		
+		<h2 id="全排列一直是一个让人联想到爆炸复杂度的东西"><a href="#全排列一直是一个让人联想到爆炸复杂度的东西" class="headerlink" title="全排列一直是一个让人联想到爆炸复杂度的东西"></a>全排列一直是一个让人联想到爆炸复杂度的东西</h2><p>如果一件事情牵扯到了全排列，大多数人脑中一定都是这样子的：高中学习的排列组合、排列数、组合数、数不清的阶乘、大学的组合数学等等一系列让人头疼的东西。</p>
+<p>如果你写过一点点OI相关的题目，或者在Leetcode等网站上刷过题，那么你一定使用过各种语言写过这样的题目：生成全排列。考点大概就是回溯。</p>
+<p>n的数有n！个全排列，生成的算法也有很多种：字典序法，插入法，邻为对换法，递增进位制法等等。不论你们去简化过程，每个全排列总还是要遍历到的。</p>
+<p>不过既然全排列一定是有序的，我们一定可以通过某一个数来确定一个唯一的全排列吧！</p>
+<p>是的，这个想法是对的，这就是康托展开（Cantor expansion）。</p>
+<h2 id="康托展开的基本思想"><a href="#康托展开的基本思想" class="headerlink" title="康托展开的基本思想"></a>康托展开的基本思想</h2><p>一个全排列一定是由1～n的不重复的数字组成的。而生成的全排列一定是有序的：我们假设就是字典序吧。那么每一位其实就可以确定在这之前有多少全排列。</p>
+<p>以 3 5 7 4 1 2 9 6 8 为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">3 5 7 4 1 2 9 6 8</span><br><span class="line">↑</span><br><span class="line">3之前有 3-1=2 个以1或者2开头的全排列，共有(9-1)! * (3-1) 个</span><br><span class="line">3 5 7 4 1 2 9 6 8</span><br><span class="line">  ↑</span><br><span class="line">5之前除去3有5-1-1=3 个以1或2或4开头的长度为7的全排列，共有(9-2)! * (5-2)个</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>按照这样的情况我们就可以使用一个式子来表示3 5 7 4 1 2 9 6 8之前有多少个全排列了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2 * 8! + 3 * 7! + 4 * 6! + 2 * 5! + 0 * 4! + 0 * 3! + 2 * 2! + 0 * 1! + 0 * 0!</span><br></pre></td></tr></table></figure>
+<h2 id="代码实现？"><a href="#代码实现？" class="headerlink" title="代码实现？"></a>代码实现？</h2><p>最近在写Go嘛，所以就…<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">reverseCantor</span><span class="params">(n <span class="keyword">int</span>, k <span class="keyword">int</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * 逆康托展开，接收一个数字返回相应的全排列</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="comment">//存放阶乘</span></span><br><span class="line">	facs := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">24</span>, <span class="number">120</span>, <span class="number">720</span>, <span class="number">5040</span>, <span class="number">40320</span>, <span class="number">362880</span>&#125;</span><br><span class="line">    nums := []<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> i:=<span class="number">1</span>; i&lt;=n; i++ &#123;</span><br><span class="line">        nums = <span class="built_in">append</span>(nums, i)</span><br><span class="line">    &#125;</span><br><span class="line">    res := []<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">    k -= <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> j:=n; j&gt;=<span class="number">1</span>; j-- &#123;</span><br><span class="line">        r := k % facs[j<span class="number">-1</span>];</span><br><span class="line">        t := k / facs[j<span class="number">-1</span>];</span><br><span class="line">        k = r;</span><br><span class="line">        res = <span class="built_in">append</span>(res, nums[t])</span><br><span class="line">        nums = <span class="built_in">append</span>(nums[:t], nums[t+<span class="number">1</span>:]...)</span><br><span class="line">    &#125;</span><br><span class="line">    bytes := []<span class="keyword">byte</span>&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> _, v := <span class="keyword">range</span> res &#123;</span><br><span class="line">        bytes = <span class="built_in">append</span>(bytes, <span class="keyword">byte</span>(<span class="number">48</span> + v))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">string</span>(bytes)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://img-blog.csdnimg.cn/20190506183209389.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Algorithm/">Algorithm</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2019/05/06/cantor/" data-title="康托展开 Cantor Expansion | Shiina Orez" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2019/04/23/CallWerkzeug_cookie/" title="《Call Werkzeug系列之：预备知识-Cookie》">
+ <strong>NEXT:</strong><br> 
+ <span>《Call Werkzeug系列之：预备知识-Cookie》
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#全排列一直是一个让人联想到爆炸复杂度的东西"><span class="toc-number">1.</span> <span class="toc-text">全排列一直是一个让人联想到爆炸复杂度的东西</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#康托展开的基本思想"><span class="toc-number">2.</span> <span class="toc-text">康托展开的基本思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现？"><span class="toc-number">3.</span> <span class="toc-text">代码实现？</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Werkzeug/" title="Werkzeug">Werkzeug<sup>4</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+			<li><a href="/tags/软件体系结构/" title="软件体系结构">软件体系结构<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 做一个真正的菜鸡 --ShiinaOrez <br>
+			日积代码千行，则无往而不利也@学业进行中</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		<a href="https://twitter.com/shiina_orez" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/ShiinaOrez" target="_blank" title="github"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="Shiina Orez">Shiina Orez</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
