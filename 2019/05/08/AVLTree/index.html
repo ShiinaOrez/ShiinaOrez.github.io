@@ -1,0 +1,374 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+  <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+
+  
+    <title>自平衡二叉查找树 -- AVL树 Adelson-Velsky-Landis Tree | Shiina Orez</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Shiina Orez">
+    
+    <meta name="description" content="平衡还是不平衡，这是一个问题😳：平衡好不好呢？🤣：我说它好。😳：好在哪里呢？🤣：我只能告诉你无可奉告。
+以上的对话是大多数人的反应，对于数据结构中的树形结构为什么平衡会比较好不求甚解。只是大概会比不平衡好吧，毕竟万物都是追求和谐的。
+树形结构的平衡好不好？当然好了，这就是产生树的基本思想啊，">
+    
+    
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="shiina_orez">
+    <meta name="twitter:title" content="自平衡二叉查找树 -- AVL树 Adelson-Velsky-Landis Tree | Shiina Orez">
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Shiina Orez" title="Shiina Orez"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shiina Orez">Shiina Orez</a></h1>
+				<h2 class="blog-motto">Backend coder, coding every day.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/05/08/AVLTree/" title="自平衡二叉查找树 -- AVL树 Adelson-Velsky-Landis Tree" itemprop="url">自平衡二叉查找树 -- AVL树 Adelson-Velsky-Landis Tree</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2019-05-08T10:24:59.000Z" itemprop="datePublished">2019-05-08</time>
+    Updated:<time datetime="2019-05-08T10:25:58.800Z" itemprop="dateModified">2019-05-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#平衡还是不平衡，这是一个问题"><span class="toc-number">1.</span> <span class="toc-text">平衡还是不平衡，这是一个问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是二叉查找树？"><span class="toc-number">2.</span> <span class="toc-text">什么是二叉查找树？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么说平衡时相等？"><span class="toc-number">2.1.</span> <span class="toc-text">为什么说平衡时相等？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何达到自平衡的效果？"><span class="toc-number">3.</span> <span class="toc-text">如何达到自平衡的效果？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是旋转？"><span class="toc-number">3.1.</span> <span class="toc-text">什么是旋转？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何实现？"><span class="toc-number">4.</span> <span class="toc-text">如何实现？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#节点-Node"><span class="toc-number">4.1.</span> <span class="toc-text">节点 - Node</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#递归计算节点的高度"><span class="toc-number">4.2.</span> <span class="toc-text">递归计算节点的高度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算平衡因子"><span class="toc-number">4.3.</span> <span class="toc-text">计算平衡因子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#右旋"><span class="toc-number">4.4.</span> <span class="toc-text">右旋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#左旋"><span class="toc-number">4.5.</span> <span class="toc-text">左旋</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#搞懂了吗？-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️"><span class="toc-number">5.</span> <span class="toc-text">搞懂了吗？ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️</span></a></li></ol>
+		</div>
+		
+		<h2 id="平衡还是不平衡，这是一个问题"><a href="#平衡还是不平衡，这是一个问题" class="headerlink" title="平衡还是不平衡，这是一个问题"></a>平衡还是不平衡，这是一个问题</h2><p>😳：平衡好不好呢？<br>🤣：我说它好。<br>😳：好在哪里呢？<br>🤣：我只能告诉你无可奉告。</p>
+<p>以上的对话是大多数人的反应，对于数据结构中的树形结构为什么平衡会比较好不求甚解。只是大概会比不平衡好吧，毕竟万物都是追求和谐的。</p>
+<p>树形结构的平衡好不好？当然好了，这就是产生树的基本思想啊，因为极端的不平衡就是线性表啊。</p>
+<p>所谓树形结构的平衡性，就是指尽量使树中的节点的子树的深度都大致相同，最理想的情况就是类似于完全二叉树那样的形状。<br><img src="https://img-blog.csdnimg.cn/20190508150412872.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>平衡带来的好处有什么呢？<br>🤣操作时间复杂度低，诸如查询，插入，删除等等curd<br>🤣好像没了，但是数据结构不就是最在意这个吗</p>
+<hr>
+<h2 id="什么是二叉查找树？"><a href="#什么是二叉查找树？" class="headerlink" title="什么是二叉查找树？"></a>什么是二叉查找树？</h2><p>这一节大概讲的都是废话。。一般来看这个文章的应该都知道二叉查找树是什么吧。。</p>
+<p>Binary Search Tree，BST就是二叉查找树，遵循最基本的“查找树”的性质：</p>
+<ul>
+<li>对于树中的任意一个节点：<ul>
+<li>如果这个节点的左子树不为空，则左子树上的所有节点都小于该节点的值</li>
+<li>如果这个节点的右子树不为空，则右子树上的所有节点都小于该节点的值</li>
+</ul>
+</li>
+</ul>
+<p>也就是：[左子树的所有的节点] 该节点 [右子树的所有的节点]<br>是不是长的和<strong>快速排序</strong>有点像？</p>
+<p>就是因为维持了这样的性质，达到了很好的效果：</p>
+<ul>
+<li>所有的数据是有序的</li>
+<li>查找数据的时间和二分查找几乎等同（平衡时相等）</li>
+</ul>
+<h3 id="为什么说平衡时相等？"><a href="#为什么说平衡时相等？" class="headerlink" title="为什么说平衡时相等？"></a>为什么说平衡时相等？</h3><p>考虑最极端的情况嘛。。就是一个链条，这样的时间复杂度就是O(N)了</p>
+<hr>
+<h2 id="如何达到自平衡的效果？"><a href="#如何达到自平衡的效果？" class="headerlink" title="如何达到自平衡的效果？"></a>如何达到自平衡的效果？</h2><p>AVL树中引入了平衡因子的概念：</p>
+<pre><code>平衡因子：某个结点的左子树的高度减去右子树的高度得到的差值。
+</code></pre><p>也就是说，一个平衡的树就是所有的节点的平衡因子的绝对值都是小于等于1的。</p>
+<p>🌛 🌜：爱的魔力转圈圈～</p>
+<p><strong>旋转</strong>，通过旋转来达到自平衡。</p>
+<p>问题来了，现在相信大家对于旋转是个什么鬼东西很疑惑</p>
+<h3 id="什么是旋转？"><a href="#什么是旋转？" class="headerlink" title="什么是旋转？"></a>什么是旋转？</h3><p>我们假设我们有一棵平衡的树，然后我们按照二叉搜索树的原则进行插入：我们大概率会破坏这棵树的平衡性。<br>最常见的一种情况便是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">   🤣                                    🤣</span><br><span class="line">  /                ---- &gt;               /  </span><br><span class="line">😜                                    😜</span><br><span class="line">                                     /</span><br><span class="line">                                   🙄</span><br></pre></td></tr></table></figure>
+<p>这简直太糟糕了，这样下去我们的可爱的BST就要变成链表了！<br>我们不能放纵我们的可爱的BST，不能让它随意生长，因此我们要：旋转。</p>
+<p>在这里我们可以看出 🤣 &gt; 😜 &gt; 🙄，而这种情况下😜作为根节点（父节点）才是最优的选择。<br>因此我们就旋转一下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">      🤣                                    😜</span><br><span class="line">     /                ---- &gt;               /  \</span><br><span class="line">   😜                                    🙄    🤣</span><br><span class="line">  /</span><br><span class="line">🙄</span><br></pre></td></tr></table></figure></p>
+<p>这种情况称之为左左情况：在本来树向左倾斜的情况下又在左子树增加元素。进行右旋。<br>相同的：右右情况进行左旋。<br>左右情况：先左旋后右旋。<br>右左情况：先右旋后左旋。</p>
+<h2 id="如何实现？"><a href="#如何实现？" class="headerlink" title="如何实现？"></a>如何实现？</h2><h3 id="节点-Node"><a href="#节点-Node" class="headerlink" title="节点 - Node"></a>节点 - Node</h3><p>一个节点应该拥有哪些属性呢？</p>
+<p>🤷‍♂️肯定要有左右子节点的指针吧！<br>🤷‍♂️要有平衡因子，嗯，这样才知道什么时候应该旋转。<br>🤷‍♂️为了方便计算平衡因子，应该缓存一下高度。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Node <span class="keyword">struct</span> &#123;</span><br><span class="line">    Data    <span class="keyword">int</span></span><br><span class="line">    Height  <span class="keyword">int</span></span><br><span class="line">    Left    *Node;</span><br><span class="line">    Right   *Node;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="递归计算节点的高度"><a href="#递归计算节点的高度" class="headerlink" title="递归计算节点的高度"></a>递归计算节点的高度</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(root *Node)</span><span class="title">TreeHeight</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> max(root.Left.TreeHeight(), root.Roght.TreeHeight()) + <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="计算平衡因子"><a href="#计算平衡因子" class="headerlink" title="计算平衡因子"></a>计算平衡因子</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(root *Node)</span><span class="title">TreeGetBalanceFactor</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> root == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> root.Left.Height - root.Right.Height</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="右旋"><a href="#右旋" class="headerlink" title="右旋"></a>右旋</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(root *Node)</span><span class="title">TreeRotateRight</span><span class="params">()</span> *<span class="title">Node</span></span> &#123;</span><br><span class="line">    left := root.Left</span><br><span class="line">    </span><br><span class="line">    root.Left = Left.Right <span class="comment">// 将将要被抛弃的节点连接为旋转后的 root 的左孩子</span></span><br><span class="line">    left.Right = root      <span class="comment">// 调换父子关系</span></span><br><span class="line"></span><br><span class="line">    left.Height = max(left.Left.TreeHeight(), left.Right.TreeHeight())+<span class="number">1</span></span><br><span class="line">    root.Right.Height = max(root.Right.Left.TreeHeight(), root.Right.Right.TreeHeight())+<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> left</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="左旋"><a href="#左旋" class="headerlink" title="左旋"></a>左旋</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(root *Node)</span><span class="title">TreeRotateLeft</span><span class="params">()</span> *<span class="title">Node</span></span> &#123;</span><br><span class="line">    right := root.Right</span><br><span class="line"></span><br><span class="line">    root.Right = right.Left</span><br><span class="line">    right.Left = root</span><br><span class="line"></span><br><span class="line">    root.Left.Height = max(root.Left.Left.TreeHeight(), root.Left.Right.TreeHeight())+<span class="number">1</span></span><br><span class="line">    right.Height = max(right.Left.TreeHeight(), right.Left.TreeHeight())+<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> right</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="搞懂了吗？-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️"><a href="#搞懂了吗？-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️" class="headerlink" title="搞懂了吗？ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️"></a>搞懂了吗？ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️</h2>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Algorithm-DataStructure/">Algorithm DataStructure</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2019/05/08/AVLTree/" data-title="自平衡二叉查找树 -- AVL树 Adelson-Velsky-Landis Tree | Shiina Orez" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2019/05/06/cantor/" title="康托展开 Cantor Expansion">
+ <strong>NEXT:</strong><br> 
+ <span>康托展开 Cantor Expansion
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#平衡还是不平衡，这是一个问题"><span class="toc-number">1.</span> <span class="toc-text">平衡还是不平衡，这是一个问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是二叉查找树？"><span class="toc-number">2.</span> <span class="toc-text">什么是二叉查找树？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么说平衡时相等？"><span class="toc-number">2.1.</span> <span class="toc-text">为什么说平衡时相等？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何达到自平衡的效果？"><span class="toc-number">3.</span> <span class="toc-text">如何达到自平衡的效果？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是旋转？"><span class="toc-number">3.1.</span> <span class="toc-text">什么是旋转？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何实现？"><span class="toc-number">4.</span> <span class="toc-text">如何实现？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#节点-Node"><span class="toc-number">4.1.</span> <span class="toc-text">节点 - Node</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#递归计算节点的高度"><span class="toc-number">4.2.</span> <span class="toc-text">递归计算节点的高度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算平衡因子"><span class="toc-number">4.3.</span> <span class="toc-text">计算平衡因子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#右旋"><span class="toc-number">4.4.</span> <span class="toc-text">右旋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#左旋"><span class="toc-number">4.5.</span> <span class="toc-text">左旋</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#搞懂了吗？-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️🤷🏻‍♀️-🤷🏻‍♂️"><span class="toc-number">5.</span> <span class="toc-text">搞懂了吗？ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️🤷🏻‍♀️ 🤷🏻‍♂️</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Algorithm-DataStructure/" title="Algorithm DataStructure">Algorithm DataStructure<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Werkzeug/" title="Werkzeug">Werkzeug<sup>4</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+			<li><a href="/tags/软件体系结构/" title="软件体系结构">软件体系结构<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 做一个真正的菜鸡 --ShiinaOrez <br>
+			日积代码千行，则无往而不利也@学业进行中</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		<a href="https://twitter.com/shiina_orez" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/ShiinaOrez" target="_blank" title="github"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="Shiina Orez">Shiina Orez</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
