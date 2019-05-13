@@ -1,0 +1,473 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+  <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+
+  
+    <title>《Concurrency in Go》阅读笔记 -- 第一章：并发概述 | Shiina Orez</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Shiina Orez">
+    
+    <meta name="description" content="《Concurrency in Go》
+
+Golang是一门静态的，强类型的，高并发的语言，而本书会聚焦在高并发的方面。第一章则从并发的基本内容讲起，大致包括几个方面：
+
+什么是并发？
+并发为什么困难？
+并发为什么值得研究？
+
+
+
+Chapter 1：An Introduction to Concu">
+    
+    
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="shiina_orez">
+    <meta name="twitter:title" content="《Concurrency in Go》阅读笔记 -- 第一章：并发概述 | Shiina Orez">
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Shiina Orez" title="Shiina Orez"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shiina Orez">Shiina Orez</a></h1>
+				<h2 class="blog-motto">Backend coder, coding every day.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/05/13/concurrency-in-go-1/" title="《Concurrency in Go》阅读笔记 -- 第一章：并发概述" itemprop="url">《Concurrency in Go》阅读笔记 -- 第一章：并发概述</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2019-05-13T09:34:01.000Z" itemprop="datePublished">2019-05-13</time>
+    Updated:<time datetime="2019-05-13T09:35:29.706Z" itemprop="dateModified">2019-05-13</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#《Concurrency-in-Go》"><span class="toc-number">1.</span> <span class="toc-text">《Concurrency in Go》</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-1：An-Introduction-to-Concurrency-并发概述"><span class="toc-number">1.1.</span> <span class="toc-text">Chapter 1：An Introduction to Concurrency 并发概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-从摩尔定律入手，讨论并发从何而来"><span class="toc-number">1.1.1.</span> <span class="toc-text">1 从摩尔定律入手，讨论并发从何而来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-为什么并发很难？"><span class="toc-number">1.1.2.</span> <span class="toc-text">2 为什么并发很难？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Race-Conditions-竞争条件"><span class="toc-number">1.1.3.</span> <span class="toc-text">2.1 Race Conditions 竞争条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Atomicity-原子性"><span class="toc-number">1.1.4.</span> <span class="toc-text">2.2 Atomicity 原子性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Memory-Access-Synchronization-内存访问同步"><span class="toc-number">1.1.5.</span> <span class="toc-text">2.3 Memory Access Synchronization 内存访问同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Deadlocks-Livelocks-and-Starvation-死锁、活锁和饥饿"><span class="toc-number">1.1.6.</span> <span class="toc-text">2.4 Deadlocks, Livelocks, and Starvation 死锁、活锁和饥饿</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-1-Deadlocks-死锁"><span class="toc-number">1.1.6.1.</span> <span class="toc-text">2.4.1 Deadlocks 死锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-2-Livelocks-活锁"><span class="toc-number">1.1.6.2.</span> <span class="toc-text">2.4.2 Livelocks 活锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-3-Starvation-饥饿"><span class="toc-number">1.1.6.3.</span> <span class="toc-text">2.4.3 Starvation 饥饿</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Determining-Concurrency-Safety-确定并发安全"><span class="toc-number">1.1.7.</span> <span class="toc-text">2.5 Determining Concurrency Safety 确定并发安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-面对复杂性的简单性"><span class="toc-number">1.1.8.</span> <span class="toc-text">3 面对复杂性的简单性</span></a></li></ol></li></ol></li></ol>
+		</div>
+		
+		<h1 id="《Concurrency-in-Go》"><a href="#《Concurrency-in-Go》" class="headerlink" title="《Concurrency in Go》"></a>《Concurrency in Go》</h1><hr>
+<blockquote>
+<p>Golang是一门静态的，强类型的，高并发的语言，而本书会聚焦在高并发的方面。第一章则从并发的基本内容讲起，大致包括几个方面：</p>
+<ul>
+<li>什么是并发？</li>
+<li>并发为什么困难？</li>
+<li>并发为什么值得研究？</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="Chapter-1：An-Introduction-to-Concurrency-并发概述"><a href="#Chapter-1：An-Introduction-to-Concurrency-并发概述" class="headerlink" title="Chapter 1：An Introduction to Concurrency 并发概述"></a>Chapter 1：An Introduction to Concurrency 并发概述</h2><hr>
+<h3 id="1-从摩尔定律入手，讨论并发从何而来"><a href="#1-从摩尔定律入手，讨论并发从何而来" class="headerlink" title="1 从摩尔定律入手，讨论并发从何而来"></a>1 从摩尔定律入手，讨论并发从何而来</h3><p>摩尔定律的内容是众所周知的，大概就是集成电路上的晶体管的数量每两年就会翻一番。</p>
+<p>这个定律的起因在于，人类迫切地需要提升单位空间的运算能力，因此穷极一切地去努力提升运算能力。而提升运算能力这一需求又源于当今世界上的存储能力和数据产生量的提高。</p>
+<p>但是摩尔定律所预估的速度正在逐步放缓，除非在一段时间以内人类的基础技术能有质的改变。而在这个条件之下应运而生的产物便是：多核处理器。</p>
+<p>以多个核心来处理来处理和解决问题，效率相比起以往肯定是提高了的，尤其在问题可以由各个独立的程序构成而不互相影响的情况下更能有所体现，但是<strong>Gene Amdhl</strong>提出了一条定律:</p>
+<blockquote>
+<p>并行计算的收益的限制取决于有多少程序必须以顺序的方式编写。</p>
+</blockquote>
+<p>也就是说并行计算提升的效率取决于能够<strong>独立执行</strong>的程序。</p>
+<p>云计算，现在的时代的热词。它的思想在时代思潮中根深蒂固，云计算隐含了一种新的规模化的方法，用于应用程序部署和水平扩展。云计算意味着可以访问大量的资源池，它们被自动调配到适当的机器中以满足工作负载需求。</p>
+<p>云计算带来的直接后果是开发者获得了大量的运算能力，可以用来解决庞大的问题。</p>
+<p>但是云计算的实现并非动动嘴皮子就可以完成的，需要在机器实例之间通信，聚合和存储结果等等，但是最最最困难的莫过于<strong>如何设计并行计算的模型</strong></p>
+<p>接下来将从设计并行计算模型的角度来分析为什么并发很难。</p>
+<hr>
+<h3 id="2-为什么并发很难？"><a href="#2-为什么并发很难？" class="headerlink" title="2 为什么并发很难？"></a>2 为什么并发很难？</h3><h3 id="2-1-Race-Conditions-竞争条件"><a href="#2-1-Race-Conditions-竞争条件" class="headerlink" title="2.1 Race Conditions 竞争条件"></a>2.1 Race Conditions 竞争条件</h3><blockquote>
+<p>当两个或者多个操作必须按正确的顺序执行，而程序并未保证这个顺序，就会发生竞争条件。</p>
+</blockquote>
+<p>也就是说，如果你希望程序的执行顺序为Ａ，但是不恰当的引入并发会导致执行顺序的改变，从而影响程序的准确性。</p>
+<p>同时不正确的导入并发会给程序带来巨大的不稳定性。</p>
+<p>很多程序员解决不确定性的方式是加入耗时操作：比如休眠（time.Sleep()）。但是事实上，错误的代码和错误的逻辑势必会导致错误的结果，加入休眠仅仅使得到的结果在概率上更加接近逻辑的准确性，但是永远不会变成真正的逻辑正确。</p>
+<p>竞争条件可能存在在一段被认为是正确的代码中而不被发现，这种代码只是看上去在用正确的方式来执行，但是事实上只是执行的顺序是正确的这件事情本身的概率比较大而已，最终早晚有可能会出现一些意料之外的结果。</p>
+<h3 id="2-2-Atomicity-原子性"><a href="#2-2-Atomicity-原子性" class="headerlink" title="2.2 Atomicity 原子性"></a>2.2 Atomicity 原子性</h3><blockquote>
+<p>原子性是指：当某些东西被认为是原子时，或者具有原子性的时候。这意味着它在运行的环境中，它是不可分割或者不可中断的。</p>
+</blockquote>
+<p>原子性的判定的一个很重要的条件就是程序的上下文。在一个上下文中可能是原子，在另一个程序中可能就不是一个原子。</p>
+<p>代码的原子性具有一些性质：原子操作的结合并不会产生更大的原子操作。使一个操作成为原子操作应当取决于它的上下文。</p>
+<p>如果某个东西是具有原子性的，则它在并发环境中是安全的。</p>
+<p>因此在并发中，确认代码的哪些部分需要原子化，以及在什么程度和级别上原子化。</p>
+<hr>
+<h3 id="2-3-Memory-Access-Synchronization-内存访问同步"><a href="#2-3-Memory-Access-Synchronization-内存访问同步" class="headerlink" title="2.3 Memory Access Synchronization 内存访问同步"></a>2.3 Memory Access Synchronization 内存访问同步</h3><blockquote>
+<p>在程序中需要独占访问共享资源的部分中，对其对于内存的访问做同步控制。</p>
+</blockquote>
+<p>在接下来的讨论之前，先提及一个概念：<strong>临界区（ Critical Section）</strong>。</p>
+<blockquote>
+<p>程序中需要独占访问共享资源的部分，称为临界区。</p>
+</blockquote>
+<p>临界区是一个代码片段，这个代码片段的特点是<strong>独占了对于共享资源的访问</strong>。</p>
+<p>现在假设两个并发进程试图访问相同的内存区域，它们访问内存的方式不是原子的（即可以被中断的）。<br>那么为了保证一个临界区内的代码能够按照预期的来执行，也就是访问内存的过程不被中断（因为这会给程序带来更大的不稳定性），我们就必须保证一个临界区内对于内存的访问的稳定性。</p>
+<p>既然无法改变读写内存的原子性，我们就使用锁（Lock）来解决内存访问同步的问题（这实际上很常见，从数据库原理中我们也经常见到，锁在计算机系统和网络资源的访问控制上也很常见）。</p>
+<p><strong>给每个临界区加锁，这就可以了吗？</strong></p>
+<p>频繁的加锁是程序运行的效率变低了，但是在我们的眼中这显然要比程序的逻辑是错误的要好的多。</p>
+<p>在考虑临界区的对于内存访问的控制的问题的时候我们需要考虑两个问题：</p>
+<ul>
+<li>我的临界区是否应该频繁进入和退出？</li>
+<li>我的临界区应该有多大？</li>
+</ul>
+<blockquote>
+<p>在程序的上下文中解决这两个问题是一种艺术，并且增加了内存访问同步的难度。</p>
+</blockquote>
+<hr>
+<h3 id="2-4-Deadlocks-Livelocks-and-Starvation-死锁、活锁和饥饿"><a href="#2-4-Deadlocks-Livelocks-and-Starvation-死锁、活锁和饥饿" class="headerlink" title="2.4 Deadlocks, Livelocks, and Starvation 死锁、活锁和饥饿"></a>2.4 Deadlocks, Livelocks, and Starvation 死锁、活锁和饥饿</h3><p><strong>竞争条件，原子性和内存访问同步</strong>的讨论主要的意义在于维持你程序的<strong>正确性</strong>：并非只是在当前的测试和运行中能够拿到正确的结果，而是代码在<strong>逻辑上</strong>就是正确的。这样就可以保证程序的输出永远是正确的。这非常的重要。</p>
+<p>但是在之前的讨论中留下了一些问题： 我们虽然使用了锁来保证了内存访问的同步，但是锁的引入也造成了效率的下降，以致于我们不得不去思考我们的临界区应该如何分布和控制。</p>
+<p><strong>不正当的使用锁会导致你的程序完全停止运行！</strong></p>
+<p>这一类问题就是：死锁、活锁和饥饿</p>
+<h4 id="2-4-1-Deadlocks-死锁"><a href="#2-4-1-Deadlocks-死锁" class="headerlink" title="2.4.1 Deadlocks 死锁"></a>2.4.1 Deadlocks 死锁</h4><p>死锁在gopher的世界中永远是常见的，从字面意思来看也十分的清晰：锁死掉了，也就是永远都不会打开了。</p>
+<blockquote>
+<p>死锁程序是所有并发进程彼此等待的程序，在这种情况下，如果没有外界的干预，这个程序将永远无法回复。</p>
+</blockquote>
+<p>如何构成一个死锁呢？其实非常的简单。这本书提供了一个最简单的例子：有两个goroutine对两个资源AB先后进行访问，但是goroutineA先访问A后访问B，goroutineB先访问B后访问A。而在两次访问之间有耗时操作。</p>
+<p>究竟会导致什么后果呢？</p>
+<p> <img src="https://img-blog.csdnimg.cn/20190513162509405.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NoaWluYV9PcmV6,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br> 上图很形象的描述了会发生的情况：</p>
+<ul>
+<li>内存资源A锁了</li>
+<li>内存资源B锁了</li>
+<li>对方都互相等着对面释放锁，于是等啊等啊等啊～</li>
+</ul>
+<p><strong>Deadlocks这次让我们的程序直接宕掉了。</strong></p>
+<p>死锁真的不好啊，虽然golang会自动帮我们检测死锁的发生，但是这毕竟是不够的。我们需要自己去检测程序中发生死锁的可能性。万幸的是，早在1971年一位名叫Edgar Coffman的人就在论文中列举了产生死锁的条件：现在被成为Coffman条件。</p>
+<blockquote>
+<ul>
+<li>相互排斥<ul>
+<li>并发进程同时拥有对于资源的独占权</li>
+</ul>
+</li>
+<li>等待条件<ul>
+<li>并发进程必须同时拥有一个资源，并且等待额外的资源</li>
+</ul>
+</li>
+<li>没有抢占<ul>
+<li>并发进程拥有的资源只能被该进程释放，即可满足这个条件</li>
+</ul>
+</li>
+<li>循环等待<ul>
+<li>一个并发进程必须等待一系列其他并发进程，这些并发进程同时也在等待该进程，这样就满足了最终的条件</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h4 id="2-4-2-Livelocks-活锁"><a href="#2-4-2-Livelocks-活锁" class="headerlink" title="2.4.2 Livelocks 活锁"></a>2.4.2 Livelocks 活锁</h4><p>谦让是中国人自古以来的优良传统。</p>
+<p>先讲一个故事：</p>
+<blockquote>
+<p>你在马路上骑车，然后对面也有人骑车过来，你们刚好正对。于是你们双方以同样的反应速度发挥中国人的优良传统：谦让。然后你们同时左拐右拐….终于你们撞上了….</p>
+</blockquote>
+<p>这就是活锁。</p>
+<blockquote>
+<p>活锁是正在主动执行并发操作的程序，但是这些操作无法向前推进程序的状态。</p>
+</blockquote>
+<p>产生活锁的常见的原因便是：两个或者两个以上的并发进程试图在没有协调的情况下防止死锁。</p>
+<h4 id="2-4-3-Starvation-饥饿"><a href="#2-4-3-Starvation-饥饿" class="headerlink" title="2.4.3 Starvation 饥饿"></a>2.4.3 Starvation 饥饿</h4><p>这里的饥饿是指并发进程对于内存的访问控制权的饥饿，也就是一些并发进程会比另外一些进程更加的横行霸道。</p>
+<blockquote>
+<p>饥饿是在任何情况下，并发进程都无法获得执行工作所需的所有资源。</p>
+</blockquote>
+<p>这个贪婪的，横行霸道的并发进程不公平的组织一个或者多个并发进程，导致自己的工作效率高但是其他并发进程的工作效率被排挤。</p>
+<p>一个稍微有一点良心的并发进程，在结束对于一个资源的原子性的操作后，会选择释放锁。<br>但是一个没有良心的并发进程，它会自始至终以尽可能长的时间来霸占锁。</p>
+<p>这是多么的多么的…emmm霸道啊？</p>
+<hr>
+<h3 id="2-5-Determining-Concurrency-Safety-确定并发安全"><a href="#2-5-Determining-Concurrency-Safety-确定并发安全" class="headerlink" title="2.5 Determining Concurrency Safety 确定并发安全"></a>2.5 Determining Concurrency Safety 确定并发安全</h3><p>如何确定并发的安全呢？</p>
+<p>在协同工作的时代，大家使用的代码很可能不出自自己的手，这意味着为了确定并发安全，代码的开发者需要加上注释！</p>
+<p>不然的话，一个新手面对一段代码：</p>
+<ul>
+<li>如何使用这个函数？</li>
+<li>为了并发的调用，我是否需要多次实例化这个函数啊？</li>
+<li>我要不要内存访问同步啊？？？</li>
+</ul>
+<p>一旦这些问题没有一个确定的答案，很显然有可能出现一些奇奇怪怪的后果。没有人希望这样。</p>
+<p>所以：<strong>写注释</strong>！</p>
+<hr>
+<h3 id="3-面对复杂性的简单性"><a href="#3-面对复杂性的简单性" class="headerlink" title="3 面对复杂性的简单性"></a>3 面对复杂性的简单性</h3><p>这一节大概就是狠狠地吹了一顿golang。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Concurrency-in-Go/">Concurrency in Go</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2019/05/13/concurrency-in-go-1/" data-title="《Concurrency in Go》阅读笔记 -- 第一章：并发概述 | Shiina Orez" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2019/05/08/AVLTree/" title="自平衡二叉查找树 -- AVL树 Adelson-Velsky-Landis Tree">
+ <strong>NEXT:</strong><br> 
+ <span>自平衡二叉查找树 -- AVL树 Adelson-Velsky-Landis Tree
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#《Concurrency-in-Go》"><span class="toc-number">1.</span> <span class="toc-text">《Concurrency in Go》</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-1：An-Introduction-to-Concurrency-并发概述"><span class="toc-number">1.1.</span> <span class="toc-text">Chapter 1：An Introduction to Concurrency 并发概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-从摩尔定律入手，讨论并发从何而来"><span class="toc-number">1.1.1.</span> <span class="toc-text">1 从摩尔定律入手，讨论并发从何而来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-为什么并发很难？"><span class="toc-number">1.1.2.</span> <span class="toc-text">2 为什么并发很难？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Race-Conditions-竞争条件"><span class="toc-number">1.1.3.</span> <span class="toc-text">2.1 Race Conditions 竞争条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Atomicity-原子性"><span class="toc-number">1.1.4.</span> <span class="toc-text">2.2 Atomicity 原子性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Memory-Access-Synchronization-内存访问同步"><span class="toc-number">1.1.5.</span> <span class="toc-text">2.3 Memory Access Synchronization 内存访问同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Deadlocks-Livelocks-and-Starvation-死锁、活锁和饥饿"><span class="toc-number">1.1.6.</span> <span class="toc-text">2.4 Deadlocks, Livelocks, and Starvation 死锁、活锁和饥饿</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-1-Deadlocks-死锁"><span class="toc-number">1.1.6.1.</span> <span class="toc-text">2.4.1 Deadlocks 死锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-2-Livelocks-活锁"><span class="toc-number">1.1.6.2.</span> <span class="toc-text">2.4.2 Livelocks 活锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-3-Starvation-饥饿"><span class="toc-number">1.1.6.3.</span> <span class="toc-text">2.4.3 Starvation 饥饿</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Determining-Concurrency-Safety-确定并发安全"><span class="toc-number">1.1.7.</span> <span class="toc-text">2.5 Determining Concurrency Safety 确定并发安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-面对复杂性的简单性"><span class="toc-number">1.1.8.</span> <span class="toc-text">3 面对复杂性的简单性</span></a></li></ol></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Algorithm-DataStructure/" title="Algorithm DataStructure">Algorithm DataStructure<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Concurrency-in-Go/" title="Concurrency in Go">Concurrency in Go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Werkzeug/" title="Werkzeug">Werkzeug<sup>4</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+			<li><a href="/tags/软件体系结构/" title="软件体系结构">软件体系结构<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 做一个真正的菜鸡 --ShiinaOrez <br>
+			日积代码千行，则无往而不利也@学业进行中</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		<a href="https://twitter.com/shiina_orez" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/ShiinaOrez" target="_blank" title="github"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="Shiina Orez">Shiina Orez</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
