@@ -1,0 +1,376 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+  <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+
+  
+    <title>构建一个高性能现代网络爬虫 | Shiina Orez</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Shiina Orez">
+    
+    <meta name="description" content="构建一个高性能现代网络爬虫PS:本文为Building a fast modern web crawker的中文译文。
+我一直对于爬虫具有很强烈的兴趣。我曾经使用过多种语言比如C++，Node.JS，Python等等来撰写爬虫程序，并且更吸引我的是爬虫背后的理论。
+但是首先我们要讨论的问题是：什么是">
+    
+    
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="shiina_orez">
+    <meta name="twitter:title" content="构建一个高性能现代网络爬虫 | Shiina Orez">
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Shiina Orez" title="Shiina Orez"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shiina Orez">Shiina Orez</a></h1>
+				<h2 class="blog-motto">Backend coder, coding every day.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/09/25/building-a-fast-modern-crawler/" title="构建一个高性能现代网络爬虫" itemprop="url">构建一个高性能现代网络爬虫</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2019-09-25T10:09:49.000Z" itemprop="datePublished">2019-09-25</time>
+    Updated:<time datetime="2019-09-25T10:12:02.833Z" itemprop="dateModified">2019-09-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#构建一个高性能现代网络爬虫"><span class="toc-number">1.</span> <span class="toc-text">构建一个高性能现代网络爬虫</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是爬虫？"><span class="toc-number">1.1.</span> <span class="toc-text">什么是爬虫？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Trandoshan：一个暗网爬虫"><span class="toc-number">1.2.</span> <span class="toc-text">Trandoshan：一个暗网爬虫</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是暗网？"><span class="toc-number">1.2.1.</span> <span class="toc-text">什么是暗网？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Trandoshan是如何设计的？"><span class="toc-number">1.2.2.</span> <span class="toc-text">Trandoshan是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#怎么运行Trandoshan？"><span class="toc-number">1.2.3.</span> <span class="toc-text">怎么运行Trandoshan？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何使用Trandoshan？"><span class="toc-number">1.2.4.</span> <span class="toc-text">如何使用Trandoshan？</span></a></li></ol></li></ol></li></ol>
+		</div>
+		
+		<h1 id="构建一个高性能现代网络爬虫"><a href="#构建一个高性能现代网络爬虫" class="headerlink" title="构建一个高性能现代网络爬虫"></a>构建一个高性能现代网络爬虫</h1><p>PS:本文为<a href="https://creekorful.me/building-fast-modern-web-crawler/" target="_blank" rel="noopener">Building a fast modern web crawker</a>的中文译文。</p>
+<p>我一直对于爬虫具有很强烈的兴趣。我曾经使用过多种语言比如C++，Node.JS，Python等等来撰写爬虫程序，并且更吸引我的是爬虫背后的理论。</p>
+<p>但是首先我们要讨论的问题是：什么是爬虫？</p>
+<h2 id="什么是爬虫？"><a href="#什么是爬虫？" class="headerlink" title="什么是爬虫？"></a>什么是爬虫？</h2><p>爬虫是一个通过浏览整个因特网从而去定位一些存在的页面、图片、PDF等等的计算机程序，并且允许用户去通过一个搜索引擎去检索它们。这就是隐藏在著名的Google搜索引擎背后的技术。</p>
+<p>一个高性能的爬虫程序通常被设计为分布式结构：区别于运行在特定机器上的单个程序，它会在云上的多台机器上运行多个实例，这样的结构带来更好的任务再分配、更好的性能和更大的带宽。（ps:这里使用吞吐量会不会更合适？）</p>
+<p>但是分布式软件并不是没有瑕疵的：一些因素可能会给你的的程序带来额外的延迟、或者可能会降低你的程序的性能，比如说网络的延迟、同步的问题、缺乏设计的通信协议等等。</p>
+<p>为了追求更好的性能，一个分布式的爬虫应该有足够良好的设计：这让消除许多性能上的瓶颈成为可能，就像法国的海军上将Olivier Lajous说的：</p>
+<pre><code>一个链子的强度取决于最薄弱的一环。
+</code></pre><h2 id="Trandoshan：一个暗网爬虫"><a href="#Trandoshan：一个暗网爬虫" class="headerlink" title="Trandoshan：一个暗网爬虫"></a>Trandoshan：一个暗网爬虫</h2><p>你可能知道很多非常成功的网络爬虫，比如Google。所以我并不想去做一个同样的东西。我当下想要去构建一个基于暗网的爬虫。（ps:trandoshan是星球大战中的狩猎种族）</p>
+<h3 id="什么是暗网？"><a href="#什么是暗网？" class="headerlink" title="什么是暗网？"></a>什么是暗网？</h3><p>没必要去使用很多术语去形容什么是暗网，要写起暗网的来龙去脉可能要新建一篇文章。</p>
+<p>Web是由三层结构组成的，我们可以将其视为一座冰山：</p>
+<ul>
+<li>第一层：表面网络，或者说是净网是我们每天最常接触的网络的那部分。它们被一些炙手可热的网络爬虫比如Google，Qwant，Duckduckgo等等所定位。</li>
+<li>第二层：更深层次的网络，是由一些无法被定位的网页组成的，这意味着你是用搜索引擎都找不到这些网页，但是你却可以直接使用URL和IP地址来访问这些页面。</li>
+<li>第三层：暗网，这是一类你是用浏览器都无法访问到的网页。你需要使用特定的应用程序或者特定的代理才可以访问。最出名的暗网是隐藏在洋葱头网络下的。你可以使用以.onion结尾的URL去访问它们。</li>
+</ul>
+<h3 id="Trandoshan是如何设计的？"><a href="#Trandoshan是如何设计的？" class="headerlink" title="Trandoshan是如何设计的？"></a>Trandoshan是如何设计的？</h3><p><img src="https://creekorful.me/content/images/2019/09/Trandoshan-1.png" alt></p>
+<p>在分别讲解这些进程的作用之前，我觉得首先要讲清楚的是这些进程之间如何通信。</p>
+<p>进程间通讯（Inter Process Communication, IPC），主要是通过使用一个基于生产者/消费者模式的名为<a href="https://nats.io/" target="_blank" rel="noopener">NATS</a>（图中黄色的线）的通讯协议，每个在NATS中的消息都有一个主题（就像邮件里的那样），支持其他进程去识别并且仅读取它们想要读取的消息。NATS支持扩展：比如可以支持十个爬虫进程从一个消息服务器并发的读取消息（许多实例可以同时运行而不出任何bug）并因此可以提升性能。</p>
+<p>Trandoshan分为四个主要的进程：</p>
+<ul>
+<li>爬虫：用于爬取页面的进程：它们从NATS读取将要爬取的页面的URL（消息的主题是”todoUrls”），爬取它，并且获取整个页面中显示的全部URL，并且发送这些URL到NATS中（这些消息的主题是”crawledUrls”），而页面的内容则以主题”content”发送到NATS。</li>
+<li>调度器：这个进程用于检查URL：它读取主题为”crawledUrls”，检查其是否是已经爬取过的URL，如果还没有被爬取过，则将URL以主题”todoUrls”发送到NATS。</li>
+<li>持久器：这个进程用于网页内容的构建：它读取以”content”为主题的消息，并且存储到非关系型数据库中（MongoDB）</li>
+<li>接口：给其他进程开放用于聚合数据的进程。比如开放给调度器的用于确定URL是否被爬取过的接口，相比于调度器直接和数据库进行交互，更倾向于调度器和API们交互。</li>
+</ul>
+<p>不同的进程们都是使用Go语言进行编写的：因为它的性能很好（可以被编译为二进制文件）并且有很多的库。Go是用来构建高性能的分布式系统的完美解决方案。</p>
+<p>Trandoshan的源码在github的这里：<a href="https://github.com/trandoshan-io" target="_blank" rel="noopener">https://github.com/trandoshan-io</a></p>
+<h3 id="怎么运行Trandoshan？"><a href="#怎么运行Trandoshan？" class="headerlink" title="怎么运行Trandoshan？"></a>怎么运行Trandoshan？</h3><p>就像之前讲过的一样，Trandoshan被设计为运行在一个分布式的系统上，并且可以使用Docker的镜像来运行，这对于云来说是很好的支持。事实上我整理了一个存储着所有部署需要的配置文件的仓库，可以用于部署Trandoshan实例在K8S上。这些文件在这里：<a href="https://github.com/trandoshan-io/k8s" target="_blank" rel="noopener">https://github.com/trandoshan-io/k8s</a> 并且docker的镜像也都上传到了<a href="https://hub.docker.com/u/trandoshanio" target="_blank" rel="noopener">Docker Hub</a>。</p>
+<p>如果你拥有一个配置成功的kubectl（K8S的控制程序），你可以通过一条简单的命令部署Trandoshan：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bootstrap.sh</span><br></pre></td></tr></table></figure>
+<p>不然的话你可以使用Docker和docker-compose在本地运行Trandoshan。在<a href="https://github.com/trandoshan-io/trandoshan-parent" target="_blank" rel="noopener">trandoshan-parent</a>这个仓库中有构建文件和shell脚本，所以你可以使用以下命令来运行这个应用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./deploy.sh</span><br></pre></td></tr></table></figure>
+<h3 id="如何使用Trandoshan？"><a href="#如何使用Trandoshan？" class="headerlink" title="如何使用Trandoshan？"></a>如何使用Trandoshan？</h3><p>现在有一个小型的Angular应用去检索定位内容。这个页面使用了API进程去完成对于数据库的检索工作。</p>
+<p><img src="https://creekorful.me/content/images/2019/09/Screenshot-from-2019-09-22-17-09-49.png" alt></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2019/09/25/building-a-fast-modern-crawler/" data-title="构建一个高性能现代网络爬虫 | Shiina Orez" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2019/06/14/concurrency-in-go-3/" title="《Concurrency in Go》阅读笔记 -- 第三章：Go语言并发组件">
+ <strong>NEXT:</strong><br> 
+ <span>《Concurrency in Go》阅读笔记 -- 第三章：Go语言并发组件
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#构建一个高性能现代网络爬虫"><span class="toc-number">1.</span> <span class="toc-text">构建一个高性能现代网络爬虫</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是爬虫？"><span class="toc-number">1.1.</span> <span class="toc-text">什么是爬虫？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Trandoshan：一个暗网爬虫"><span class="toc-number">1.2.</span> <span class="toc-text">Trandoshan：一个暗网爬虫</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是暗网？"><span class="toc-number">1.2.1.</span> <span class="toc-text">什么是暗网？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Trandoshan是如何设计的？"><span class="toc-number">1.2.2.</span> <span class="toc-text">Trandoshan是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#怎么运行Trandoshan？"><span class="toc-number">1.2.3.</span> <span class="toc-text">怎么运行Trandoshan？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何使用Trandoshan？"><span class="toc-number">1.2.4.</span> <span class="toc-text">如何使用Trandoshan？</span></a></li></ol></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Algorithm-DataStructure/" title="Algorithm DataStructure">Algorithm DataStructure<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Concurrency-In-Go/" title="Concurrency In Go">Concurrency In Go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Concurrency-in-Go/" title="Concurrency in Go">Concurrency in Go<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Go/" title="Go">Go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Werkzeug/" title="Werkzeug">Werkzeug<sup>4</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+			<li><a href="/tags/软件体系结构/" title="软件体系结构">软件体系结构<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 做一个真正的菜鸡 --ShiinaOrez <br>
+			日积代码千行，则无往而不利也@学业进行中</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		<a href="https://twitter.com/shiina_orez" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/ShiinaOrez" target="_blank" title="github"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="Shiina Orez">Shiina Orez</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
