@@ -1,0 +1,378 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+  <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+
+  
+    <title>面对小数值的高效率序列化方案:varints和zigzag编码 | Shiina Orez</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Shiina Orez">
+    
+    <meta name="description" content="序列化是在传输数据的时候非常重要的一环, 而对于如何高效的序列化数字一直是人们非常关心的问题, 在历史的长河中也有很多的工程师提出了有效的序列化方案, 这篇文章就讲一下在protobuf中使用到的两种数字序列化编码方案: varints和zigzag
+
+varints可变长编码方案, 用于把整数进行">
+    
+    
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="shiina_orez">
+    <meta name="twitter:title" content="面对小数值的高效率序列化方案:varints和zigzag编码 | Shiina Orez">
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Shiina Orez" title="Shiina Orez"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shiina Orez">Shiina Orez</a></h1>
+				<h2 class="blog-motto">Backend coder, coding every day.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/09/30/varintsAndZigZag/" title="面对小数值的高效率序列化方案:varints和zigzag编码" itemprop="url">面对小数值的高效率序列化方案:varints和zigzag编码</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2019-09-30T08:12:45.000Z" itemprop="datePublished">2019-09-30</time>
+    Updated:<time datetime="2019-09-30T08:13:45.753Z" itemprop="dateModified">2019-09-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#varints"><span class="toc-number">1.</span> <span class="toc-text">varints</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zig-zag"><span class="toc-number">2.</span> <span class="toc-text">zig zag</span></a></li></ol>
+		</div>
+		
+		<p>序列化是在传输数据的时候非常重要的一环, 而对于如何高效的序列化数字一直是人们非常关心的问题, 在历史的长河中也有很多的工程师提出了有效的序列化方案, 这篇文章就讲一下在protobuf中使用到的两种数字序列化编码方案: <strong>varints</strong>和<strong>zigzag</strong></p>
+<hr>
+<h3 id="varints"><a href="#varints" class="headerlink" title="varints"></a>varints</h3><p><strong>可变长</strong>编码方案, 用于把整数进行<strong>序列化</strong>, 在序列化一些大概率比较小的整数的时候效率会好一些.</p>
+<p>我们传输时使用的是一个字节流, 也就是由byte组成的bytes. 我们在各个语言中声明的整数都是有固定的大小的: 比如说四个字节大小. 但是如果一些数字本身的取值范围就很小, 那么在序列化时就会产生很多的浪费, 因为前几个字节位很可能都是由0组成的. 因此varints就是为了能够在序列化整数时能够有更好的效率而产生的一种编码方式.</p>
+<p>varints将每一个字节(8-bit)中的第一bit抽出用于标识是否还有后续字节, 剩余7-bit用来表示内容, 而在组合的时候则是逆序组合, 就像下面这样:</p>
+<p>十进制: <code>2019</code> -&gt; 二进制: <code>111 11100011</code></p>
+<p>假设这个数字是使用<code>golang</code>中的<code>uint</code>类型存储的, 那么它应该占用了内存中<code>32-bit</code>的空间, 也就是<code>4</code>个字节:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">    byte4      byte3      byte2      byte1</span><br><span class="line">╭──────────┬──────────┬──────────┬──────────╮</span><br><span class="line">│ 00000000 │ 00000000 │ 00000111 │ 11100011 │</span><br><span class="line">╰──────────┴──────────┴──────────┴──────────╯</span><br></pre></td></tr></table></figure>
+<p>我们在传输的时候真的太难受了: 白白浪费了两个字节的空间! 那么我们使用<code>varints</code>来进行一下编码吧! 或许会更好一些!</p>
+<p>首先第一步, 把原来的串按照<code>7-bit</code>拆分, 舍去多余的前导0:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">111 11100011 -&gt; 0001111 1100011</span><br></pre></td></tr></table></figure>
+<p>然后第二步, 把所有的<code>7-bit</code>片逆序排列:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> byte2   byte1      byte1   byte2</span><br><span class="line">0001111 1100011 -&gt; 1100011 0001111</span><br></pre></td></tr></table></figure>
+<p>然后在每个非结尾<code>7-bit</code>片前面加上<code>1</code>, 在最后一个<code>7-bit</code>片前加上<code>0</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">╭───┬─────────╮╭───┬─────────╮   ╭───┬─────────╮╭───┬─────────╮</span><br><span class="line">│   │ 1100011 ││   │ 0001111 │ -&gt;│ 1 │ 1100011 ││ 0 │ 0001111 │ </span><br><span class="line">╰───┴─────────╯╰───┴─────────╯   ╰───┴─────────╯╰───┴─────────╯</span><br></pre></td></tr></table></figure>
+<p>而最后我们得到了两个<code>8-bit</code>字节: 我们可以用它来进行传输啦! 而且我们省去了两个字节!</p>
+<p>大家一定可以发现一些使用<code>varints</code>的限制和缺陷:</p>
+<ul>
+<li>首先, varints会把数字表示的最大范围缩小, 比如uint使用varints就只能表示2^28, 这是因为极端情况缺少了4个标志位.</li>
+<li>其次, 在一个变量频繁的大于2^22次方时, 我们编码后也不会节省任何的空间, (为了不失真甚至还有可能变大), 因此varints编码只适用于相对较小的数字的序列化.</li>
+<li>如果序列化的数字对象为负数, 则和上一种情况类似, 不会有任何空间的节省. 因为符号位在最前会被视为很大的一个数.</li>
+</ul>
+<p>但是在面对<strong>较小的数字</strong>的时候, <code>varints</code>的效果是非常显著的.</p>
+<hr>
+<h3 id="zig-zag"><a href="#zig-zag" class="headerlink" title="zig zag"></a>zig zag</h3><p>zig zag是将有符号数统一映射到无符号数的一种编码方式, 从结果来看可以看出其名字的由来: 0, -1, 1, -2, 2 编码后变为了 0, 1, 2, 3, 4. 负数和正数以绝对值不断增大的方式来回在数轴上跳跃穿插.也就是zig zag.</p>
+<p>我们从极端情况来看zig zag的解决方案: -1:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> 1 -&gt; 00000000 00000000 00000000 00000001</span><br><span class="line">-1 -&gt; 11111111 11111111 11111111 11111111</span><br></pre></td></tr></table></figure>
+<p>对于1而言, 无论是zig zag还是varints都会相对而言觉得很好处理, 因为传输时的主要思想就是对于前导0的省略, 而对于负数的补码而言, 有大量的前导1出现在字节中, 这就导致了编码上的困难.</p>
+<p>是什么导致了这种情况呢? 一是因为<strong>符号位放在最前</strong>, 二是因为负数<strong>取补码</strong>时将大量的0都变成了1.</p>
+<p>对于第一个原因, 工程师们决定把符号位重新编码放到最后, 而对于第二个原因, 工程师们决定对于负数把除了符号位以外的位都反转过来. 而对于正数则不变(除了将符号位也放在最后)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">                                             符号位</span><br><span class="line">zig_zag(1): 00000000 00000000 00000000 0000001_0</span><br><span class="line">zig_zag(-1):00000000 00000000 00000000 0000000_1</span><br></pre></td></tr></table></figure>
+<p>所以就出现了像我们一开头提到的情况: 正数和负数来来回回的映射到正数数轴上.</p>
+<p>我们可以使用C++简单的位运算来实现<code>zig zag</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">zigzag</span><span class="params">(<span class="keyword">int</span> num)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (num &lt;&lt; <span class="number">1</span>) ^ (n &gt;&gt; <span class="number">31</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>varints</code>将无用的字节省略掉, <code>zig zag</code>则解决了负数的问题, 但是这二者在面对绝对值较大的数字时都是非常无力的, 因此在应用时应当分清不同的场景, 仅有在序列化绝对值较小的数字时才会使用这两种编码方式.</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/protocol-buffers/">protocol buffers</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2019/09/30/varintsAndZigZag/" data-title="面对小数值的高效率序列化方案:varints和zigzag编码 | Shiina Orez" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2019/09/25/building-a-fast-modern-crawler/" title="构建一个高性能现代网络爬虫">
+ <strong>NEXT:</strong><br> 
+ <span>构建一个高性能现代网络爬虫
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#varints"><span class="toc-number">1.</span> <span class="toc-text">varints</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zig-zag"><span class="toc-number">2.</span> <span class="toc-text">zig zag</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Algorithm-DataStructure/" title="Algorithm DataStructure">Algorithm DataStructure<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Concurrency-In-Go/" title="Concurrency In Go">Concurrency In Go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Concurrency-in-Go/" title="Concurrency in Go">Concurrency in Go<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Go/" title="Go">Go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Werkzeug/" title="Werkzeug">Werkzeug<sup>4</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/protocol-buffers/" title="protocol buffers">protocol buffers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+			<li><a href="/tags/软件体系结构/" title="软件体系结构">软件体系结构<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 做一个真正的菜鸡 --ShiinaOrez <br>
+			日积代码千行，则无往而不利也@学业进行中</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		<a href="https://twitter.com/shiina_orez" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/ShiinaOrez" target="_blank" title="github"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="Shiina Orez">Shiina Orez</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
