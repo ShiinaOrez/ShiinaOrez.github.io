@@ -89,7 +89,7 @@ varints可变长编码方案, 用于把整数进行">
     </p>
   <p class="article-time">
     <time datetime="2019-09-30T08:12:45.000Z" itemprop="datePublished">2019-09-30</time>
-    Updated:<time datetime="2019-09-30T08:13:45.753Z" itemprop="dateModified">2019-09-30</time>
+    Updated:<time datetime="2019-09-30T08:19:39.882Z" itemprop="dateModified">2019-09-30</time>
     
   </p>
 </header>
@@ -108,14 +108,14 @@ varints可变长编码方案, 用于把整数进行">
 <p>varints将每一个字节(8-bit)中的第一bit抽出用于标识是否还有后续字节, 剩余7-bit用来表示内容, 而在组合的时候则是逆序组合, 就像下面这样:</p>
 <p>十进制: <code>2019</code> -&gt; 二进制: <code>111 11100011</code></p>
 <p>假设这个数字是使用<code>golang</code>中的<code>uint</code>类型存储的, 那么它应该占用了内存中<code>32-bit</code>的空间, 也就是<code>4</code>个字节:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">    byte4      byte3      byte2      byte1</span><br><span class="line">╭──────────┬──────────┬──────────┬──────────╮</span><br><span class="line">│ 00000000 │ 00000000 │ 00000111 │ 11100011 │</span><br><span class="line">╰──────────┴──────────┴──────────┴──────────╯</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">    byte4      byte3      byte2      byte1</span><br><span class="line">+-------------------------------------------+</span><br><span class="line">| 00000000 | 00000000 | 00000111 | 11100011 |</span><br><span class="line">+-------------------------------------------+</span><br></pre></td></tr></table></figure>
 <p>我们在传输的时候真的太难受了: 白白浪费了两个字节的空间! 那么我们使用<code>varints</code>来进行一下编码吧! 或许会更好一些!</p>
 <p>首先第一步, 把原来的串按照<code>7-bit</code>拆分, 舍去多余的前导0:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">111 11100011 -&gt; 0001111 1100011</span><br></pre></td></tr></table></figure>
 <p>然后第二步, 把所有的<code>7-bit</code>片逆序排列:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> byte2   byte1      byte1   byte2</span><br><span class="line">0001111 1100011 -&gt; 1100011 0001111</span><br></pre></td></tr></table></figure>
 <p>然后在每个非结尾<code>7-bit</code>片前面加上<code>1</code>, 在最后一个<code>7-bit</code>片前加上<code>0</code>:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">╭───┬─────────╮╭───┬─────────╮   ╭───┬─────────╮╭───┬─────────╮</span><br><span class="line">│   │ 1100011 ││   │ 0001111 │ -&gt;│ 1 │ 1100011 ││ 0 │ 0001111 │ </span><br><span class="line">╰───┴─────────╯╰───┴─────────╯   ╰───┴─────────╯╰───┴─────────╯</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+-------------++-------------+   +-------------++-------------+</span><br><span class="line">|   | 1100011 ||   | 0001111 | -&gt;| 1 | 1100011 || 0 | 0001111 | </span><br><span class="line">+-------------++-------------+   +-------------++-------------+</span><br></pre></td></tr></table></figure>
 <p>而最后我们得到了两个<code>8-bit</code>字节: 我们可以用它来进行传输啦! 而且我们省去了两个字节!</p>
 <p>大家一定可以发现一些使用<code>varints</code>的限制和缺陷:</p>
 <ul>
