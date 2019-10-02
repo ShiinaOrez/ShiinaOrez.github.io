@@ -1,0 +1,385 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+  <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+
+  
+    <title>TLV和TTLV - 编码规范的历史 | Shiina Orez</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Shiina Orez">
+    
+    <meta name="description" content="众所周知, 在Protobuf中使用的编码方式是TLV, 也就是Tag-Length-Value, 但是在单纯的理解TLV是什么之前, 我认为需要去理解一下编码规范的历史, 因此写了这篇文章:
+一, 紧凑时代
+时代背景是刚刚有类似DOS的时候, 这个时候的显著特征就是各方面都很原始, 带宽很低, 因">
+    
+    
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="shiina_orez">
+    <meta name="twitter:title" content="TLV和TTLV - 编码规范的历史 | Shiina Orez">
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Shiina Orez" title="Shiina Orez"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shiina Orez">Shiina Orez</a></h1>
+				<h2 class="blog-motto">Backend coder, coding every day.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/10/02/tlv-ttlv/" title="TLV和TTLV - 编码规范的历史" itemprop="url">TLV和TTLV - 编码规范的历史</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2019-10-02T15:49:55.000Z" itemprop="datePublished">2019-10-02</time>
+    Updated:<time datetime="2019-10-02T15:52:40.170Z" itemprop="dateModified">2019-10-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-紧凑时代"><span class="toc-number">1.</span> <span class="toc-text">一, 紧凑时代</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-Version的出现"><span class="toc-number">2.</span> <span class="toc-text">二, Version的出现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-Tag的出现"><span class="toc-number">3.</span> <span class="toc-text">三. Tag的出现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-TLV和TTLV"><span class="toc-number">4.</span> <span class="toc-text">四, TLV和TTLV</span></a></li></ol>
+		</div>
+		
+		<p>众所周知, 在Protobuf中使用的编码方式是TLV, 也就是Tag-Length-Value, 但是在单纯的理解TLV是什么之前, 我认为需要去理解一下编码规范的历史, 因此写了这篇文章:</p>
+<h2 id="一-紧凑时代"><a href="#一-紧凑时代" class="headerlink" title="一, 紧凑时代"></a>一, 紧凑时代</h2><blockquote>
+<p>时代背景是刚刚有类似DOS的时候, 这个时候的显著特征就是各方面都很原始, 带宽很低, 因此在传输数据的时候要省之又省, 因此协议的编码规范以紧凑为特点.</p>
+</blockquote>
+<p>假设武大和华师要搞一个数据传输协议, 目的是传输一本书的信息, 然后两个学校商量好了:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">BookInfo</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> cmd; <span class="comment">// 代表不同的操作</span></span><br><span class="line">    <span class="keyword">char</span>[<span class="number">8</span>]  num;</span><br><span class="line">    <span class="keyword">char</span>[<span class="number">60</span>] name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>学校觉得应该是可以的, 这个协议可以很好的沟通数据了! 也非常的节省空间!</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+---+---+----+</span><br><span class="line">|cmd|num|name|</span><br><span class="line">+---+---+----+</span><br><span class="line">| 2 | 8 | 60 |</span><br><span class="line">+---+---+----+</span><br></pre></td></tr></table></figure>
+<p>这种编码规范的特点就是紧凑, 对于空间的利用率高, 导致这样的特征出现是因为当时的时代环境所限制, 带宽是非常珍贵的, 因此能省则省, 不允许冗余字段的产生.</p>
+<h2 id="二-Version的出现"><a href="#二-Version的出现" class="headerlink" title="二, Version的出现"></a>二, Version的出现</h2><p>在两三年后, 武大想在这个数据传输协议中增加一个字段: 入馆日期. 我们可以叫它<code>date</code>, 然后我们的结构体可以这样去写:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">BookInfo</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> cmd; <span class="comment">// 代表不同的操作</span></span><br><span class="line">    <span class="keyword">char</span>[<span class="number">8</span>] num;</span><br><span class="line">    <span class="keyword">char</span>[<span class="number">60</span>] name;</span><br><span class="line">    <span class="keyword">char</span>[<span class="number">8</span>] date; <span class="comment">// 日期存储的形式为: 19990101这种</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>嗯, 这样安排应该也挺紧凑的, 但是问题很快就凸显了出来: 接收方无法判断应该按照旧的方式去解析数据帧还是按照新的方式去解析数据帧, 因为不可能一夜之间所有的服务都按照新的编码规范来传输数据. 因此一个叫做版本号的字段就这样诞生了:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">BookInfo</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> version; <span class="comment">// 版本字段, 用于标识当前的版本号</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> cmd;</span><br><span class="line">    <span class="keyword">char</span>[<span class="number">8</span>] num;</span><br><span class="line">    <span class="keyword">char</span>[<span class="number">60</span>] name;</span><br><span class="line">    <span class="keyword">char</span>[<span class="number">8</span>] date;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-------+---+---+----+----+</span><br><span class="line">|version|cmd|num|name|date|</span><br><span class="line">+-------+---+---+----+----+</span><br><span class="line">|   1   | 2 | 8 | 60 | 4  |</span><br><span class="line">+-------+---+---+----+----+</span><br></pre></td></tr></table></figure>
+<p>这样根据版本号就可以使用不同的解析方式, 也就解决了之前的问题, 在这里其实版本号就是一个冗余的字段, 但是由于这个字段本身占用的空间不大, 而且当时的带宽已经比之前宽松了一点. 这样的方式现在还有不少协议都在使用.</p>
+<h2 id="三-Tag的出现"><a href="#三-Tag的出现" class="headerlink" title="三. Tag的出现"></a>三. Tag的出现</h2><p>虽然有了版本号能够让我们在协议的构建的时候能够拥有一定的可扩展性, 但是一个协议仅有一个冗余字段来维护还是略显单薄了一些: 当我们拥有很多个版本的协议的时候, 意味着我们的代码里将会出现相当多的<code>case</code>, 然后我们的代码就会变得非常的臃肿, 所以我们尝试加入更多的冗余信息: <code>tag</code>.</p>
+<p><code>tag</code>的作用是用来标识一个字段的解析方式, 一个特定的<code>tag</code>可以用于标识一个字段, 这个字段的解析方式完全可以通过<code>tag</code>来判断, 解析数据帧的时候就可以通过遇见的<code>tag</code>来解析接下来一个或几个字节的数据. 这样就可以拥有更好的可扩展性:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-------+---+---+---+---+---+----+---+----+</span><br><span class="line">|version|tag|cmd|tag|num|tag|name|tag|date|</span><br><span class="line">+-------+---+---+---+---+---+----+---+----+</span><br><span class="line">|   1   | 1 | 2 | 1 | 8 | 1 | 60 | 1 | 4  |</span><br><span class="line">+-------+---+---+---+---+---+----+---+----+</span><br></pre></td></tr></table></figure>
+<h2 id="四-TLV和TTLV"><a href="#四-TLV和TTLV" class="headerlink" title="四, TLV和TTLV"></a>四, TLV和TTLV</h2><p><strong>1. TLV</strong></p>
+<p>在使用了Tag之后, 我们程序的可扩展性好了很多, 但是有时候会出现这样的情况: 我们的书名可能只占4个或者5个字节, 但是仍然分配了60个字节的空间, 这显然有点浪费吧! 所以人们就想着加上后续的长度这类冗余信息会不会让协议变得更加高效?</p>
+<p>好在这种形式早在<a href="https://baike.baidu.com/item/ASN.1/498523" target="_blank" rel="noopener">ASN.1</a>中的BER(Basic Encoding Rule)中提出了:</p>
+<blockquote>
+<p>BER的数据由三个域组成: 标识域(tag), 长度域(length)和值域(value), 又叫做TLV</p>
+</blockquote>
+<p>也就是说, 一个数据段由三个部分组成:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+---+------+-----+</span><br><span class="line">|tag|length|value|</span><br><span class="line">+---+------+-----+</span><br></pre></td></tr></table></figure>
+<p><code>tag</code>的作用是用于标识字段是什么, <code>length</code>用于告知解析程序后续的值域的字节长度, <code>value</code>用于存储真正的数据.</p>
+<p>而且TLV的模式还可以嵌套使用.</p>
+<p>这样的TLV其实已经够棒了, 对吗? 因为我们已经牺牲了足够多的冗余空间来帮助我们达成数据传输协议的高可扩展性, 当数据传输中不定长的字段比较多的时候这样往往是很有效的, 但是如果字段都是占用空间比较小的时候(比如说字符和一些数值), TLV并没有很大的提升整体解析的效率. 并且TLV这样一种模式不具有<strong>自解释性</strong>.</p>
+<blockquote>
+<p>所谓自解释性, 是指可以通过阅读代码或者数据包本身来知晓其结构和特征, 而不需要依靠特定的文档来实现.</p>
+</blockquote>
+<p>比如我们希望随便抓一个数据包, 就能知道每个字段的键, 类型等等信息.</p>
+<p><strong>2. TTLV</strong></p>
+<p>所谓的TTLV, 是指<strong>Tag, Type, Length, Value</strong>, 在这其中加上了Type, 就能够在数据中直接知晓一个数据段的数据类型, 相应的, 在一些确定长度的类型下, 我们还可以删减掉长度这个辅助信息[所以其实是<strong>TT(L)V</strong>], 这样接收方就能够只看数据包而知晓数据传输协议的编码规范.</p>
+<p>比如我们定义了几个类型: <code>int8</code>用<code>1</code>表示, <code>int32</code>用<code>2</code>表示, <code>string</code>用<code>3</code>表示, 这样的话<code>int8</code>和<code>int32</code>的值域其实是定长的, 而只有<code>string</code>类型的字段是需要长度域的, 比如:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Info <span class="keyword">struct</span> &#123;</span><br><span class="line">    One   <span class="keyword">int8</span></span><br><span class="line">    Two   <span class="keyword">int32</span></span><br><span class="line">    Three <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样一个Go语言中的结构体, 如果我们传输他的话, 按照TTLV的形式, 数据帧的编码规范应该是这样的:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+---+----+-----+---+----+-----+---+----+------+-----+</span><br><span class="line">|tag|type|value|tag|type|value|tag|type|length|value|</span><br><span class="line">+---+----+-----+---+----+-----+---+----+------+-----+</span><br><span class="line">|   | 1  |1-bit|   | 2  |4-bit|   | 3  |  x   |x-bit|</span><br><span class="line">+---+----+-----+---+----+-----+---+----+------+-----+</span><br></pre></td></tr></table></figure>
+<p>编码规范的演化, 一方面受着<strong>物理环境因素的影响(指带宽)</strong>, 另一方面受<strong>人类需求</strong>的影响, 所以在使用TLV或者TTLV之前一定要了解整个编码规范的历史进程, 这样才能更好的理解为什么会出现TLV和TTLV.</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Protobuf/">Protobuf</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2019/10/02/tlv-ttlv/" data-title="TLV和TTLV - 编码规范的历史 | Shiina Orez" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2019/09/30/varintsAndZigZag/" title="面对小数值的高效率序列化方案:varints和zigzag编码">
+ <strong>NEXT:</strong><br> 
+ <span>面对小数值的高效率序列化方案:varints和zigzag编码
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-紧凑时代"><span class="toc-number">1.</span> <span class="toc-text">一, 紧凑时代</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-Version的出现"><span class="toc-number">2.</span> <span class="toc-text">二, Version的出现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-Tag的出现"><span class="toc-number">3.</span> <span class="toc-text">三. Tag的出现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-TLV和TTLV"><span class="toc-number">4.</span> <span class="toc-text">四, TLV和TTLV</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Algorithm-DataStructure/" title="Algorithm DataStructure">Algorithm DataStructure<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Concurrency-In-Go/" title="Concurrency In Go">Concurrency In Go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Concurrency-in-Go/" title="Concurrency in Go">Concurrency in Go<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Go/" title="Go">Go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Werkzeug/" title="Werkzeug">Werkzeug<sup>4</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/protocol-buffers/" title="protocol buffers">protocol buffers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+			<li><a href="/tags/软件体系结构/" title="软件体系结构">软件体系结构<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 做一个真正的菜鸡 --ShiinaOrez <br>
+			日积代码千行，则无往而不利也@学业进行中</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		<a href="https://twitter.com/shiina_orez" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/ShiinaOrez" target="_blank" title="github"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2019 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="Shiina Orez">Shiina Orez</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
