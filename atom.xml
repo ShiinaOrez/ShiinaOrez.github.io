@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://shiinaorez.github.com/"/>
-  <updated>2019-10-02T15:52:40.170Z</updated>
+  <updated>2020-02-27T18:40:33.687Z</updated>
   <id>http://shiinaorez.github.com/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Elastic Search安装教程</title>
+    <link href="http://shiinaorez.github.com/2020/02/28/elastic-search-install/"/>
+    <id>http://shiinaorez.github.com/2020/02/28/elastic-search-install/</id>
+    <published>2020-02-27T16:35:10.000Z</published>
+    <updated>2020-02-27T18:40:33.687Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Elastic-Search-安装教程"><a href="#Elastic-Search-安装教程" class="headerlink" title="Elastic Search 安装教程"></a>Elastic Search 安装教程</h2><p>本文是俺在学习Elastic Search时安装的一些步骤和教程, 包括了对于ES中的分词插件的安装等等.</p><h3 id="学习Elastic-Search的契机"><a href="#学习Elastic-Search的契机" class="headerlink" title="学习Elastic Search的契机"></a>学习Elastic Search的契机</h3><p>源自我在学校时的一个开源项目: 木犀课栈, 不知道以后看到这个文章的时候这个项目是否还在hhh, 暂且纪念一下吧… 当时要满足对于课程的搜索, 大致的场景如下:</p><ul><li>支持全文搜索(对于课程名, 开课教师名, 课程号)</li><li>支持对于tag的检索</li><li>支持多种筛选条件</li></ul><p>当时适逢老板(zxh)送给我一本&lt;&lt;高性能MySQL&gt;&gt;(o’reilly Baron Scbwartz等, High Performance MySQL), 我就使用了MySQL里的FULLTEXT(全文索引, 在MySQL 4.x后引入), 结合MATCH和AGAINST两个函数以及多个MySQL函数实现了当时要求的功能. 并且当时觉得自己非常的厉害来着…</p><p>使用MySQl+golang编写当时的代码时, 真的是费劲了各种心机, 各种优化, 最终把性能维护在了一个还不错的程度. 当时又恰逢去字节跳动(base武汉)实习, 我的Leader问起我在校内写过的项目, 我就提起了这个搜索的部分, 并且还有点骄傲… ? 因为当时真的想了很多办法去优化.</p><p>我的Leader听我讲了一下情况, 就问我为什么不用ES, 我当时知道ES是一个搜索引擎, 但是觉得太重了, 所以就说因为ES太重了所以没有尝试, 后来Leader说ES一点儿也不重, 可以试一试. 于是有了后来学习ES的过程.</p><p>(后来发现ES对于我们这种校内的团队的情况还是很重的, 干, 根本负担不起)</p><h3 id="下载-安装Elastic-Search"><a href="#下载-安装Elastic-Search" class="headerlink" title="下载/安装Elastic Search"></a>下载/安装Elastic Search</h3><p>Elastic Search是一个完全开源的搜索引擎, 基于Lucene, 集成了RESTful的API调度方式, <a href="https://www.elastic.co/" target="_blank" rel="noopener">官网</a>上可以下载对应的安装包, 我当时下载的是7.5.2版本(我在写这篇文章的时候已经是7.6.0版本了, 可以看出还是比较活跃的), 由于各个版本ES有比较大的改动, 因此还是建议下载最新的版本.</p><p>当然, 不管是哪个版本的ES都是稳定的, 因此你也可以选择下载比较小的ES 2.x来进行测试和部署, 网络上有各个版本的ES的文档, 都可以很好的进行查阅.</p><p>(下载的时候由于墙的原因会比较慢, 因此建议开梯子进行下载)</p><p>下载好之后进行解压:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xzvf elasticsearch-7.5.2-linux-x86_64.tar.gz</span><br></pre></td></tr></table></figure><p>解压后进入文件夹内, 直接运行二进制的文件:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> elasticsearch-7.5.2 &amp;&amp; ./bin/elasticsearch</span><br></pre></td></tr></table></figure><p>然后就会运行起来啦~但是需要JDK-8, 建议提前安装好哦~</p><h3 id="安装Elastic-Search中文分词插件IK"><a href="#安装Elastic-Search中文分词插件IK" class="headerlink" title="安装Elastic Search中文分词插件IK"></a>安装Elastic Search中文分词插件IK</h3><p>ES对于存储数据的内容进行全文索引, 这其中很重要的一环就是需要对于内容进行<strong>分词</strong>, 只有在进行适当的分词之后才可以建立合适的索引, 否则就无法进行全文检索.</p><p>我们从ES官网下载的文件中并没有自带中文的分词插件, 这个时候就需要我们进行手动安装了, 我下载使用的是ik, 好在ES给我们提供了很便捷的安装插件的功能:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.5.2/elasticsearch-analysis-ik-7.5.2.zip</span><br></pre></td></tr></table></figure><p>然后我们在使用ES的时候就可以通过tokenizer字段来指定对应安装的分词器了.</p><h3 id="后话"><a href="#后话" class="headerlink" title="后话"></a>后话</h3><p>随着我对于ES的学习越来越深入, 我发现相比起之前使用了大量的原生SQL语句和各种优化技巧相比, 直接使用ES是更加的轻松和方便的. 而且ES提供了人性化的RESTful API和很强大的检索功能, 很适合我当时的应用场景.</p><p>但是在我盲目开心的时候, 发现了一个很致命的问题: ES对于内存的需求不是我们这个团队当前的条件可以负担的起的… 所以没有办法我最后还是使用了之前的版本.</p><p>虽然很可惜, 但是以后在我漫长的开发生涯中, 我一定有机会能够使用ES, 能够和这个能够为我提供简便全文检索的朋友相见, 就这样.</p><p>– 2020.02.28</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;Elastic-Search-安装教程&quot;&gt;&lt;a href=&quot;#Elastic-Search-安装教程&quot; class=&quot;headerlink&quot; title=&quot;Elastic Search 安装教程&quot;&gt;&lt;/a&gt;Elastic Search 安装教程&lt;/h2&gt;&lt;p&gt;本文
+      
+    
+    </summary>
+    
+    
+    
+      <category term="ES" scheme="http://shiinaorez.github.com/tags/ES/"/>
+    
+  </entry>
   
   <entry>
     <title>TLV和TTLV - 编码规范的历史</title>
@@ -469,30 +493,6 @@
       
         &lt;h2 id=&quot;前言：&quot;&gt;&lt;a href=&quot;#前言：&quot; class=&quot;headerlink&quot; title=&quot;前言：&quot;&gt;&lt;/a&gt;前言：&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;因为HUST校赛所以就要复习一下以前学过的知识，很多以前学过的知识全都忘光了，就很难受，所以慢慢的整理一下；
 &lt;/c
-      
-    
-    </summary>
-    
-    
-    
-      <category term="algorithm" scheme="http://shiinaorez.github.com/tags/algorithm/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>拓扑排序-topological-sort</title>
-    <link href="http://shiinaorez.github.com/2018/04/24/topological-sort/"/>
-    <id>http://shiinaorez.github.com/2018/04/24/topological-sort/</id>
-    <published>2018-04-24T13:33:21.000Z</published>
-    <updated>2019-04-08T15:39:45.244Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="什么是拓扑排序"><a href="#什么是拓扑排序" class="headerlink" title="什么是拓扑排序"></a>什么是拓扑排序</h2><pre><code>对一个有向无环图(Directed Acyclic Graph简称DAG)G进行拓扑排序，是将G中所有顶点排成一个线性序列，使得图中任意一对顶点u和v，若边(u,v)∈E(G)，则u在线性序列中出现在v之前。通常，这样的线性序列称为满足拓扑次序(Topological Order)的序列，简称拓扑序列。简单的说，由某个集合上的一个偏序得到该集合上的一个全序，这个操作称之为拓扑排序。</code></pre><p>↑听不懂听不懂= =</p><p>随便刷刷编程题的人应该知道一个先行课问题，就是在大学中，选修一门课程是有它的固定的先行课的，只有完成了先行课才能选择对应的课程。</p><p>拓扑排序就是解决这个问题的。</p><h2 id="如何实现？"><a href="#如何实现？" class="headerlink" title="如何实现？"></a>如何实现？</h2><p>我们就用先行课问题来进行讲解。</p><p>如果一门课程没有先行课，那么这个课程是基础课程，可以直接上的。而在我们上完所有的基础课程后，那些仅由基础课程为先行课的课程也相应解锁，以此类推。</p><p>具体实现为：<br>    &gt; <em> 记录每个结点的入度和出度<br>    &gt; </em> 建立一个队列，将所有的入度为0的点加入队列（因为是有向无环图所以一定存在入度为0的点）<br>    &gt; <em> 在队列非空前，不断取出元素，遍历它连接的所有点，并将他们的入度-1，（删除该节点），如果有点入度为0，那么加入队列。<br>    &gt; </em> OK</p><p>然后我们得到的序列中，满足所有的关系X-&gt;Y，都有</p><pre><code>index[x]&lt;index[y] </code></pre><p>我们便完成了拓扑排序</p><h2 id="源码（自己写的勿喷）"><a href="#源码（自己写的勿喷）" class="headerlink" title="源码（自己写的勿喷）"></a>源码（自己写的勿喷）</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;queue&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> maxn 1005</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span>&#123;</span></span><br><span class="line"><span class="keyword">int</span> next;</span><br><span class="line"><span class="keyword">int</span> to;</span><br><span class="line">&#125;edge[maxn];</span><br><span class="line"><span class="keyword">bool</span> visit[maxn];</span><br><span class="line"><span class="keyword">int</span> e,head[maxn];</span><br><span class="line"><span class="keyword">int</span> in[maxn];</span><br><span class="line"><span class="keyword">int</span> n,m;</span><br><span class="line"><span class="built_in">queue</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">list</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> u,<span class="keyword">int</span> v)</span></span>&#123;</span><br><span class="line">edge[++e].next=head[u];</span><br><span class="line">edge[e].to=v;</span><br><span class="line">head[u]=e;</span><br><span class="line"><span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">scan</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=head[x];i!=<span class="number">0</span>;i=edge[i].next)&#123;</span><br><span class="line"><span class="keyword">int</span> v=edge[i].to;</span><br><span class="line">in[v]--;</span><br><span class="line"><span class="keyword">if</span>(!in[v]) <span class="built_in">list</span>.push(v);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="keyword">int</span> u,v,w;</span><br><span class="line"><span class="built_in">scanf</span>(<span class="string">"%d %d"</span>,&amp;n,&amp;m);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=m;i++)&#123;</span><br><span class="line"><span class="built_in">scanf</span>(<span class="string">"%d %d"</span>,&amp;u,&amp;v);</span><br><span class="line">add(u,v);</span><br><span class="line">in[v]++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=n;i++)</span><br><span class="line"><span class="keyword">if</span>(!in[i]) <span class="built_in">list</span>.push(i);</span><br><span class="line"><span class="keyword">while</span>(!<span class="built_in">list</span>.empty())&#123;</span><br><span class="line"><span class="keyword">int</span> now=<span class="built_in">list</span>.front();</span><br><span class="line">scan(now);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%d "</span>,now);</span><br><span class="line"><span class="built_in">list</span>.pop();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><hr><p>欢迎大家到<a href="https://blog.csdn.net/Shiina_Orez" target="_blank" rel="noopener">ShiinaOrez的博客</a></p><p><img src="http://r.photo.store.qq.com/psb?/V13Gxo2x1UzVE2/jGkqTLPCfDQJUA47vTYTfaotZSOPunLE.UBloy6Fyp8!/r/dGYBAAAAAAAA" alt="这里写图片描述"></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h2 id=&quot;什么是拓扑排序&quot;&gt;&lt;a href=&quot;#什么是拓扑排序&quot; class=&quot;headerlink&quot; title=&quot;什么是拓扑排序&quot;&gt;&lt;/a&gt;什么是拓扑排序&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;对一个有向无环图(Directed Acyclic Graph简称DAG)G进行拓扑
       
     
     </summary>

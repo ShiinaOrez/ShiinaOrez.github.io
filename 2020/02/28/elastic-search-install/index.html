@@ -9,18 +9,19 @@
   <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
 
   
-    <title>《Call Werkzeug系列之：WSGI Environment》 | Shiina Orez</title>
+    <title>Elastic Search安装教程 | Shiina Orez</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Shiina Orez">
     
-    <meta name="description" content="WSGI-Environment是什么：WSGI-Environment，就是在代码中最常见的environ。environ字典被用来包含CGI(Common Gateway Interface，必须的网关接口)环境变量，除非是空字符串，否则所有以下将要介绍的变量都必须指定，但是在空字符串的情况下，">
+    <meta name="description" content="Elastic Search 安装教程本文是俺在学习Elastic Search时安装的一些步骤和教程, 包括了对于ES中的分词插件的安装等等.
+学习Elastic Search的契机源自我在学校时的一个开源项目: 木犀课栈, 不知道以后看到这个文章的时候这个项目是否还在hhh, 暂且纪念一下吧… ">
     
     
     
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="shiina_orez">
-    <meta name="twitter:title" content="《Call Werkzeug系列之：WSGI Environment》 | Shiina Orez">
+    <meta name="twitter:title" content="Elastic Search安装教程 | Shiina Orez">
       
     
     
@@ -81,15 +82,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/04/10/CallWerkzeug_wsgi_environment/" title="《Call Werkzeug系列之：WSGI Environment》" itemprop="url">《Call Werkzeug系列之：WSGI Environment》</a>
+      <a href="/2020/02/28/elastic-search-install/" title="Elastic Search安装教程" itemprop="url">Elastic Search安装教程</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
     </p>
   <p class="article-time">
-    <time datetime="2019-04-10T13:33:30.000Z" itemprop="datePublished">2019-04-10</time>
-    Updated:<time datetime="2019-04-10T13:34:04.634Z" itemprop="dateModified">2019-04-10</time>
+    <time datetime="2020-02-27T16:35:10.000Z" itemprop="datePublished">2020-02-28</time>
+    Updated:<time datetime="2020-02-27T18:40:33.687Z" itemprop="dateModified">2020-02-28</time>
     
   </p>
 </header>
@@ -98,154 +99,43 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#WSGI-Environment是什么："><span class="toc-number">1.</span> <span class="toc-text">WSGI-Environment是什么：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#environ经典情况下包含的键值对："><span class="toc-number">2.</span> <span class="toc-text">environ经典情况下包含的键值对：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WSGI要求下的变量："><span class="toc-number">3.</span> <span class="toc-text">WSGI要求下的变量：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WSGI-Environment的规范："><span class="toc-number">4.</span> <span class="toc-text">WSGI-Environment的规范：</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Elastic-Search-安装教程"><span class="toc-number">1.</span> <span class="toc-text">Elastic Search 安装教程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#学习Elastic-Search的契机"><span class="toc-number">1.1.</span> <span class="toc-text">学习Elastic Search的契机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#下载-安装Elastic-Search"><span class="toc-number">1.2.</span> <span class="toc-text">下载/安装Elastic Search</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装Elastic-Search中文分词插件IK"><span class="toc-number">1.3.</span> <span class="toc-text">安装Elastic Search中文分词插件IK</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#后话"><span class="toc-number">1.4.</span> <span class="toc-text">后话</span></a></li></ol></li></ol>
 		</div>
 		
-		<h2 id="WSGI-Environment是什么："><a href="#WSGI-Environment是什么：" class="headerlink" title="WSGI-Environment是什么："></a>WSGI-Environment是什么：</h2><p>WSGI-Environment，就是在代码中最常见的<strong>environ</strong>。<br>environ<strong>字典</strong>被用来包含<strong>CGI</strong>(Common Gateway Interface，必须的网关接口)环境变量，除非是空字符串，否则所有以下将要介绍的变量都<strong>必须</strong>指定，但是在空字符串的情况下，他们会被忽略。除非特殊说明。<br>简而言之：<strong>environ是一个字典，包含请求中所有的环境变量</strong></p>
-<hr>
-<h2 id="environ经典情况下包含的键值对："><a href="#environ经典情况下包含的键值对：" class="headerlink" title="environ经典情况下包含的键值对："></a>environ经典情况下包含的键值对：</h2><table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Value</th>
-<th>Required</th>
-<th>Meaning</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>REQUEST_METHOD</td>
-<td>string</td>
-<td>√</td>
-<td>HTTP的请求方式</td>
-<td>“GET”</td>
-</tr>
-<tr>
-<td>SCRIPT_NAME</td>
-<td>string</td>
-<td></td>
-<td>URL请求中path的开始部分，对应了应用程序对象</td>
-<td>“/api/v1”</td>
-</tr>
-<tr>
-<td>PATH_INFO</td>
-<td>string</td>
-<td></td>
-<td>URL请求中path的其余部分，指定应用程序内部的虚拟位置</td>
-<td>“/login”</td>
-</tr>
-<tr>
-<td>QUERY_STRING</td>
-<td>string</td>
-<td></td>
-<td>请求参数</td>
-<td>“id=10086&amp;page=1”</td>
-</tr>
-<tr>
-<td>CONTENT_TYPE</td>
-<td>string</td>
-<td></td>
-<td>HTTP请求中的Content-Type字段</td>
-<td>“application/json”</td>
-</tr>
-<tr>
-<td>CONTENT-LENGTH</td>
-<td>string</td>
-<td></td>
-<td>HTTP请求中的Content-Length字段</td>
-<td>“18868”</td>
-</tr>
-<tr>
-<td>SERVER_NAME</td>
-<td>string</td>
-<td>√</td>
-<td>服务器名</td>
-<td>“119.27.79.87”</td>
-</tr>
-<tr>
-<td>SERVER_PORT</td>
-<td>string</td>
-<td>√</td>
-<td>服务器端口</td>
-<td>“6666”</td>
-</tr>
-<tr>
-<td>SERVER_PROTOCOL</td>
-<td>string</td>
-<td>√</td>
-<td>HTTP协议版本</td>
-<td>“HTTP/1.0”</td>
-</tr>
-<tr>
-<td>HTTP_*</td>
-<td></td>
-<td></td>
-<td>客户端提供的请求报头们，以”HTTP_”开头</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="WSGI要求下的变量："><a href="#WSGI要求下的变量：" class="headerlink" title="WSGI要求下的变量："></a>WSGI要求下的变量：</h2><table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>wsgi.version</td>
-<td>tuple</td>
-<td>一般为(1,0)，代表WSGI版本1.0</td>
-</tr>
-<tr>
-<td>wsgi.url_scheme</td>
-<td>string</td>
-<td>URL的scheme部分，值为”http”或”https”</td>
-</tr>
-<tr>
-<td>wsgi.input</td>
-<td>stream</td>
-<td>一个能被HTTP请求主体读取的输入流</td>
-</tr>
-<tr>
-<td>wgsi.errors</td>
-<td>stream</td>
-<td>用于记录错误信息的输出流，目的是记录程序或者其他标准化及可能的中心化错误。对很对服务器而言，wsgi.errors是服务器的主要错误日志</td>
-</tr>
-<tr>
-<td>wsgi.multithread</td>
-<td>bool</td>
-<td>如果一个应用程序对象同时处于被同一个进程中的不同线程调用，则为True</td>
-</tr>
-<tr>
-<td>wsgi.multiprocess</td>
-<td>bool</td>
-<td>如果相同的应用程序对象同时被其他进程调用，则为True</td>
-</tr>
-<tr>
-<td>wsgi.run_once</td>
-<td>bool</td>
-<td>如果服务器/网关期待（但是不保证）应用程序在它所在的进程生命期间只会被调用一次，则为True</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="WSGI-Environment的规范："><a href="#WSGI-Environment的规范：" class="headerlink" title="WSGI-Environment的规范："></a>WSGI-Environment的规范：</h2><ul>
-<li>一个遵循WSGI规范的服务器或网关应该在文档中描述它们自己定义的同时，适当的<strong>说明</strong>一下它们可以提供哪些变量。而应用程序这边则应该对它们要用到的<strong>每一个变量的存在性进行检查</strong>，并且在检测某些变量不存在的时候要有<strong>备用措施</strong>。</li>
-<li>除了<strong>CGI定义的变量</strong>，environ字典也可以包含任何<strong>操作系统相关的环境变量</strong>，并且并且必须包含<strong>第二部分提及的变量</strong>。</li>
-<li>environ字典可能会包含<strong>服务器定义的</strong>变量。这些变量应该用<strong>小写，数字，点号</strong>以及<strong>下划线</strong>来命名，并且必须定义一个该服务器/网关<strong>专有的前缀开头</strong>。</li>
+		<h2 id="Elastic-Search-安装教程"><a href="#Elastic-Search-安装教程" class="headerlink" title="Elastic Search 安装教程"></a>Elastic Search 安装教程</h2><p>本文是俺在学习Elastic Search时安装的一些步骤和教程, 包括了对于ES中的分词插件的安装等等.</p>
+<h3 id="学习Elastic-Search的契机"><a href="#学习Elastic-Search的契机" class="headerlink" title="学习Elastic Search的契机"></a>学习Elastic Search的契机</h3><p>源自我在学校时的一个开源项目: 木犀课栈, 不知道以后看到这个文章的时候这个项目是否还在hhh, 暂且纪念一下吧… 当时要满足对于课程的搜索, 大致的场景如下:</p>
+<ul>
+<li>支持全文搜索(对于课程名, 开课教师名, 课程号)</li>
+<li>支持对于tag的检索</li>
+<li>支持多种筛选条件</li>
 </ul>
-<hr>
+<p>当时适逢老板(zxh)送给我一本&lt;&lt;高性能MySQL&gt;&gt;(o’reilly Baron Scbwartz等, High Performance MySQL), 我就使用了MySQL里的FULLTEXT(全文索引, 在MySQL 4.x后引入), 结合MATCH和AGAINST两个函数以及多个MySQL函数实现了当时要求的功能. 并且当时觉得自己非常的厉害来着…</p>
+<p>使用MySQl+golang编写当时的代码时, 真的是费劲了各种心机, 各种优化, 最终把性能维护在了一个还不错的程度. 当时又恰逢去字节跳动(base武汉)实习, 我的Leader问起我在校内写过的项目, 我就提起了这个搜索的部分, 并且还有点骄傲… ? 因为当时真的想了很多办法去优化.</p>
+<p>我的Leader听我讲了一下情况, 就问我为什么不用ES, 我当时知道ES是一个搜索引擎, 但是觉得太重了, 所以就说因为ES太重了所以没有尝试, 后来Leader说ES一点儿也不重, 可以试一试. 于是有了后来学习ES的过程.</p>
+<p>(后来发现ES对于我们这种校内的团队的情况还是很重的, 干, 根本负担不起)</p>
+<h3 id="下载-安装Elastic-Search"><a href="#下载-安装Elastic-Search" class="headerlink" title="下载/安装Elastic Search"></a>下载/安装Elastic Search</h3><p>Elastic Search是一个完全开源的搜索引擎, 基于Lucene, 集成了RESTful的API调度方式, <a href="https://www.elastic.co/" target="_blank" rel="noopener">官网</a>上可以下载对应的安装包, 我当时下载的是7.5.2版本(我在写这篇文章的时候已经是7.6.0版本了, 可以看出还是比较活跃的), 由于各个版本ES有比较大的改动, 因此还是建议下载最新的版本.</p>
+<p>当然, 不管是哪个版本的ES都是稳定的, 因此你也可以选择下载比较小的ES 2.x来进行测试和部署, 网络上有各个版本的ES的文档, 都可以很好的进行查阅.</p>
+<p>(下载的时候由于墙的原因会比较慢, 因此建议开梯子进行下载)</p>
+<p>下载好之后进行解压:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xzvf elasticsearch-7.5.2-linux-x86_64.tar.gz</span><br></pre></td></tr></table></figure>
+<p>解压后进入文件夹内, 直接运行二进制的文件:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> elasticsearch-7.5.2 &amp;&amp; ./bin/elasticsearch</span><br></pre></td></tr></table></figure>
+<p>然后就会运行起来啦~但是需要JDK-8, 建议提前安装好哦~</p>
+<h3 id="安装Elastic-Search中文分词插件IK"><a href="#安装Elastic-Search中文分词插件IK" class="headerlink" title="安装Elastic Search中文分词插件IK"></a>安装Elastic Search中文分词插件IK</h3><p>ES对于存储数据的内容进行全文索引, 这其中很重要的一环就是需要对于内容进行<strong>分词</strong>, 只有在进行适当的分词之后才可以建立合适的索引, 否则就无法进行全文检索.</p>
+<p>我们从ES官网下载的文件中并没有自带中文的分词插件, 这个时候就需要我们进行手动安装了, 我下载使用的是ik, 好在ES给我们提供了很便捷的安装插件的功能:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.5.2/elasticsearch-analysis-ik-7.5.2.zip</span><br></pre></td></tr></table></figure>
+<p>然后我们在使用ES的时候就可以通过tokenizer字段来指定对应安装的分词器了.</p>
+<h3 id="后话"><a href="#后话" class="headerlink" title="后话"></a>后话</h3><p>随着我对于ES的学习越来越深入, 我发现相比起之前使用了大量的原生SQL语句和各种优化技巧相比, 直接使用ES是更加的轻松和方便的. 而且ES提供了人性化的RESTful API和很强大的检索功能, 很适合我当时的应用场景.</p>
+<p>但是在我盲目开心的时候, 发现了一个很致命的问题: ES对于内存的需求不是我们这个团队当前的条件可以负担的起的… 所以没有办法我最后还是使用了之前的版本.</p>
+<p>虽然很可惜, 但是以后在我漫长的开发生涯中, 我一定有机会能够使用ES, 能够和这个能够为我提供简便全文检索的朋友相见, 就这样.</p>
+<p>– 2020.02.28</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Werkzeug/">Werkzeug</a>
+  <span></span> <a href="/tags/ES/">ES</a>
   </div>
 
 
@@ -253,7 +143,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://shiinaorez.github.com/2019/04/10/CallWerkzeug_wsgi_environment/" data-title="《Call Werkzeug系列之：WSGI Environment》 | Shiina Orez" data-tsina class="share clearfix">
+  <div data-url="http://shiinaorez.github.com/2020/02/28/elastic-search-install/" data-title="Elastic Search安装教程 | Shiina Orez" data-tsina class="share clearfix">
   </div>
 
 </div>
@@ -262,19 +152,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev">
- <a href="/2019/04/10/CallWerkzeug_start/" title="《Call Werkzeug系列之：开始》">
-  <strong>PREVIOUS:</strong><br>
-  <span>
-  《Call Werkzeug系列之：开始》</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2019/04/10/RESTful/" title="什么是RESTful？">
+<a href="/2019/10/02/tlv-ttlv/" title="TLV和TTLV - 编码规范的历史">
  <strong>NEXT:</strong><br> 
- <span>什么是RESTful？
+ <span>TLV和TTLV - 编码规范的历史
 </span>
 </a>
 </div>
@@ -287,7 +169,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#WSGI-Environment是什么："><span class="toc-number">1.</span> <span class="toc-text">WSGI-Environment是什么：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#environ经典情况下包含的键值对："><span class="toc-number">2.</span> <span class="toc-text">environ经典情况下包含的键值对：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WSGI要求下的变量："><span class="toc-number">3.</span> <span class="toc-text">WSGI要求下的变量：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WSGI-Environment的规范："><span class="toc-number">4.</span> <span class="toc-text">WSGI-Environment的规范：</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Elastic-Search-安装教程"><span class="toc-number">1.</span> <span class="toc-text">Elastic Search 安装教程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#学习Elastic-Search的契机"><span class="toc-number">1.1.</span> <span class="toc-text">学习Elastic Search的契机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#下载-安装Elastic-Search"><span class="toc-number">1.2.</span> <span class="toc-text">下载/安装Elastic Search</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装Elastic-Search中文分词插件IK"><span class="toc-number">1.3.</span> <span class="toc-text">安装Elastic Search中文分词插件IK</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#后话"><span class="toc-number">1.4.</span> <span class="toc-text">后话</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">
