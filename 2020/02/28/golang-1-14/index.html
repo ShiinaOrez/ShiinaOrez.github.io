@@ -1,0 +1,398 @@
+
+ <!DOCTYPE HTML>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+  <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+
+  
+    <title>Go语言1.14版本发布 | Shiina Orez</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Shiina Orez">
+    
+    <meta name="description" content="Go语言 1.14版本发布的新特性在2020年2月25日, Go语言的1.14版本发布了, 在Go语言官方的博客上Alex Rakoczy写道:
+“今天, Go语言团队非常开心的宣布Go 1.14版本的发布, 您可以从下载页面上下载它”
+“这个版本的一些亮点包括:”
+
+现在, Go Module已经">
+    
+    
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="shiina_orez">
+    <meta name="twitter:title" content="Go语言1.14版本发布 | Shiina Orez">
+      
+    
+    
+    <link rel="alternate" href="/atom.xml" title="Shiina Orez" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/gopher.png" alt="Shiina Orez" title="Shiina Orez"></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shiina Orez">Shiina Orez</a></h1>
+				<h2 class="blog-motto">Backend coder, coding every day.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/tags">Tags</a></li>
+					
+						<li><a href="/categories">Categories</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:shiinaorez.github.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/02/28/golang-1-14/" title="Go语言1.14版本发布" itemprop="url">Go语言1.14版本发布</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://shiinaorez.github.com" title="Shiina Orez">Shiina Orez</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2020-02-28T15:45:38.000Z" itemprop="datePublished">2020-02-28</time>
+    Updated:<time datetime="2020-02-29T11:10:30.349Z" itemprop="dateModified">2020-02-29</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go语言-1-14版本发布的新特性"><span class="toc-number">1.</span> <span class="toc-text">Go语言 1.14版本发布的新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GO-MOD用于生产环境"><span class="toc-number">1.1.</span> <span class="toc-text">GO MOD用于生产环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-5及以前：GOPATH"><span class="toc-number">1.1.1.</span> <span class="toc-text">Go1.5及以前：GOPATH</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-6到1-10：vendor"><span class="toc-number">1.1.2.</span> <span class="toc-text">Go1.6到1.10：vendor</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-11至今："><span class="toc-number">1.1.3.</span> <span class="toc-text">Go1.11至今：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#具有重叠方法集的接口类型"><span class="toc-number">1.2.</span> <span class="toc-text">具有重叠方法集的接口类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#关于使接口类型允许嵌入重叠方法集的提议"><span class="toc-number">1.2.1.</span> <span class="toc-text">关于使接口类型允许嵌入重叠方法集的提议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#本质：解决菱形问题"><span class="toc-number">1.2.2.</span> <span class="toc-text">本质：解决菱形问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提升defer的性能"><span class="toc-number">1.3.</span> <span class="toc-text">提升defer的性能</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="Go语言-1-14版本发布的新特性"><a href="#Go语言-1-14版本发布的新特性" class="headerlink" title="Go语言 1.14版本发布的新特性"></a>Go语言 1.14版本发布的新特性</h2><p>在2020年2月25日, Go语言的1.14版本发布了, 在Go语言官方的<a href="https://blog.golang.org/go1.14" target="_blank" rel="noopener">博客</a>上Alex Rakoczy写道:</p>
+<p>“今天, Go语言团队非常开心的宣布Go 1.14版本的发布, 您可以从<a href="golang.org/dl">下载页面</a>上下载它”</p>
+<p>“这个版本的一些亮点包括:”</p>
+<ul>
+<li>现在, Go Module已经准备好用于生产环境了, 我们鼓励所有的用户使用Go Mod进行依赖性管理</li>
+<li>嵌入具有重叠方法集的接口</li>
+<li>改进defer的性能</li>
+<li>goroutine异步抢占</li>
+<li>页面分配器效率更高</li>
+<li>内置的time中的计时器的效率更高了</li>
+</ul>
+<p>我们可以看到Alex主要提到了六点, 接下来我将分别讲述这六点</p>
+<h3 id="GO-MOD用于生产环境"><a href="#GO-MOD用于生产环境" class="headerlink" title="GO MOD用于生产环境"></a>GO MOD用于生产环境</h3><p>对于每一个开发者而言，程序的依赖管理都是不可缺少的，因为不管我们使用什么语言，都是站在巨人的肩膀上进行开发。全球的开发者都会互相帮助，这也是开源精神很重要的一部分。<br>除了Go之外的其他语言，Java有maven，Python有pip，PHP有compose，Node.js有npm等等。对于Go语言而言，就是在1.6版本之后出现的vendor和1.11版本之后的go module了。</p>
+<h4 id="Go1-5及以前：GOPATH"><a href="#Go1-5及以前：GOPATH" class="headerlink" title="Go1.5及以前：GOPATH"></a>Go1.5及以前：GOPATH</h4><p>在Go1.5及以前，都是依靠最简单的GOPATH的方式进行代码导入的。<br>通过设置全局变量GOPATH的方式来导入本地的代码，而且还存在和内置库冲突的风险。<br>这个时期的GOPATH不能称之为包管理，因为根本没有依赖性的概念和版本的概念。是非常不方便、不成熟的一种方式。</p>
+<h4 id="Go1-6到1-10：vendor"><a href="#Go1-6到1-10：vendor" class="headerlink" title="Go1.6到1.10：vendor"></a>Go1.6到1.10：vendor</h4><p>vendor的本意是供应商或者小贩，在Go1.6时推出了使用vendor来进行应用依赖性管理的功能。<br>vendor本身是应用根目录下的一个文件夹，而文件夹内用于存放应用的一些第三方依赖，在build我们的应用时，可以自动从vendor中进行搜索和导入。这样子应用和依赖可以整体进行打包，成为了真正意义上的包管理工具。<br>接下来进行推测：既然我们自己构建的应用会有vendor，那么意味着我们依赖的第三方的包也会有同样的情况产生，也就是我们的vendor目录下其实会有多级vendor的出现。<br>vendor的加载流程：</p>
+<p> 包根目录下的vendor<br> 包根目录向上的最近的一个vendor<br> …<br> GOPATH src/下的vendor<br> GOROOT src/<br> GOPATH src/</p>
+<p>但是只依靠vendor还是没办法管理依赖的版本，这个时候很多第三方的工具出现了：glide，godep还有govendor等等…</p>
+<h4 id="Go1-11至今："><a href="#Go1-11至今：" class="headerlink" title="Go1.11至今："></a>Go1.11至今：</h4><p>Go1.11版本开始，实验性的出现了可以不用定义GOPATH的功能，而且官方有<code>go mod</code>进行支持，到了Go1.12更是正式化了这一功能。<br>很明显的一个标志是源于全局变量<code>GO111MODULE</code>，这个全局变量用于设置Go1.11版本以来对于go mod功能的开关：</p>
+<p>+ GO111MODULE=off：关闭MOD<br>+ GO111MODULE=on，开启MOD，忽略GOPATH和vendor，只根据go.mod文件进行下载依赖<br>+ GO111MODULE=auto，该项目在GOPATH src/外且根目录有go.mod时，才开启模块支持</p>
+<p>但是go mod的功能一直不是很稳定，我们团队之前的工程模板就会发生在Go1.13版本下使用go mod导致无法正常编译的错误，不得已更换了依赖（升级到使用uber体验还是很不错的）。</p>
+<p>但是Go1.14大声的告诉我们：go mod已经完全可以使用在生产环境了！（虽然在这之前我在公司的项目就一直用的是go mod来着…）</p>
+<hr>
+<h3 id="具有重叠方法集的接口类型"><a href="#具有重叠方法集的接口类型" class="headerlink" title="具有重叠方法集的接口类型"></a>具有重叠方法集的接口类型</h3><p>官方原文的描述：</p>
+<p>​    Per the overlapping interfaces proposal, Go 1.14 now permits embedding of interfaces with overlapping method sets: methods from an embedded interface may have the same names and identical signatures as methods already present in the (embedding) interface. This solves problems that typically (but not exclusively) occur with diamond-shaped embedding graphs. Explicitly declared methods in an interface must remain unique, as before.<br>​    根据重叠接口类型提议，Go1.14现在已经允许使用具有重叠的方法集的嵌入接口类型：被嵌入的接口类型可能具有和嵌入的接口类型具有相同名称的方法。这解决了最经典的菱形嵌入问题（虽然导致这个问题出现的不一定是菱形拓扑结构）。和之前一样，在接口中明确声明的方法必须保证唯一性。</p>
+<p>在这个描述中，有两点是值得注意的：一是有关于这个改变的提议，另一个则是所谓的菱形嵌入（继承）问题。</p>
+<h4 id="关于使接口类型允许嵌入重叠方法集的提议"><a href="#关于使接口类型允许嵌入重叠方法集的提议" class="headerlink" title="关于使接口类型允许嵌入重叠方法集的提议"></a>关于使接口类型允许嵌入重叠方法集的提议</h4><p>这个提议源于golang的<a href="https://golang.org/issue/6977" target="_blank" rel="noopener">ISSUE-6977</a>，作者是Robert Griesemer。提议的<a href="https://github.com/golang/proposal/blob/master/design/6977-overlapping-interfaces.md" target="_blank" rel="noopener">传送门</a>。</p>
+<p>以下是提议的主要内容（自己翻译的，可能不准确）：<br>目前，在Go语言的接口类型章节中是这样陈述的：</p>
+<p>​    一个接口类型T可以通过嵌入一个另一个接口类型E来代替自身的接口方法声明。这个过程称为嵌入E到T中。它会将E中所有的导出方法和未导出方法都添加到接口T中。</p>
+<p>而我们现在希望将其改为：</p>
+<p>​    一个接口类型T可以通过嵌入一个另一个接口类型E来代替自身的接口方法声明。这个过程称为嵌入E到T中。接口T的方法集为其显式声明的方法集和嵌入的方法集的并集。</p>
+<p>并且添加以下描述：</p>
+<p>​    这个并集仅包括所有的方法集的所有方法（导出的和未导出的）一次，并且相同名称的方法必须保持相同的签名。</p>
+<p>这个提议可以这样去理解，Go语言的面向对象的方式是以组合（嵌入）的方式实现的。和继承一样，存在着对于成员方法和字段的合并问题。<br>Go语言以前的方针是不允许任何同名的方法出现在同一个接口类型的合并过程中。哪怕是完全相同的两个方法也不可以。<br>在这次的修改后，这个方针改变为，可以有相同名称的方法出现在合并的过程中，但是必须函数的签名完全一致。</p>
+<p> Go语言中函数签名包括的几部分：方法接受者（receiver），方法名(name)，参数列表（param_list）和返回值列表（return_list），四者唯一确定一个函数签名</p>
+<p>在同一个接口中，接受者是一致的，也就是要保证方法名，参数列表和返回值列表完全一致。这样在合并的过程中才不会出现报错。</p>
+<p>我们可以看出，这样的一个举措是完全和重载背道而驰的做法，也算是一个特色了。（重载在遇到重名方法的时候，是允许不同的函数签名同时存在的）</p>
+<h4 id="本质：解决菱形问题"><a href="#本质：解决菱形问题" class="headerlink" title="本质：解决菱形问题"></a>本质：解决菱形问题</h4><p><img src="https://www.python-course.eu/images/multiple_inheritance_diamond.png" alt="菱形问题"><br>在面向对象的语言中，菱形继承问题是不可避免的一个话题，和上面的图一样形象的问题：一个类（类型）D会继承（组合）来自不同方向的不同的类（类型），但是有可能B和C都具有同样的方法，这样调用D的方法时会产生一个究竟走哪条调用链的问题。<br>比如A有方法a，B和C分别重写了方法a，成为a-B和a-C，这个时候D继承了B和C，在调用a-D的时候，就会产生应该调用a-B还是a-C的问题。<br>这个问题在C++，Python中都不同的解决方案。分别是虚继承和MRO（Method Resolution Order）+C4算法。而这次Go1.14的重叠方法集应该算是Go语言对于菱形问题的解决方案。</p>
+<hr>
+<h3 id="提升defer的性能"><a href="#提升defer的性能" class="headerlink" title="提升defer的性能"></a>提升defer的性能</h3><p>原文描述：</p>
+<p>​    This release improves the performance of most uses of defer to incur almost zero overhead compared to calling the deferred function directly. As a result, defer can now be used in performance-critical code without overhead concerns.<br>​    这个版本提升了defer大多数用法的性能，接近了几乎0开销。因此，现在可以将defer用于高性能场景了。</p>
+<p>先来看一下defer在Go1.14以前是如何实现的：<br><img src="http://xiaorui.cc/wp-content/uploads/2020/02/deferdefer.jpg" alt="defer"><br>我们可以很明显的看出一个defer的递归调用栈，以及独立于goroutine的协程切换，defer主要的性能流失就在这里。<br>Go1.14新加入了Open-Coded defer类型，编译器会将defer中的函数直接插到函数的尾部，避免了runtime的deferproc和deferprocStack操作，免除了在没有runtime判断下的deferreturn调用，如果有runtime判断逻辑，则deferreturn不会进行jmpdefer尾递归调用，而是直接在一个循环里遍历执行，这样效率流失的部分就抓了一部分回来了。</p>
+<p>网上也有了很多的benchmark测评，结果是Go1.14比Go1.13的defer的速度快了不少，提升了大概35ns左右，得到的结论是：Go1.14中用不用defer对于性能影响甚微。</p>
+<p>更详细的细节在[这里</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Golang/">Golang</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://shiinaorez.github.com/2020/02/28/golang-1-14/" data-title="Go语言1.14版本发布 | Shiina Orez" data-tsina class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2020/02/28/python-docxtpl-pdf/" title="Python使用docxtpl渲染docx文件和Linux转换docx为pdf">
+ <strong>NEXT:</strong><br> 
+ <span>Python使用docxtpl渲染docx文件和Linux转换docx为pdf
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go语言-1-14版本发布的新特性"><span class="toc-number">1.</span> <span class="toc-text">Go语言 1.14版本发布的新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GO-MOD用于生产环境"><span class="toc-number">1.1.</span> <span class="toc-text">GO MOD用于生产环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-5及以前：GOPATH"><span class="toc-number">1.1.1.</span> <span class="toc-text">Go1.5及以前：GOPATH</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-6到1-10：vendor"><span class="toc-number">1.1.2.</span> <span class="toc-text">Go1.6到1.10：vendor</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-11至今："><span class="toc-number">1.1.3.</span> <span class="toc-text">Go1.11至今：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#具有重叠方法集的接口类型"><span class="toc-number">1.2.</span> <span class="toc-text">具有重叠方法集的接口类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#关于使接口类型允许嵌入重叠方法集的提议"><span class="toc-number">1.2.1.</span> <span class="toc-text">关于使接口类型允许嵌入重叠方法集的提议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#本质：解决菱形问题"><span class="toc-number">1.2.2.</span> <span class="toc-text">本质：解决菱形问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提升defer的性能"><span class="toc-number">1.3.</span> <span class="toc-text">提升defer的性能</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Algorithm-DataStructure/" title="Algorithm DataStructure">Algorithm DataStructure<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Concurrency-In-Go/" title="Concurrency In Go">Concurrency In Go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Concurrency-in-Go/" title="Concurrency in Go">Concurrency in Go<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ES/" title="ES">ES<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Go/" title="Go">Go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Golang/" title="Golang">Golang<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Werkzeug/" title="Werkzeug">Werkzeug<sup>4</sup></a></li>
+		
+			<li><a href="/tags/algorithm/" title="algorithm">algorithm<sup>12</sup></a></li>
+		
+			<li><a href="/tags/base/" title="base">base<sup>1</sup></a></li>
+		
+			<li><a href="/tags/go/" title="go">go<sup>1</sup></a></li>
+		
+			<li><a href="/tags/kotlin/" title="kotlin">kotlin<sup>1</sup></a></li>
+		
+			<li><a href="/tags/protocol-buffers/" title="protocol buffers">protocol buffers<sup>1</sup></a></li>
+		
+			<li><a href="/tags/python/" title="python">python<sup>2</sup></a></li>
+		
+			<li><a href="/tags/ubuntu-QT/" title="ubuntu QT">ubuntu QT<sup>1</sup></a></li>
+		
+			<li><a href="/tags/软件体系结构/" title="软件体系结构">软件体系结构<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 做一个真正的菜鸡 --ShiinaOrez <br>
+			日积代码千行，则无往而不利也@学业进行中</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		<a href="https://twitter.com/shiina_orez" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/ShiinaOrez" target="_blank" title="github"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2020 
+		
+		<a href="http://shiinaorez.github.com" target="_blank" title="Shiina Orez">Shiina Orez</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
