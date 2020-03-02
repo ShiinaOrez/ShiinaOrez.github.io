@@ -93,7 +93,7 @@
     </p>
   <p class="article-time">
     <time datetime="2020-02-28T15:45:38.000Z" itemprop="datePublished">2020-02-28</time>
-    Updated:<time datetime="2020-02-29T14:47:57.099Z" itemprop="dateModified">2020-02-29</time>
+    Updated:<time datetime="2020-03-02T12:09:38.872Z" itemprop="dateModified">2020-03-02</time>
     
   </p>
 </header>
@@ -102,7 +102,7 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go语言-1-14版本发布的新特性"><span class="toc-number">1.</span> <span class="toc-text">Go语言 1.14版本发布的新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GO-MOD用于生产环境"><span class="toc-number">1.1.</span> <span class="toc-text">GO MOD用于生产环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-5及以前：GOPATH"><span class="toc-number">1.1.1.</span> <span class="toc-text">Go1.5及以前：GOPATH</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-6到1-10：vendor"><span class="toc-number">1.1.2.</span> <span class="toc-text">Go1.6到1.10：vendor</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-11至今："><span class="toc-number">1.1.3.</span> <span class="toc-text">Go1.11至今：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#具有重叠方法集的接口类型"><span class="toc-number">1.2.</span> <span class="toc-text">具有重叠方法集的接口类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#关于使接口类型允许嵌入重叠方法集的提议"><span class="toc-number">1.2.1.</span> <span class="toc-text">关于使接口类型允许嵌入重叠方法集的提议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#本质：解决菱形问题"><span class="toc-number">1.2.2.</span> <span class="toc-text">本质：解决菱形问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提升defer的性能"><span class="toc-number">1.3.</span> <span class="toc-text">提升defer的性能</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go语言-1-14版本发布的新特性"><span class="toc-number">1.</span> <span class="toc-text">Go语言 1.14版本发布的新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GO-MOD用于生产环境"><span class="toc-number">1.1.</span> <span class="toc-text">GO MOD用于生产环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-5及以前：GOPATH"><span class="toc-number">1.1.1.</span> <span class="toc-text">Go1.5及以前：GOPATH</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-6到1-10：vendor"><span class="toc-number">1.1.2.</span> <span class="toc-text">Go1.6到1.10：vendor</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-11至今："><span class="toc-number">1.1.3.</span> <span class="toc-text">Go1.11至今：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#具有重叠方法集的接口类型"><span class="toc-number">1.2.</span> <span class="toc-text">具有重叠方法集的接口类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#关于使接口类型允许嵌入重叠方法集的提议"><span class="toc-number">1.2.1.</span> <span class="toc-text">关于使接口类型允许嵌入重叠方法集的提议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#本质：解决菱形问题"><span class="toc-number">1.2.2.</span> <span class="toc-text">本质：解决菱形问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提升defer的性能"><span class="toc-number">1.3.</span> <span class="toc-text">提升defer的性能</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-14以前的defer"><span class="toc-number">1.3.1.</span> <span class="toc-text">Go1.14以前的defer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-14做出的改变"><span class="toc-number">1.3.2.</span> <span class="toc-text">Go1.14做出的改变:</span></a></li></ol></li></ol></li></ol>
 		</div>
 		
 		<h2 id="Go语言-1-14版本发布的新特性"><a href="#Go语言-1-14版本发布的新特性" class="headerlink" title="Go语言 1.14版本发布的新特性"></a>Go语言 1.14版本发布的新特性</h2><p>在2020年2月25日, Go语言的1.14版本发布了, 在Go语言官方的<a href="https://blog.golang.org/go1.14" target="_blank" rel="noopener">博客</a>上Alex Rakoczy写道:</p>
@@ -180,9 +180,58 @@
 <li>This release improves the performance of most uses of defer to incur almost zero overhead compared to calling the deferred function directly. As a result, defer can now be used in performance-critical code without overhead concerns.</li>
 <li>这个版本提升了defer大多数用法的性能，接近了几乎0开销。因此，现在可以将defer用于高性能场景了。</li>
 </ul>
-<p>先来看一下defer在Go1.14以前是如何实现的：<br><img src="http://xiaorui.cc/wp-content/uploads/2020/02/deferdefer.jpg" alt="defer"></p>
-<p>我们可以很明显的看出一个defer的递归调用栈，以及独立于goroutine的协程切换，defer主要的性能流失就在这里。</p>
-<p>Go1.14新加入了Open-Coded defer类型，编译器会将defer中的函数直接插到函数的尾部，避免了runtime的deferproc和deferprocStack操作，免除了在没有runtime判断下的deferreturn调用，如果有runtime判断逻辑，则deferreturn不会进行jmpdefer尾递归调用，而是直接在一个循环里遍历执行，这样效率流失的部分就抓了一部分回来了。</p>
+<p>先来看一下defer在Go1.14以前是如何实现的：</p>
+<h4 id="Go1-14以前的defer"><a href="#Go1-14以前的defer" class="headerlink" title="Go1.14以前的defer"></a>Go1.14以前的defer</h4><p><img src="http://xiaorui.cc/wp-content/uploads/2020/02/deferdefer.jpg" alt="defer"></p>
+<p>在源码的<code>src/src/runtime/runtime2.go:_defer</code>中定义了defer的数据结构:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// go1.12.13</span></span><br><span class="line"><span class="keyword">type</span> _defer <span class="keyword">struct</span> &#123;</span><br><span class="line">    siz     <span class="keyword">int32</span>    <span class="comment">// 参数和结果的内存大小</span></span><br><span class="line">    started <span class="keyword">bool</span></span><br><span class="line">    sp      <span class="keyword">uintptr</span>  <span class="comment">// 函数栈的指针</span></span><br><span class="line">    pc      <span class="keyword">uintptr</span>  <span class="comment">// 程序计数器</span></span><br><span class="line">    fn      *funcval <span class="comment">// defer传入的函数地址</span></span><br><span class="line">    _panic  *_panic  <span class="comment">// 对应的panic数据结构, 用于触发延迟调用</span></span><br><span class="line">    link    *_defer  <span class="comment">// 以链表结构连接多个defer</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的数据结构来看, 可以很明显的看出一个goroutine内的defer是以链表的形式链接在一起的.</p>
+<p>在<code>src/src/runtime/panic.go</code>中定义了deferproc和deferreturn两个函数:</p>
+<ul>
+<li>runtime.deferproc: 负责创建新的defer调用</li>
+<li>runtime.deferreturn: 负责在调用的函数结束时调用所有的延迟调用</li>
+</ul>
+<p><strong>runtime.deferproc</strong>:</p>
+<p>本函数会为每一个defer关键字创建一个新的runtime._defer结构体, 并且设置它的函数指针<code>fn</code>, 程序计数器<code>pc</code>和栈指针<code>sp</code>并且将相关的参数copy到相邻的内存空间中.</p>
+<p>本函数的末尾由return0()函数结尾, 为了避免无限递归调用deferreturn()函数.</p>
+<p>创建好的新的runtime._defer结构体会被追加到goroutine的_defer链表的最前面, 这也就是为什么后声明的defer会被率先调用的原理.</p>
+<p><strong>runtime.deferreturn</strong>:</p>
+<p>本函数会从goroutine的_defer链表的最前面取出一个_defer结构体并调用runtime.jmpdefer函数传入需要执行的函数和参数.</p>
+<p>具体的流程:</p>
+<ul>
+<li>获取当前的goroutine</li>
+<li>获取当前goroutine的_defer链表头指针, 判断是否为空, 为空则直接返回</li>
+<li>获取调用者的栈指针, 若调用者的栈指针和要执行的defer的栈指针不同则直接返回</li>
+<li>switch-case defer.siz<ul>
+<li>如果defer占用的内存是0, 便什么都不做</li>
+<li>如果defer占用的内存是一个指针类型的大小, 便取出d中的参数到arg0</li>
+<li>default: 直接将d中的参数取出到arg0</li>
+</ul>
+</li>
+<li>取出defer要调用的函数fn</li>
+<li>修改当前goroutine的_defer链表</li>
+<li>释放当前处理的defer的内存空间</li>
+<li>使用jmpdefer将获取到的参数传入fn进行调用, 并且调用结束后返回本函数</li>
+</ul>
+<p>而deferreturn函数在什么时候才会运行呢? 实际上在编译的阶段, deferreturn函数会被插入到调用defer的函数返回之前.</p>
+<p><strong>总结</strong>:</p>
+<p>在Go1.14版本之前, defer的整体逻辑是这样的:</p>
+<ul>
+<li>编译阶段:<ul>
+<li>将defer关键字转换为deferproc()</li>
+<li>在调用defer关键字的函数返回前插入deferreturn()</li>
+</ul>
+</li>
+<li>运行时:<ul>
+<li>deferproc()函数会创建一个新的_defer加入到goroutine的_defer链表中.</li>
+<li>deferreturn()函数会从goroutine中取出_defer并依次执行</li>
+</ul>
+</li>
+</ul>
+<h4 id="Go1-14做出的改变"><a href="#Go1-14做出的改变" class="headerlink" title="Go1.14做出的改变:"></a>Go1.14做出的改变:</h4><p>Go1.14新加入了Open-Coded defer类型，编译器会将defer中的函数直接插到函数的尾部，避免了runtime的deferproc和复制参数的操作，免除了在没有runtime判断下的deferreturn调用，如果有runtime判断逻辑，则deferreturn不会进行jmpdefer尾递归调用，而是直接在一个循环里遍历执行，这样效率流失的部分就抓了一部分回来了。</p>
+<ul>
+<li>编译时直接将defer要调用的函数插入原函数的尾部, 避免了调用deferproc和建立_defer链表和对于每一个_defer的参数复制</li>
+<li>deferreturn时将多个_defer在一个循环中执行, 而不是进行多次的jmpdefer递归调用</li>
+</ul>
 <p>网上也有了很多的benchmark测评，结果是Go1.14比Go1.13的defer的速度快了不少，提升了大概35ns左右，得到的结论是：Go1.14中用不用defer对于性能影响甚微。</p>
 <p>更详细的细节在<a href="http://xiaorui.cc/archives/6579" target="_blank" rel="noopener">这里</a></p>
   
@@ -225,7 +274,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go语言-1-14版本发布的新特性"><span class="toc-number">1.</span> <span class="toc-text">Go语言 1.14版本发布的新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GO-MOD用于生产环境"><span class="toc-number">1.1.</span> <span class="toc-text">GO MOD用于生产环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-5及以前：GOPATH"><span class="toc-number">1.1.1.</span> <span class="toc-text">Go1.5及以前：GOPATH</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-6到1-10：vendor"><span class="toc-number">1.1.2.</span> <span class="toc-text">Go1.6到1.10：vendor</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-11至今："><span class="toc-number">1.1.3.</span> <span class="toc-text">Go1.11至今：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#具有重叠方法集的接口类型"><span class="toc-number">1.2.</span> <span class="toc-text">具有重叠方法集的接口类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#关于使接口类型允许嵌入重叠方法集的提议"><span class="toc-number">1.2.1.</span> <span class="toc-text">关于使接口类型允许嵌入重叠方法集的提议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#本质：解决菱形问题"><span class="toc-number">1.2.2.</span> <span class="toc-text">本质：解决菱形问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提升defer的性能"><span class="toc-number">1.3.</span> <span class="toc-text">提升defer的性能</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go语言-1-14版本发布的新特性"><span class="toc-number">1.</span> <span class="toc-text">Go语言 1.14版本发布的新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GO-MOD用于生产环境"><span class="toc-number">1.1.</span> <span class="toc-text">GO MOD用于生产环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-5及以前：GOPATH"><span class="toc-number">1.1.1.</span> <span class="toc-text">Go1.5及以前：GOPATH</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-6到1-10：vendor"><span class="toc-number">1.1.2.</span> <span class="toc-text">Go1.6到1.10：vendor</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-11至今："><span class="toc-number">1.1.3.</span> <span class="toc-text">Go1.11至今：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#具有重叠方法集的接口类型"><span class="toc-number">1.2.</span> <span class="toc-text">具有重叠方法集的接口类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#关于使接口类型允许嵌入重叠方法集的提议"><span class="toc-number">1.2.1.</span> <span class="toc-text">关于使接口类型允许嵌入重叠方法集的提议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#本质：解决菱形问题"><span class="toc-number">1.2.2.</span> <span class="toc-text">本质：解决菱形问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提升defer的性能"><span class="toc-number">1.3.</span> <span class="toc-text">提升defer的性能</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-14以前的defer"><span class="toc-number">1.3.1.</span> <span class="toc-text">Go1.14以前的defer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Go1-14做出的改变"><span class="toc-number">1.3.2.</span> <span class="toc-text">Go1.14做出的改变:</span></a></li></ol></li></ol></li></ol>
   </div>
 
 <div id="asidepart">
